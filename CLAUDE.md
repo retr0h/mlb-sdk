@@ -10,10 +10,11 @@ this repo and generate a typed client from it via
 ```
 api/openapi.yaml      Hand-authored OpenAPI 3.0 spec
 internal/gen/         Generated client. NEVER importable externally.
-internal/version/     Build identity for `mlb version`
 pkg/mlb/              Public, idiomatic SDK surface (the only thing users import)
-cmd/                  Cobra CLI tree
 ```
+
+This is a library only. There is no `main.go`, no `cmd/`, and no published
+binary. Examples may live under `examples/` if useful for documentation.
 
 ## Commands
 

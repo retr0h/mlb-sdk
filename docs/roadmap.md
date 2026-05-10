@@ -17,9 +17,6 @@ public surfaces, plus matching CLI subcommands.
       PlayByPlay or expose distinctly.
 - [ ] `pkg/mlb.TeamStats(ctx, q)` — query season / by-date-range stats
       with typed `StatGroup` constants (Hitting, Pitching, Fielding).
-- [ ] `cmd/{schedule,box,playbyplay,team-stats}.go` — Cobra subcommands
-      that each call one SDK method and pretty-print JSON or a tabular
-      summary.
 - [ ] Migrate `freebies` to consume `pkg/mlb` once v0.1 is tagged.
 
 ## Phase 3 — Polish layer from kvlt
@@ -122,10 +119,12 @@ we wrap later.
 
 ## AI-native consumer hooks
 
-Nice-to-have once the SDK surface is stable.
+Nice-to-have once the SDK surface is stable. As a library-only repo, an
+MCP server would ship as a separate companion module (`mlb-sdk-mcp`) that
+imports `pkg/mlb` rather than as a subcommand.
 
-- [ ] `cmd/mcp.go` — expose `pkg/mlb` as an MCP server over stdio
-      (`mlb mcp`) so Claude Desktop / Cursor / agentic clients can call
+- [ ] `mlb-sdk-mcp` — separate module exposing `pkg/mlb` as an MCP server
+      over stdio so Claude Desktop / Cursor / agentic clients can call
       methods directly.
 - [ ] `tools.json` schema bundle for tool-use APIs that don't speak MCP.
 - [ ] LLM-friendly docstrings on every public method (concrete examples,

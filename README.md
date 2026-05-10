@@ -82,9 +82,6 @@ internal/gen/             Generated typed HTTP client. Not importable externally
         │  wrapped, parsed, normalized
         ▼
 pkg/mlb/                  Public, idiomatic Go SDK (the only thing you import)
-        │
-        ▼
-cmd/                      Cobra CLI tree built on top of pkg/mlb
 ```
 
 The generated layer handles HTTP, query-string assembly, and JSON parsing.

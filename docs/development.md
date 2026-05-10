@@ -25,11 +25,11 @@ go test ./...
 api/openapi.yaml      Hand-authored OpenAPI 3.0 spec
 internal/gen/         Generated typed HTTP client (oapi-codegen).
                       NOT importable externally.
-internal/version/     Build identity for the optional `mlb` dev CLI
 pkg/mlb/              Public, idiomatic Go SDK — the only thing you import
-cmd/                  Optional Cobra CLI used for ad-hoc lookups during
-                      development. Library users do not depend on this.
 ```
+
+This is a library only — no `main.go`, no `cmd/`, no published binary.
+
 
 ## Common tasks
 
