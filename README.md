@@ -32,6 +32,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/game/{gamePk}/boxscore`      | [Client.Boxscore][d-box]      | [boxscore.go](examples/boxscore.go)      |
 | `/api/v1/game/{gamePk}/playByPlay`    | [Client.PlayByPlay][d-pbp]    | [playbyplay.go](examples/playbyplay.go)  |
 | `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
+| `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
 | `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
@@ -79,4 +80,5 @@ The [MIT][] License.
 [d-box]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
 [d-pbp]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
 [d-live]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
+[d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
 [d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats

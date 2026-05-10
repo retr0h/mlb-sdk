@@ -70,6 +70,24 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/standings:
+    get:
+      operationId: getStandings
+      summary: League standings (regular season, wild card, etc.) for a league + season
+      parameters:
+        - { name: leagueId, in: query, required: true, schema: { type: string }, description: "103 = AL, 104 = NL. May be comma-separated for multiple leagues." }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: standingsTypes, in: query, schema: { type: string }, description: "regularSeason | wildCard | divisionLeaders | …" }
+        - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD; standings as of this date" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Standings
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StandingsResponse" }
+
   /api/v1/teams/{teamId}/stats:
     get:
       operationId: getTeamStats
@@ -297,3 +315,74 @@ components:
         stats:
           type: array
           items: { $ref: "#/components/schemas/StatGroup" }
+
+    Ref:
+      type: object
+      additionalProperties: true
+      description: |
+        Lightweight reference object — `{id, link}` — that the MLB API uses
+        for league/division/sport pointers in responses (no name field).
+      properties:
+        id:   { type: integer }
+        link: { type: string }
+
+    Streak:
+      type: object
+      additionalProperties: true
+      properties:
+        streakCode:   { type: string, description: "e.g. W3, L1" }
+        streakType:   { type: string, description: "wins | losses" }
+        streakNumber: { type: integer }
+
+    TeamRecord:
+      type: object
+      additionalProperties: true
+      description: |
+        One team's slot in a division standings block. Fields like
+        gamesBack, divisionRank, eliminationNumber and winningPercentage
+        are intentionally typed as strings because the MLB API uses "-"
+        for "not applicable" values that an int cannot represent.
+      properties:
+        team:                 { $ref: "#/components/schemas/Team" }
+        streak:               { $ref: "#/components/schemas/Streak" }
+        wins:                 { type: integer }
+        losses:               { type: integer }
+        gamesPlayed:          { type: integer }
+        runsScored:           { type: integer }
+        runsAllowed:          { type: integer }
+        runDifferential:      { type: integer }
+        winningPercentage:    { type: string, description: ".593-style decimal string" }
+        gamesBack:            { type: string }
+        wildCardGamesBack:    { type: string }
+        divisionRank:         { type: string }
+        leagueRank:           { type: string }
+        sportRank:            { type: string }
+        eliminationNumber:    { type: string }
+        magicNumber:          { type: string }
+        clinched:             { type: boolean }
+        divisionLeader:       { type: boolean }
+        divisionChamp:        { type: boolean }
+        hasWildcard:          { type: boolean }
+        season:               { type: string }
+        lastUpdated:          { type: string, format: date-time }
+
+    DivisionStandings:
+      type: object
+      additionalProperties: true
+      properties:
+        standingsType: { type: string, description: "e.g. regularSeason" }
+        league:        { $ref: "#/components/schemas/Ref" }
+        division:      { $ref: "#/components/schemas/Ref" }
+        sport:         { $ref: "#/components/schemas/Ref" }
+        lastUpdated:   { type: string, format: date-time }
+        teamRecords:
+          type: array
+          items: { $ref: "#/components/schemas/TeamRecord" }
+
+    StandingsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        records:
+          type: array
+          items: { $ref: "#/components/schemas/DivisionStandings" }

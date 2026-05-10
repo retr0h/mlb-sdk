@@ -30,6 +30,12 @@
       "operationId": "getTeamStats",
       "ingestedOn": "2026-05-10",
       "source": "hand-authored before the skill existed"
+    },
+    "standings": {
+      "method": "Client.Standings",
+      "operationId": "getStandings",
+      "ingestedOn": "2026-05-10",
+      "source": "ingest-from-toddrob99 skill — first endpoint ported via the skill"
     }
   }
 }
