@@ -23,12 +23,13 @@ test:
     just just::fmt-check
     just go::test
 
-# Format, lint before committing
+# Format, lint before committing. `go::vet` runs golangci-lint per the
+
+# osapi-justfiles convention — it's the lint step despite the name.
 ready:
     just just::fmt
     just go::fmt
     just go::vet
-    just go::lint
 
 # Run code generation (oapi-codegen)
 generate:
