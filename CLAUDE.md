@@ -10,6 +10,11 @@ this repo and generate a typed client from it via
 > functional-options pattern, and the table-driven testing conventions
 > every public function must follow. This file is the short summary; the
 > guide has the full rules and examples.
+>
+> **Adding a new endpoint?** Follow the eight-step checklist in
+> [docs/development.md → Adding a new endpoint](docs/development.md#adding-a-new-endpoint).
+> Each step lists the exact file to touch — skipping any of them leaves
+> the public surface incomplete.
 
 ## Layout
 

@@ -26,12 +26,16 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 
 ## ⚙️ Endpoints
 
-| Endpoint                         | SDK method                     |
-| -------------------------------- | ------------------------------ |
-| `/api/v1/schedule`               | `Client.Schedule`              |
-| `/api/v1/game/{gamePk}/boxscore` | `Client.Boxscore`              |
+| Endpoint                              | Docs                          | Example                                  |
+| ------------------------------------- | ----------------------------- | ---------------------------------------- |
+| `/api/v1/schedule`                    | [Client.Schedule][d-sched]    | [schedule.go](examples/schedule.go)      |
+| `/api/v1/game/{gamePk}/boxscore`      | [Client.Boxscore][d-box]      | [boxscore.go](examples/boxscore.go)      |
+| `/api/v1/game/{gamePk}/playByPlay`    | [Client.PlayByPlay][d-pbp]    | [playbyplay.go](examples/playbyplay.go)  |
+| `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
+| `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 
-Additional endpoints in flight — see [docs/roadmap.md][].
+Run any example with `go run examples/<name>.go`. Roadmap for additional
+endpoints lives in [docs/roadmap.md][].
 
 ## ✨ Features
 
@@ -71,3 +75,8 @@ The [MIT][] License.
 [Development]: docs/development.md
 [Contributing]: docs/contributing.md
 [MIT]: LICENSE
+[d-sched]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Schedule
+[d-box]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
+[d-pbp]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
+[d-live]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
+[d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats

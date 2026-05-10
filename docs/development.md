@@ -61,6 +61,41 @@ go generate ./internal/gen
 The directive in `internal/gen/generate.go` calls `oapi-codegen` via a
 `go tool` reference, so no separate install step is required.
 
+## Adding a new endpoint
+
+When wrapping a new MLB Stats API path, touch every one of these files in
+this order. Skipping any of them leaves the public surface incomplete.
+
+1. **`api/openapi.yaml`** — add the path entry under `paths:` and any
+   new component schemas. Set an explicit `operationId`. Every nested
+   object must be a named `components/schemas/...` reference (no inline
+   `type: object`); see the spec authoring rules below.
+2. **`go generate ./internal/gen`** — regenerate `client.gen.go` from
+   the spec. Commit the regenerated file.
+3. **`pkg/mlb/<name>_types.go`** — declare the public types only.
+   No methods, no logic. Use idiomatic Go (`time.Time` for dates,
+   typed enum constants for status fields, etc.).
+4. **`pkg/mlb/<name>.go`** — add the `Client.<Method>(ctx, ...)`
+   implementation, plus private `<name>FromGen` converters that map the
+   generated layer's pointer-heavy types onto the public type. Wrap
+   errors as `fmt.Errorf("mlb: <method>: %w", err)`. Map 404 to
+   `ErrNotFound`. Map other non-200 to a wrapped `unexpected status`
+   error.
+5. **`pkg/mlb/<name>_test.go`** — one table-driven test per public
+   function, with rows covering: happy path, 200 with empty/missing
+   fields, 404, 5xx, malformed JSON, network failure (closed server).
+   Coverage must stay at 100.0% — run `just go::test` to confirm.
+6. **`examples/<name>.go`** — a runnable example program (one file per
+   endpoint, all under `examples/` which is its own Go submodule with
+   a `replace` directive pointing at the parent). Run with
+   `go run examples/<name>.go`.
+7. **`README.md`** — add a row to the `## ⚙️ Endpoints` table. Three
+   columns: endpoint path, link to the pkg.go.dev anchor for the new
+   `Client.<Method>`, link to the `examples/<name>.go` file. Add the
+   `[d-<name>]` reference-style link footer next to the existing ones.
+8. **`just ready`** — final gate. fmt + vet + lint + 100% coverage all
+   green before committing.
+
 ## OpenAPI spec authoring
 
 When adding endpoints or types to `api/openapi.yaml`:
