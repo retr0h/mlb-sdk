@@ -4,7 +4,7 @@
 [![conventional commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge)](https://conventionalcommits.org)
 [![built with just](https://img.shields.io/badge/Built_with-Just-black?style=for-the-badge&logo=just&logoColor=white)](https://just.systems)
 ![github commit activity](https://img.shields.io/github/commit-activity/m/retr0h/mlb-sdk?style=for-the-badge)
-[![Go Reference](https://pkg.go.dev/badge/github.com/retr0h/mlb-sdk/pkg/mlb.svg)](https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=for-the-badge)](https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb)
 [![hovnokod](https://raw.githubusercontent.com/tekk/hovnokod-badge/main/assets/badges/hovnokod-for-the-badge.svg)](https://github.com/tekk/hovnokod-badge)
 
 # mlb-sdk
