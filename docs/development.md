@@ -80,23 +80,163 @@ When adding endpoints or types to `api/openapi.yaml`:
 
 `internal/gen` is an implementation detail. Consumers must import only
 `pkg/mlb`. The whole point of the SDK is to encapsulate the MLB API's
-awkward bits behind idiomatic Go:
+awkward bits behind idiomatic Go.
 
-- Convert API string dates to `time.Time` at the boundary.
-- Expose typed identifiers (`mlb.LAD`, not `119`).
-- Surface helper methods like `Boxscore.Team(LAD).DoublePlaysTurned()` that
-  hide awkward parsing (e.g., per-game team double plays only appear in the
-  free-text `info.FIELDING.DP` block — the SDK parses it).
-- Public types live in `pkg/mlb/<resource>_types.go`; methods on those types
-  live in `pkg/mlb/<resource>.go`.
-- The generated `gen.Client` is wrapped by `pkg/mlb.Client` — never returned
-  to callers.
+### File organization
 
-## Testing pattern
+Every endpoint or domain concept gets three files:
 
-Use `mlb.WithBaseURL(srv.URL)` in tests against an `httptest.Server` to
-avoid hitting the live MLB API. See `pkg/mlb/boxscore_test.go` for an
-example.
+```
+pkg/mlb/<resource>_types.go    Exported types (no methods, no logic)
+pkg/mlb/<resource>.go          Methods on Client + private conversion helpers
+pkg/mlb/<resource>_test.go     Table-driven tests
+```
+
+`pkg/mlb/client.go` holds the `Client` type and the functional-options
+constructor; `pkg/mlb/teams.go` holds typed identifier constants. Add new
+domain-wide enums in their own `<concept>.go` file.
+
+### Naming conventions
+
+- Public type for a top-level resource: singular noun (`Boxscore`, `Game`).
+- Per-side / per-team subtype: prefix with the parent (`BoxscoreTeam`).
+- Query parameters struct: `<Resource>Query` (e.g., `ScheduleQuery`).
+- Status / category enums: `<Concept>Type` or `<Concept>Status` typed
+  string with grouped constants (`StatusFinal`, `StatusLive`, `StatusPreview`).
+- Sentinel errors: `Err<Reason>` at package level (`ErrNotFound`).
+- Private gen→public conversion helpers: `<resource>FromGen` taking the
+  `*gen.X` pointer and returning the public type.
+
+### Functional options
+
+Every component that needs configuration uses functional options:
+
+```go
+type Option func(*config)
+type config struct { /* internal */ }
+
+func WithThing(v T) Option { return func(c *config) { c.thing = v } }
+```
+
+Defaults live inside the constructor; options override.
+
+### Error handling
+
+- Every `Client` method returns `(*T, error)` or `([]T, error)` and takes
+  `context.Context` as the first argument.
+- Wrap errors with the method name: `fmt.Errorf("mlb: <method>: %w", err)`.
+- HTTP 404 maps to `ErrNotFound` (callers can `errors.Is`).
+- Other non-200 maps to `fmt.Errorf("mlb: <method>: unexpected status %d", code)`.
+- Public methods never panic; they always return errors.
+
+### Conversion pattern
+
+The generated layer makes every field `*T` because the spec uses
+`additionalProperties: true`. The handwritten layer must:
+
+1. Nil-check every pointer before deref.
+2. Copy fields onto a public type with non-pointer fields where the value
+   semantics are clear (`int` for counts, `string` for names, `time.Time`
+   for dates).
+3. Retain the underlying `raw *gen.X` on the public type when downstream
+   helpers may need fields we have not yet promoted (see `BoxscoreTeam.raw`).
+
+### Generic helpers
+
+`pkg/mlb/schedule.go` declares `ptr[T any](v T) *T { return &v }` — used to
+build `*T` request parameter values without scratch variables. Reuse this
+helper rather than redeclaring it per file.
+
+## Testing conventions
+
+**Every public function and method MUST have a table-driven test.** One
+table per function, with rows covering both the happy path and every
+failure mode the function can produce. Failure rows belong in the same
+table as the happy row — not in a separate test.
+
+### Table shape
+
+For pure functions:
+
+```go
+func TestParseDPCount(t *testing.T) {
+    cases := []struct {
+        name  string
+        input string
+        want  int
+    }{
+        {"empty", "", 0},
+        {"single DP, no leading number", "(Smith-Jones).", 1},
+        {"two DPs", "2 (Smith; Jones).", 2},
+    }
+    for _, c := range cases {
+        t.Run(c.name, func(t *testing.T) { ... })
+    }
+}
+```
+
+For `Client` methods (HTTP-level), each row configures a per-case
+`httptest.Server` and asserts on either the parsed result or the error:
+
+```go
+func TestClient_Schedule(t *testing.T) {
+    cases := []struct {
+        name       string
+        query      ScheduleQuery
+        respStatus int    // http status the fake server returns
+        respBody   string // raw response body (set "" with respStatus 0 for net failure)
+        wantLen    int    // expected len(result) on success
+        wantErr    string // substring match; "" means expect nil error
+        wantIs     error  // optional: errors.Is target (e.g. ErrNotFound)
+    }{
+        {name: "happy path", respStatus: 200, respBody: `{...}`, wantLen: 2},
+        {name: "404 returns ErrNotFound", respStatus: 404, wantIs: ErrNotFound},
+        {name: "5xx is wrapped", respStatus: 500, wantErr: "unexpected status 500"},
+        {name: "malformed JSON", respStatus: 200, respBody: `not json`, wantErr: "schedule"},
+        {name: "network failure", respStatus: 0, wantErr: "schedule"},
+    }
+    for _, c := range cases {
+        t.Run(c.name, func(t *testing.T) { ... })
+    }
+}
+```
+
+### Required failure rows for HTTP methods
+
+Every `Client` method's table MUST include rows covering:
+
+| Row | Setup |
+| --- | --- |
+| Happy path | `respStatus: 200`, expected body |
+| Empty/missing fields | `respStatus: 200`, body with omitted optional fields → expect graceful zero values, no error |
+| 404 | `respStatus: 404` → expect `errors.Is(err, ErrNotFound)` |
+| 5xx | `respStatus: 500` → expect wrapped "unexpected status" error |
+| Malformed JSON | `respStatus: 200`, body that is not valid JSON → expect wrapped error |
+| Network failure | server closed before request → expect wrapped error |
+
+Pure helpers (`parseDPCount`, `doublePlaysTurned`, `<resource>FromGen`)
+need only the failure rows that apply to them — typically empty input,
+nil fields, malformed input.
+
+### Server-per-case pattern
+
+Use a fresh `httptest.NewServer` inside each `t.Run` so that test cases
+are isolated. To simulate a network failure, close the server before
+calling the client. Do not share servers across rows.
+
+### Test helpers
+
+`strPtr`, `intPtr`, etc. live at the bottom of the test file in question.
+Don't promote them across files unless three or more files end up
+duplicating the same helper.
+
+### Test naming
+
+- Pure functions: `TestFunctionName`.
+- Methods on a type: `TestType_Method` (Go convention; `go test` displays
+  it nicely).
+- Helper / unexported: `Test<helperName>`, lowercase first letter
+  preserved.
 
 ## Commit messages
 

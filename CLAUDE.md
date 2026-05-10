@@ -1,9 +1,15 @@
 # mlb-sdk
 
-Idiomatic Go SDK and CLI for the public MLB Stats API hosted at
+Idiomatic Go library for the public MLB Stats API hosted at
 `statsapi.mlb.com`. MLB does not publish an OpenAPI spec — we author one in
 this repo and generate a typed client from it via
 [`oapi-codegen`](https://github.com/oapi-codegen/oapi-codegen).
+
+> **Read [docs/development.md](docs/development.md) first.** It is the
+> source of truth for code organization, naming, error handling, the
+> functional-options pattern, and the table-driven testing conventions
+> every public function must follow. This file is the short summary; the
+> guide has the full rules and examples.
 
 ## Layout
 
@@ -61,11 +67,20 @@ awkward bits behind idiomatic Go:
 - The generated `gen.Client` is wrapped by `pkg/mlb.Client` — never returned
   to callers.
 
+### Tests are mandatory for every public function
+
+One table-driven test per public function, with rows covering both the
+happy path and every failure mode. See
+[docs/development.md → Testing conventions](docs/development.md#testing-conventions)
+for the required failure rows on `Client` HTTP methods (404, 5xx,
+malformed JSON, network failure, empty body) and the server-per-case
+pattern.
+
 ### Branching
 
-Feature branches off `main` with `type/short-description` (e.g.,
-`feat/add-live-feed-wrapper`, `fix/dp-parser-edge-case`). PRs only — no
-direct commits to `main`.
+Skunkworks repo: commits land directly on `main` and push immediately.
+No feature branches, no PR workflow — same as the rest of the
+maintainer's solo projects.
 
 ### Commit messages
 
