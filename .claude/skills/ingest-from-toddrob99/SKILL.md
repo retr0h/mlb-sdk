@@ -9,6 +9,15 @@ description: Port MLB Stats API endpoints from the toddrob99/MLB-StatsAPI Python
 years of human reverse-engineering of `statsapi.mlb.com`. This skill ports
 their work into our typed Go SDK without us re-doing the discovery.
 
+> **Architectural reminder before you read anything else:** `internal/gen/`
+> is the generated implementation detail; `pkg/mlb/` is the public surface
+> that wraps it. **No `gen.X` type ever appears in an exported signature.**
+> Every public method on `*mlb.Client` has a private `<name>FromGen`
+> converter that translates the pointer-heavy generated structs into clean
+> idiomatic Go. The full rules are in AGENTS.md and docs/development.md
+> (read them in step 0 below); this paragraph is the single most important
+> thing to internalize.
+
 ## Source of truth
 
 - Repo: `https://github.com/toddrob99/MLB-StatsAPI`
