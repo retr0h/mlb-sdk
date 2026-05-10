@@ -58,19 +58,22 @@ func WithHTTPClient(h *http.Client) Option {
 }
 
 // New returns a Client configured for the public MLB Stats API. Options may
-// override the base URL and http.Client.
-func New(opts ...Option) (*Client, error) {
+// override the base URL and http.Client. Construction never fails — the
+// underlying generated client only validates the server URL when it actually
+// dispatches a request, surfacing errors there instead.
+func New(opts ...Option) *Client {
 	cfg := config{baseURL: DefaultBaseURL, httpClient: http.DefaultClient}
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 
-	raw, err := gen.NewClientWithResponses(
+	// gen.NewClientWithResponses returns an error only when one of its
+	// ClientOptions fails. We pass only WithHTTPClient, which never errors
+	// (it just stores the client). If a future oapi-codegen release adds a
+	// fallible option, switch to (*Client, error) here.
+	raw, _ := gen.NewClientWithResponses( //nolint:errcheck
 		cfg.baseURL,
 		gen.WithHTTPClient(cfg.httpClient),
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &Client{raw: raw}, nil
+	return &Client{raw: raw}
 }

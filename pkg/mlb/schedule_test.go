@@ -122,6 +122,22 @@ func TestClient_Schedule(t *testing.T) {
 			wantLen:    0,
 		},
 		{
+			name:       "200 with date that has nil games is skipped",
+			respStatus: 200,
+			respBody:   `{"dates":[{"date":"2026-05-08"}]}`, // games key omitted → nil
+			wantLen:    0,
+		},
+		{
+			name:       "game with nil away side still parses",
+			respStatus: 200,
+			respBody: `{"dates":[{"games":[{
+				"gamePk": 1, "status": {"abstractGameState": "Final"},
+				"teams": {"home": {"team": {"id": 119, "name": "Los Angeles Dodgers"}, "score": 3}}
+			}]}]}`, // away omitted → teamScoreFromGen(nil) returns zero TeamScore
+			wantLen:     1,
+			wantFirstPk: 1,
+		},
+		{
 			name:       "404 is wrapped (Schedule does not map to ErrNotFound)",
 			respStatus: 404,
 			respBody:   `{}`,
@@ -164,10 +180,7 @@ func TestClient_Schedule(t *testing.T) {
 				defer srv.Close()
 			}
 
-			client, err := New(WithBaseURL(urlStr))
-			if err != nil {
-				t.Fatalf("New: %v", err)
-			}
+			client := New(WithBaseURL(urlStr))
 			games, err := client.Schedule(context.Background(), c.query)
 
 			if c.wantErr != "" {

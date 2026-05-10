@@ -122,10 +122,7 @@ func TestClient_LiveFeed(t *testing.T) {
 				defer srv.Close()
 			}
 
-			client, err := New(WithBaseURL(urlStr))
-			if err != nil {
-				t.Fatalf("New: %v", err)
-			}
+			client := New(WithBaseURL(urlStr))
 			plays, err := client.LiveFeed(context.Background(), c.gamePk)
 
 			if c.wantErr != "" {

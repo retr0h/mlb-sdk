@@ -113,6 +113,19 @@ func TestBoxscoreTeam_DoublePlaysTurned(t *testing.T) {
 			}),
 			2,
 		},
+		{
+			"FIELDING section with nil FieldList",
+			mkTeam(gen.InfoSection{Title: strPtr("FIELDING"), FieldList: nil}),
+			0,
+		},
+		{
+			"DP entry with nil Value",
+			mkTeam(gen.InfoSection{
+				Title:     strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: nil}},
+			}),
+			0,
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -135,6 +148,14 @@ func TestBoxscore_Team(t *testing.T) {
 		},
 	}
 	box := boxscoreFromGen(resp)
+	awayOnlyBox := boxscoreFromGen(&gen.BoxscoreResponse{
+		Teams: &gen.BoxscoreTeams{
+			Home: nil, // exercises teamFromGen(nil) → nil
+			Away: &gen.BoxscoreSide{
+				Team: &gen.Team{Id: intPtr(int(ATL)), Name: strPtr("Atlanta Braves")},
+			},
+		},
+	})
 
 	cases := []struct {
 		name     string
@@ -148,6 +169,8 @@ func TestBoxscore_Team(t *testing.T) {
 		{"home team match", box, LAD, false, LAD, "Los Angeles Dodgers"},
 		{"away team match", box, ATL, false, ATL, "Atlanta Braves"},
 		{"team not in boxscore", box, NYY, true, 0, ""},
+		{"box with nil home side, lookup misses", awayOnlyBox, LAD, true, 0, ""},
+		{"box with nil home side, away still found", awayOnlyBox, ATL, false, ATL, "Atlanta Braves"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -256,10 +279,7 @@ func TestClient_Boxscore(t *testing.T) {
 				defer srv.Close()
 			}
 
-			client, err := New(WithBaseURL(url))
-			if err != nil {
-				t.Fatalf("New: %v", err)
-			}
+			client := New(WithBaseURL(url))
 			box, err := client.Boxscore(context.Background(), c.gamePk)
 
 			if c.wantErr == "" {

@@ -309,10 +309,7 @@ func TestClient_TeamStats(t *testing.T) {
 				defer srv.Close()
 			}
 
-			client, err := New(WithBaseURL(urlStr))
-			if err != nil {
-				t.Fatalf("New: %v", err)
-			}
+			client := New(WithBaseURL(urlStr))
 			ts, err := client.TeamStats(context.Background(), c.query)
 
 			if c.wantErr != "" {

@@ -24,7 +24,6 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
@@ -44,22 +43,20 @@ func TestNew(t *testing.T) {
 	}
 
 	cases := []struct {
-		name      string
-		opts      func(srvURL string) (opts []Option, marker *markerTransport)
-		wantErr   string
-		invokeErr bool // whether to drive Schedule afterwards (to exercise transport)
+		name   string
+		opts   func(srvURL string) (opts []Option, marker *markerTransport)
+		invoke bool // whether to drive Schedule afterwards (to exercise transport)
 	}{
 		{
-			name:    "no options uses defaults",
-			opts:    func(_ string) ([]Option, *markerTransport) { return nil, nil },
-			wantErr: "",
+			name: "no options uses defaults",
+			opts: func(_ string) ([]Option, *markerTransport) { return nil, nil },
 		},
 		{
 			name: "WithBaseURL is honored",
 			opts: func(u string) ([]Option, *markerTransport) {
 				return []Option{WithBaseURL(u)}, nil
 			},
-			invokeErr: true,
+			invoke: true,
 		},
 		{
 			name: "WithHTTPClient rewires the transport",
@@ -70,14 +67,14 @@ func TestNew(t *testing.T) {
 					WithHTTPClient(&http.Client{Transport: roundTripperFunc(roundTrip(m))}),
 				}, m
 			},
-			invokeErr: true,
+			invoke: true,
 		},
 		{
 			name: "options stack — both can be applied",
 			opts: func(u string) ([]Option, *markerTransport) {
 				return []Option{WithBaseURL(u), WithHTTPClient(http.DefaultClient)}, nil
 			},
-			invokeErr: true,
+			invoke: true,
 		},
 	}
 
@@ -92,27 +89,14 @@ func TestNew(t *testing.T) {
 			defer srv.Close()
 
 			opts, marker := c.opts(srv.URL)
-			client, err := New(opts...)
-
-			if c.wantErr != "" {
-				if err == nil {
-					t.Fatalf("expected error containing %q, got nil", c.wantErr)
-				}
-				if !strings.Contains(err.Error(), c.wantErr) {
-					t.Errorf("err = %v, want substring %q", err, c.wantErr)
-				}
-				return
-			}
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
+			client := New(opts...)
 			if client == nil {
-				t.Fatal("New returned nil client without error")
+				t.Fatal("New returned nil client")
 			}
 
 			// Drive the client through one call so we can verify transport
 			// rewiring actually took effect when the test asked for it.
-			if c.invokeErr {
+			if c.invoke {
 				if _, err := client.Schedule(context.Background(), ScheduleQuery{}); err != nil {
 					t.Fatalf("Schedule via httptest server: %v", err)
 				}
