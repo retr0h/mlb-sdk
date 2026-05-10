@@ -4,8 +4,8 @@ Thanks for your interest in contributing.
 
 ## Before you start
 
-- **Read [AI_POLICY.md](../AI_POLICY.md)** — disclose AI assistance, ensure
-  you understand any code you submit.
+- **Read [AI_POLICY.md](../AI_POLICY.md)** — disclose AI assistance, ensure you
+  understand any code you submit.
 - **Check existing work** — search open issues and PRs to avoid duplicating
   effort.
 - **Start small** — focused PRs are easier to review than sweeping changes.
@@ -23,9 +23,8 @@ Thanks for your interest in contributing.
 
 - Authoring rules in [development.md](development.md#openapi-spec-authoring) —
   named components only, no inline nested objects.
-- After editing `api/openapi.yaml`, regenerate with
-  `go generate ./internal/gen` and commit the regenerated
-  `internal/gen/client.gen.go`.
+- After editing `api/openapi.yaml`, regenerate with `go generate ./internal/gen`
+  and commit the regenerated `internal/gen/client.gen.go`.
 
 ### Documentation
 
@@ -33,10 +32,11 @@ Thanks for your interest in contributing.
 
 ## Submitting a PR
 
-1. Create a feature branch from `main` (`type/short-description` —
-   `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`).
-2. Commit messages: [Conventional Commits](https://www.conventionalcommits.org/),
-   see [development.md](development.md#commit-messages).
+1. Create a feature branch from `main` (`type/short-description` — `feat/`,
+   `fix/`, `docs/`, `refactor/`, `chore/`).
+2. Commit messages:
+   [Conventional Commits](https://www.conventionalcommits.org/), see
+   [development.md](development.md#commit-messages).
 3. PR description: what changed, why, and any follow-ups.
 4. Open as draft if you want early feedback before final review.
 5. One logical change per PR — split unrelated changes.
@@ -49,5 +49,5 @@ Thanks for your interest in contributing.
 3. Add public types in `pkg/mlb/<resource>_types.go`.
 4. Add the method on `*Client` in `pkg/mlb/<resource>.go`, plus any helper
    methods on the response types that hide upstream awkwardness.
-5. Add tests in `pkg/mlb/<resource>_test.go` — prefer the
-   `httptest.Server` + `WithBaseURL` pattern from `boxscore_test.go`.
+5. Add tests in `pkg/mlb/<resource>_test.go` — prefer the `httptest.Server` +
+   `WithBaseURL` pattern from `boxscore_test.go`.

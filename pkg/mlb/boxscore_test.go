@@ -170,7 +170,14 @@ func TestBoxscore_Team(t *testing.T) {
 		{"away team match", box, ATL, false, ATL, "Atlanta Braves"},
 		{"team not in boxscore", box, NYY, true, 0, ""},
 		{"box with nil home side, lookup misses", awayOnlyBox, LAD, true, 0, ""},
-		{"box with nil home side, away still found", awayOnlyBox, ATL, false, ATL, "Atlanta Braves"},
+		{
+			"box with nil home side, away still found",
+			awayOnlyBox,
+			ATL,
+			false,
+			ATL,
+			"Atlanta Braves",
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

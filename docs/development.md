@@ -30,7 +30,6 @@ pkg/mlb/              Public, idiomatic Go SDK — the only thing you import
 
 This is a library only — no `main.go`, no `cmd/`, no published binary.
 
-
 ## Common tasks
 
 ```bash
@@ -58,64 +57,61 @@ whenever `api/openapi.yaml` changes:
 go generate ./internal/gen
 ```
 
-The directive in `internal/gen/generate.go` calls `oapi-codegen` via a
-`go tool` reference, so no separate install step is required.
+The directive in `internal/gen/generate.go` calls `oapi-codegen` via a `go tool`
+reference, so no separate install step is required.
 
 ## Adding a new endpoint
 
-When wrapping a new MLB Stats API path, touch every one of these files in
-this order. Skipping any of them leaves the public surface incomplete.
+When wrapping a new MLB Stats API path, touch every one of these files in this
+order. Skipping any of them leaves the public surface incomplete.
 
-1. **`api/openapi.yaml`** — add the path entry under `paths:` and any
-   new component schemas. Set an explicit `operationId`. Every nested
-   object must be a named `components/schemas/...` reference (no inline
-   `type: object`); see the spec authoring rules below.
-2. **`go generate ./internal/gen`** — regenerate `client.gen.go` from
-   the spec. Commit the regenerated file.
-3. **`pkg/mlb/<name>_types.go`** — declare the public types only.
-   No methods, no logic. Use idiomatic Go (`time.Time` for dates,
-   typed enum constants for status fields, etc.).
-4. **`pkg/mlb/<name>.go`** — add the `Client.<Method>(ctx, ...)`
-   implementation, plus private `<name>FromGen` converters that map the
-   generated layer's pointer-heavy types onto the public type. Wrap
-   errors as `fmt.Errorf("mlb: <method>: %w", err)`. Map 404 to
-   `ErrNotFound`. Map other non-200 to a wrapped `unexpected status`
-   error.
-5. **`pkg/mlb/<name>_test.go`** — one table-driven test per public
-   function, with rows covering: happy path, 200 with empty/missing
-   fields, 404, 5xx, malformed JSON, network failure (closed server).
-   Coverage must stay at 100.0% — run `just go::test` to confirm.
-6. **`examples/<name>.go`** — a runnable example program (one file per
-   endpoint, all under `examples/` which is its own Go submodule with
-   a `replace` directive pointing at the parent). Run with
-   `go run examples/<name>.go`.
-7. **`README.md`** — add a row to the `## ⚙️ Endpoints` table. Three
-   columns: endpoint path, link to the pkg.go.dev anchor for the new
-   `Client.<Method>`, link to the `examples/<name>.go` file. Add the
-   `[d-<name>]` reference-style link footer next to the existing ones.
-8. **`just ready`** — final gate. fmt + vet + lint + 100% coverage all
-   green before committing.
+1. **`api/openapi.yaml`** — add the path entry under `paths:` and any new
+   component schemas. Set an explicit `operationId`. Every nested object must be
+   a named `components/schemas/...` reference (no inline `type: object`); see
+   the spec authoring rules below.
+2. **`go generate ./internal/gen`** — regenerate `client.gen.go` from the spec.
+   Commit the regenerated file.
+3. **`pkg/mlb/<name>_types.go`** — declare the public types only. No methods, no
+   logic. Use idiomatic Go (`time.Time` for dates, typed enum constants for
+   status fields, etc.).
+4. **`pkg/mlb/<name>.go`** — add the `Client.<Method>(ctx, ...)` implementation,
+   plus private `<name>FromGen` converters that map the generated layer's
+   pointer-heavy types onto the public type. Wrap errors as
+   `fmt.Errorf("mlb: <method>: %w", err)`. Map 404 to `ErrNotFound`. Map other
+   non-200 to a wrapped `unexpected status` error.
+5. **`pkg/mlb/<name>_test.go`** — one table-driven test per public function,
+   with rows covering: happy path, 200 with empty/missing fields, 404, 5xx,
+   malformed JSON, network failure (closed server). Coverage must stay at 100.0%
+   — run `just go::test` to confirm.
+6. **`examples/<name>.go`** — a runnable example program (one file per endpoint,
+   all under `examples/` which is its own Go submodule with a `replace`
+   directive pointing at the parent). Run with `go run examples/<name>.go`.
+7. **`README.md`** — add a row to the `## ⚙️ Endpoints` table. Three columns:
+   endpoint path, link to the pkg.go.dev anchor for the new `Client.<Method>`,
+   link to the `examples/<name>.go` file. Add the `[d-<name>]` reference-style
+   link footer next to the existing ones.
+8. **`just ready`** — final gate. fmt + vet + lint + 100% coverage all green
+   before committing.
 
 ## OpenAPI spec authoring
 
 When adding endpoints or types to `api/openapi.yaml`:
 
-- **Every nested object gets its own named schema** under
-  `components/schemas/`. Inline `type: object` with `properties:` is
-  forbidden in path responses and request bodies — `oapi-codegen` produces
-  ugly anonymous nested struct types for inline objects, and clean top-level
-  Go types for named schemas.
+- **Every nested object gets its own named schema** under `components/schemas/`.
+  Inline `type: object` with `properties:` is forbidden in path responses and
+  request bodies — `oapi-codegen` produces ugly anonymous nested struct types
+  for inline objects, and clean top-level Go types for named schemas.
 - Reference shared shapes via `$ref`.
 - Use `additionalProperties: true` on response schemas so forward-compatible
   fields the MLB API adds don't break unmarshalling.
-- Set explicit `operationId` on every path — it becomes the generated
-  function name in `internal/gen`.
+- Set explicit `operationId` on every path — it becomes the generated function
+  name in `internal/gen`.
 
 ## Public surface authoring
 
 `internal/gen` is an implementation detail. Consumers must import only
-`pkg/mlb`. The whole point of the SDK is to encapsulate the MLB API's
-awkward bits behind idiomatic Go.
+`pkg/mlb`. The whole point of the SDK is to encapsulate the MLB API's awkward
+bits behind idiomatic Go.
 
 ### File organization
 
@@ -136,11 +132,11 @@ domain-wide enums in their own `<concept>.go` file.
 - Public type for a top-level resource: singular noun (`Boxscore`, `Game`).
 - Per-side / per-team subtype: prefix with the parent (`BoxscoreTeam`).
 - Query parameters struct: `<Resource>Query` (e.g., `ScheduleQuery`).
-- Status / category enums: `<Concept>Type` or `<Concept>Status` typed
-  string with grouped constants (`StatusFinal`, `StatusLive`, `StatusPreview`).
+- Status / category enums: `<Concept>Type` or `<Concept>Status` typed string
+  with grouped constants (`StatusFinal`, `StatusLive`, `StatusPreview`).
 - Sentinel errors: `Err<Reason>` at package level (`ErrNotFound`).
-- Private gen→public conversion helpers: `<resource>FromGen` taking the
-  `*gen.X` pointer and returning the public type.
+- Private gen→public conversion helpers: `<resource>FromGen` taking the `*gen.X`
+  pointer and returning the public type.
 
 ### Functional options
 
@@ -161,7 +157,8 @@ Defaults live inside the constructor; options override.
   `context.Context` as the first argument.
 - Wrap errors with the method name: `fmt.Errorf("mlb: <method>: %w", err)`.
 - HTTP 404 maps to `ErrNotFound` (callers can `errors.Is`).
-- Other non-200 maps to `fmt.Errorf("mlb: <method>: unexpected status %d", code)`.
+- Other non-200 maps to
+  `fmt.Errorf("mlb: <method>: unexpected status %d", code)`.
 - Public methods never panic; they always return errors.
 
 ### Conversion pattern
@@ -171,38 +168,36 @@ The generated layer makes every field `*T` because the spec uses
 
 1. Nil-check every pointer before deref.
 2. Copy fields onto a public type with non-pointer fields where the value
-   semantics are clear (`int` for counts, `string` for names, `time.Time`
-   for dates).
-3. Retain the underlying `raw *gen.X` on the public type when downstream
-   helpers may need fields we have not yet promoted (see `BoxscoreTeam.raw`).
+   semantics are clear (`int` for counts, `string` for names, `time.Time` for
+   dates).
+3. Retain the underlying `raw *gen.X` on the public type when downstream helpers
+   may need fields we have not yet promoted (see `BoxscoreTeam.raw`).
 
 ### Generic helpers
 
 `pkg/mlb/schedule.go` declares `ptr[T any](v T) *T { return &v }` — used to
-build `*T` request parameter values without scratch variables. Reuse this
-helper rather than redeclaring it per file.
+build `*T` request parameter values without scratch variables. Reuse this helper
+rather than redeclaring it per file.
 
 ## Testing conventions
 
-**Every public function and method MUST have a table-driven test.** One
-table per function, with rows covering both the happy path and every
-failure mode the function can produce. Failure rows belong in the same
-table as the happy row — not in a separate test.
+**Every public function and method MUST have a table-driven test.** One table
+per function, with rows covering both the happy path and every failure mode the
+function can produce. Failure rows belong in the same table as the happy row —
+not in a separate test.
 
-> **Anti-pattern (do not do this):** writing a separate one-off test
-> function for a failure scenario. If you find yourself drafting a
-> `TestClient_BoxscoreReturnsErrorOn500`, stop — instead add a row to
-> the existing `TestClient_Boxscore` table. Each public function gets
-> exactly **one** `Test*` function in the codebase. Reviewers should
-> reject PRs that introduce additional one-off tests for the same
-> function.
+> **Anti-pattern (do not do this):** writing a separate one-off test function
+> for a failure scenario. If you find yourself drafting a
+> `TestClient_BoxscoreReturnsErrorOn500`, stop — instead add a row to the
+> existing `TestClient_Boxscore` table. Each public function gets exactly
+> **one** `Test*` function in the codebase. Reviewers should reject PRs that
+> introduce additional one-off tests for the same function.
 
-> **Anti-pattern:** asserting on `gen.X` types from a public-package
-> test. Tests should assert on the public types we wrap (`Boxscore`,
-> `Game`, `Play`, etc.), proving the wrapping actually happens. The
-> only place a `gen.X` reference is acceptable in a test is when
-> *constructing* fake input for a private conversion helper —
-> `boxscoreFromGen`, `playFromGen`, etc.
+> **Anti-pattern:** asserting on `gen.X` types from a public-package test. Tests
+> should assert on the public types we wrap (`Boxscore`, `Game`, `Play`, etc.),
+> proving the wrapping actually happens. The only place a `gen.X` reference is
+> acceptable in a test is when _constructing_ fake input for a private
+> conversion helper — `boxscoreFromGen`, `playFromGen`, etc.
 
 ### Table shape
 
@@ -255,38 +250,37 @@ func TestClient_Schedule(t *testing.T) {
 
 Every `Client` method's table MUST include rows covering:
 
-| Row | Setup |
-| --- | --- |
-| Happy path | `respStatus: 200`, expected body |
+| Row                  | Setup                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| Happy path           | `respStatus: 200`, expected body                                                             |
 | Empty/missing fields | `respStatus: 200`, body with omitted optional fields → expect graceful zero values, no error |
-| 404 | `respStatus: 404` → expect `errors.Is(err, ErrNotFound)` |
-| 5xx | `respStatus: 500` → expect wrapped "unexpected status" error |
-| Malformed JSON | `respStatus: 200`, body that is not valid JSON → expect wrapped error |
-| Network failure | server closed before request → expect wrapped error |
+| 404                  | `respStatus: 404` → expect `errors.Is(err, ErrNotFound)`                                     |
+| 5xx                  | `respStatus: 500` → expect wrapped "unexpected status" error                                 |
+| Malformed JSON       | `respStatus: 200`, body that is not valid JSON → expect wrapped error                        |
+| Network failure      | server closed before request → expect wrapped error                                          |
 
-Pure helpers (`parseDPCount`, `doublePlaysTurned`, `<resource>FromGen`)
-need only the failure rows that apply to them — typically empty input,
-nil fields, malformed input.
+Pure helpers (`parseDPCount`, `doublePlaysTurned`, `<resource>FromGen`) need
+only the failure rows that apply to them — typically empty input, nil fields,
+malformed input.
 
 ### Server-per-case pattern
 
-Use a fresh `httptest.NewServer` inside each `t.Run` so that test cases
-are isolated. To simulate a network failure, close the server before
-calling the client. Do not share servers across rows.
+Use a fresh `httptest.NewServer` inside each `t.Run` so that test cases are
+isolated. To simulate a network failure, close the server before calling the
+client. Do not share servers across rows.
 
 ### Test helpers
 
-`strPtr`, `intPtr`, etc. live at the bottom of the test file in question.
-Don't promote them across files unless three or more files end up
-duplicating the same helper.
+`strPtr`, `intPtr`, etc. live at the bottom of the test file in question. Don't
+promote them across files unless three or more files end up duplicating the same
+helper.
 
 ### Test naming
 
 - Pure functions: `TestFunctionName`.
-- Methods on a type: `TestType_Method` (Go convention; `go test` displays
-  it nicely).
-- Helper / unexported: `Test<helperName>`, lowercase first letter
-  preserved.
+- Methods on a type: `TestType_Method` (Go convention; `go test` displays it
+  nicely).
+- Helper / unexported: `Test<helperName>`, lowercase first letter preserved.
 
 ## Commit messages
 
