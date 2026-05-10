@@ -1,9 +1,11 @@
 [![go report card](https://goreportcard.com/badge/github.com/retr0h/mlb-sdk?style=for-the-badge)](https://goreportcard.com/report/github.com/retr0h/mlb-sdk)
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](LICENSE)
 [![build](https://img.shields.io/github/actions/workflow/status/retr0h/mlb-sdk/go.yml?style=for-the-badge)](https://github.com/retr0h/mlb-sdk/actions/workflows/go.yml)
-[![just](https://img.shields.io/badge/just-command%20runner-blue?style=for-the-badge)](https://github.com/casey/just)
 [![conventional commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge)](https://conventionalcommits.org)
-[![go reference](https://img.shields.io/badge/go-reference-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb)
+[![built with just](https://img.shields.io/badge/Built_with-Just-black?style=for-the-badge&logo=just&logoColor=white)](https://just.systems)
+![github commit activity](https://img.shields.io/github/commit-activity/m/retr0h/mlb-sdk?style=for-the-badge)
+[![Go Reference](https://pkg.go.dev/badge/github.com/retr0h/mlb-sdk/pkg/mlb.svg)](https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb)
+[![hovnokod](https://raw.githubusercontent.com/tekk/hovnokod-badge/main/assets/badges/hovnokod-for-the-badge.svg)](https://github.com/tekk/hovnokod-badge)
 
 # mlb-sdk
 
@@ -39,6 +41,15 @@ Additional endpoints in flight — see [docs/roadmap.md][].
 | Idiomatic surface   | `time.Time`, typed `mlb.TeamID`, helper methods            |
 | Hides API quirks    | e.g. `box.Team(mlb.LAD).DoublePlaysTurned()`               |
 | Test-friendly       | `WithBaseURL` injects an `httptest.Server` for fixtures    |
+
+## 💡 Inspiration
+
+This module exists because the MLB Stats API is undocumented and the most
+useful prior art is in Python and R:
+
+- [toddrob99/MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI)
+- [appac/mlb-data-api-docs](https://appac.github.io/mlb-data-api-docs/)
+- [BillPetti/baseballr](https://github.com/BillPetti/baseballr)
 
 ## 📖 Documentation
 
