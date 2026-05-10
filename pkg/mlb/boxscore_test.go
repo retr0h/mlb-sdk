@@ -22,6 +22,7 @@ package mlb
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -52,50 +53,106 @@ func TestParseDPCount(t *testing.T) {
 	}
 }
 
-func TestBoxscoreTeamLookupAndDoublePlays(t *testing.T) {
-	// Compose a minimal Boxscore via the same conversion path the live
-	// client uses, so the test exercises both gen→public mapping and the
-	// DP parser.
-	dodgerInfo := gen.InfoSection{
-		Title: strPtr("FIELDING"),
-		FieldList: &[]gen.InfoItem{
-			{Label: strPtr("DP"), Value: strPtr("2 (Freeland, A; Betts-Freeman).")},
-		},
-	}
-	bravesInfo := gen.InfoSection{
-		Title: strPtr("FIELDING"),
-		FieldList: &[]gen.InfoItem{
-			{Label: strPtr("E"), Value: strPtr("Jarvis (1, throw).")},
-		},
+func TestBoxscoreTeam_DoublePlaysTurned(t *testing.T) {
+	mkTeam := func(sections ...gen.InfoSection) *BoxscoreTeam {
+		side := &gen.BoxscoreSide{Info: &sections}
+		return teamFromGen(side)
 	}
 
+	cases := []struct {
+		name string
+		team *BoxscoreTeam
+		want int
+	}{
+		{"nil receiver", nil, 0},
+		{"team with nil raw", &BoxscoreTeam{}, 0},
+		{
+			"no info sections",
+			mkTeam(),
+			0,
+		},
+		{
+			"fielding section without DP entry",
+			mkTeam(gen.InfoSection{
+				Title:     strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{{Label: strPtr("E"), Value: strPtr("Jarvis (1, throw).")}},
+			}),
+			0,
+		},
+		{
+			"DP in non-fielding section is ignored",
+			mkTeam(gen.InfoSection{
+				Title:     strPtr("BATTING"),
+				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: strPtr("2 (X-Y).")}},
+			}),
+			0,
+		},
+		{
+			"single DP entry",
+			mkTeam(gen.InfoSection{
+				Title:     strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: strPtr("(Freeman, F-Rojas, M).")}},
+			}),
+			1,
+		},
+		{
+			"two DPs",
+			mkTeam(gen.InfoSection{
+				Title:     strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: strPtr("2 (Freeland; Betts-Freeman).")}},
+			}),
+			2,
+		},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := c.team.DoublePlaysTurned(); got != c.want {
+				t.Errorf("DoublePlaysTurned() = %d, want %d", got, c.want)
+			}
+		})
+	}
+}
+
+func TestBoxscore_Team(t *testing.T) {
 	resp := &gen.BoxscoreResponse{
 		Teams: &gen.BoxscoreTeams{
-			Home: &gen.BoxscoreSide{
-				Team: &gen.Team{Id: intPtr(int(LAD)), Name: strPtr("Los Angeles Dodgers")},
-				Info: &[]gen.InfoSection{dodgerInfo},
-			},
-			Away: &gen.BoxscoreSide{
-				Team: &gen.Team{Id: intPtr(int(ATL)), Name: strPtr("Atlanta Braves")},
-				Info: &[]gen.InfoSection{bravesInfo},
-			},
+			Home: &gen.BoxscoreSide{Team: &gen.Team{Id: intPtr(int(LAD)), Name: strPtr("Los Angeles Dodgers")}},
+			Away: &gen.BoxscoreSide{Team: &gen.Team{Id: intPtr(int(ATL)), Name: strPtr("Atlanta Braves")}},
 		},
 	}
 	box := boxscoreFromGen(resp)
 
-	if got := box.Team(LAD).DoublePlaysTurned(); got != 2 {
-		t.Errorf("Dodgers DoublePlaysTurned = %d, want 2", got)
+	cases := []struct {
+		name     string
+		box      *Boxscore
+		lookup   TeamID
+		wantNil  bool
+		wantID   TeamID
+		wantName string
+	}{
+		{"nil receiver", nil, LAD, true, 0, ""},
+		{"home team match", box, LAD, false, LAD, "Los Angeles Dodgers"},
+		{"away team match", box, ATL, false, ATL, "Atlanta Braves"},
+		{"team not in boxscore", box, NYY, true, 0, ""},
 	}
-	if got := box.Team(ATL).DoublePlaysTurned(); got != 0 {
-		t.Errorf("Braves DoublePlaysTurned = %d, want 0 (no DP entry)", got)
-	}
-	if got := box.Team(NYY); got != nil {
-		t.Errorf("Team(NYY) = %v, want nil for team not in boxscore", got)
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got := c.box.Team(c.lookup)
+			if (got == nil) != c.wantNil {
+				t.Fatalf("Team(%v) nil=%v, wantNil=%v", c.lookup, got == nil, c.wantNil)
+			}
+			if got == nil {
+				return
+			}
+			if got.ID != c.wantID || got.Name != c.wantName {
+				t.Errorf("Team(%v) = {%v %q}, want {%v %q}", c.lookup, got.ID, got.Name, c.wantID, c.wantName)
+			}
+		})
 	}
 }
 
-func TestBoxscoreOverHTTP(t *testing.T) {
-	body := `{
+func TestClient_Boxscore(t *testing.T) {
+	const happyBody = `{
 		"teams": {
 			"home": {
 				"team": {"id": 119, "name": "Los Angeles Dodgers"},
@@ -104,25 +161,111 @@ func TestBoxscoreOverHTTP(t *testing.T) {
 			"away": {"team": {"id": 144, "name": "Atlanta Braves"}}
 		}
 	}`
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !strings.HasPrefix(r.URL.Path, "/api/v1/game/") {
-			t.Errorf("unexpected path %q", r.URL.Path)
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(body))
-	}))
-	defer srv.Close()
 
-	c, err := New(WithBaseURL(srv.URL))
-	if err != nil {
-		t.Fatal(err)
+	cases := []struct {
+		name       string
+		respStatus int    // 0 means close server before request to simulate net failure
+		respBody   string
+		gamePk     int
+		wantNil    bool
+		wantDPs    int   // for happy rows; checked when wantErr == ""
+		wantIs     error // errors.Is target; nil means no errors.Is check
+		wantErr    string
+	}{
+		{
+			name:       "happy path returns parsed boxscore",
+			respStatus: 200,
+			respBody:   happyBody,
+			gamePk:     823957,
+			wantDPs:    3,
+		},
+		{
+			name:       "200 with empty body yields zero-value boxscore",
+			respStatus: 200,
+			respBody:   `{}`,
+			gamePk:     1,
+		},
+		{
+			name:       "404 returns ErrNotFound",
+			respStatus: 404,
+			respBody:   `{}`,
+			gamePk:     1,
+			wantNil:    true,
+			wantIs:     ErrNotFound,
+			wantErr:    "not found",
+		},
+		{
+			name:       "5xx is wrapped",
+			respStatus: 500,
+			respBody:   `oops`,
+			gamePk:     1,
+			wantNil:    true,
+			wantErr:    "unexpected status 500",
+		},
+		{
+			name:       "malformed JSON is wrapped",
+			respStatus: 200,
+			respBody:   `not json`,
+			gamePk:     1,
+			wantNil:    true,
+			wantErr:    "boxscore",
+		},
+		{
+			name:       "network failure is wrapped",
+			respStatus: 0,
+			gamePk:     1,
+			wantNil:    true,
+			wantErr:    "boxscore",
+		},
 	}
-	box, err := c.Boxscore(context.Background(), 823957)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := box.Team(LAD).DoublePlaysTurned(); got != 3 {
-		t.Errorf("DoublePlaysTurned over HTTP = %d, want 3", got)
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(c.respStatus)
+				_, _ = w.Write([]byte(c.respBody))
+			}))
+			url := srv.URL
+			if c.respStatus == 0 {
+				srv.Close()
+			} else {
+				defer srv.Close()
+			}
+
+			client, err := New(WithBaseURL(url))
+			if err != nil {
+				t.Fatalf("New: %v", err)
+			}
+			box, err := client.Boxscore(context.Background(), c.gamePk)
+
+			if c.wantErr == "" {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if box == nil {
+					t.Fatal("expected non-nil boxscore")
+				}
+				if c.wantDPs > 0 {
+					if got := box.Team(LAD).DoublePlaysTurned(); got != c.wantDPs {
+						t.Errorf("DoublePlaysTurned() = %d, want %d", got, c.wantDPs)
+					}
+				}
+				return
+			}
+			if err == nil {
+				t.Fatalf("expected error containing %q, got nil", c.wantErr)
+			}
+			if !strings.Contains(err.Error(), c.wantErr) {
+				t.Errorf("err = %v, want substring %q", err, c.wantErr)
+			}
+			if c.wantIs != nil && !errors.Is(err, c.wantIs) {
+				t.Errorf("errors.Is(err, %v) = false, want true", c.wantIs)
+			}
+			if c.wantNil && box != nil {
+				t.Errorf("box = %v, want nil on error", box)
+			}
+		})
 	}
 }
 
