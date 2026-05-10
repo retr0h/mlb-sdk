@@ -26,24 +26,34 @@ Two ways to invoke this skill:
 
 Default to single mode unless the user explicitly says "all" / "everything" / "batch".
 
+## Step 0: load the universal rules into your context (REQUIRED)
+
+This skill does **not** duplicate the universal rules — it would drift. They
+live in two files you MUST `Read` before doing any work for this skill:
+
+```
+Read tool → AGENTS.md
+Read tool → docs/development.md
+```
+
+You are not done with step 0 until both files are in your context. The skill's
+instructions below assume you have internalized:
+
+- the **Hard rules** in `AGENTS.md` (public-types-only at the boundary,
+  one table-driven test per public function, 100.0% coverage gate, named
+  components only in OpenAPI, `just ready` before commit),
+- the **Adding a new endpoint** eight-file recipe in `docs/development.md`,
+- the **Testing conventions** section in `docs/development.md` listing the
+  required failure rows for `Client` methods (404, 5xx, malformed JSON,
+  network failure, empty body) and the server-per-case `httptest.NewServer`
+  pattern.
+
+If you skip this step you will produce broken or non-conforming code. The
+skill is the **toddrob99 wrapper** around the recipe in those two files — it
+only tells you how to translate Python upstream into the recipe's inputs and
+covers gotchas only relevant when ingesting from upstream.
+
 ## Per-endpoint procedure
-
-**Before doing anything**, the universal rules live elsewhere:
-
-- [`AGENTS.md` → Hard rules](../../../AGENTS.md#hard-rules) — public-types-only,
-  one-table-per-public-function, 100% coverage, named components, `just ready`
-  gate.
-- [`docs/development.md` → Adding a new endpoint](../../../docs/development.md#adding-a-new-endpoint) —
-  the eight-file recipe (`api/openapi.yaml`, `go generate`, `pkg/mlb/<name>_types.go`,
-  `pkg/mlb/<name>.go`, `pkg/mlb/<name>_test.go`, `examples/<name>.go`, `README.md`,
-  `just ready`).
-- [`docs/development.md` → Testing conventions](../../../docs/development.md#testing-conventions) —
-  the required failure rows for `Client` methods (404, 5xx, malformed JSON,
-  network failure, empty body) and the server-per-case pattern.
-
-This skill is the **toddrob99 wrapper** around that recipe — it tells you how
-to translate their Python catalog into the inputs the recipe expects, and
-covers the gotchas only relevant to ingesting from upstream.
 
 ### 1. Fetch the upstream definition
 
