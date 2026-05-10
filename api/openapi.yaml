@@ -1,0 +1,299 @@
+openapi: 3.0.3
+info:
+  title: MLB Stats API
+  description: |
+    Reverse-engineered OpenAPI specification for the public MLB Stats API hosted
+    at statsapi.mlb.com. This spec is hand-authored — MLB does not publish an
+    official OpenAPI document — and covers only the subset of endpoints exposed
+    by the mlb-sdk Go client. Schemas use `additionalProperties: true` so
+    forward-compatible fields don't break unmarshalling.
+  version: 0.1.0
+servers:
+  - url: https://statsapi.mlb.com
+    description: MLB Stats API root
+
+paths:
+  /api/v1/schedule:
+    get:
+      operationId: getSchedule
+      summary: Game schedule for a sport, team, and/or date range
+      parameters:
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: gamePk, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: startDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: endDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+      responses:
+        "200":
+          description: Schedule
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
+  /api/v1/game/{gamePk}/boxscore:
+    get:
+      operationId: getBoxscore
+      summary: Boxscore for a single game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Boxscore
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BoxscoreResponse" }
+
+  /api/v1/game/{gamePk}/playByPlay:
+    get:
+      operationId: getPlayByPlay
+      summary: Play-by-play for a single game (v1)
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Play-by-play
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlayByPlayResponse" }
+
+  /api/v1.1/game/{gamePk}/feed/live:
+    get:
+      operationId: getLiveFeed
+      summary: Full live game feed (v1.1)
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Live feed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LiveFeedResponse" }
+
+  /api/v1/teams/{teamId}/stats:
+    get:
+      operationId: getTeamStats
+      summary: Aggregated team stats
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: stats, in: query, schema: { type: string }, description: "e.g. season, byDateRange" }
+        - { name: group, in: query, schema: { type: string }, description: "hitting | pitching | fielding" }
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamStatsResponse" }
+
+components:
+  schemas:
+    Team:
+      type: object
+      additionalProperties: true
+      properties:
+        id: { type: integer }
+        name: { type: string }
+
+    GameStatus:
+      type: object
+      additionalProperties: true
+      properties:
+        abstractGameState: { type: string, description: "Final, Live, Preview" }
+        detailedState: { type: string }
+
+    SideScoreboard:
+      type: object
+      additionalProperties: true
+      properties:
+        team: { $ref: "#/components/schemas/Team" }
+        score: { type: integer }
+
+    ScheduleGameTeams:
+      type: object
+      additionalProperties: true
+      properties:
+        home: { $ref: "#/components/schemas/SideScoreboard" }
+        away: { $ref: "#/components/schemas/SideScoreboard" }
+
+    ScheduleGame:
+      type: object
+      additionalProperties: true
+      properties:
+        gamePk: { type: integer }
+        gameDate: { type: string, format: date-time }
+        status: { $ref: "#/components/schemas/GameStatus" }
+        teams: { $ref: "#/components/schemas/ScheduleGameTeams" }
+
+    ScheduleDate:
+      type: object
+      additionalProperties: true
+      properties:
+        date: { type: string, description: "YYYY-MM-DD" }
+        games:
+          type: array
+          items: { $ref: "#/components/schemas/ScheduleGame" }
+
+    ScheduleResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        totalGames: { type: integer }
+        dates:
+          type: array
+          items: { $ref: "#/components/schemas/ScheduleDate" }
+
+    PitchingStats:
+      type: object
+      additionalProperties: true
+      properties:
+        strikeOuts: { type: integer }
+        hits: { type: integer }
+        runs: { type: integer }
+        homeRuns: { type: integer }
+        baseOnBalls: { type: integer }
+
+    BattingStats:
+      type: object
+      additionalProperties: true
+      properties:
+        runs: { type: integer }
+        hits: { type: integer }
+        homeRuns: { type: integer }
+        rbi: { type: integer }
+        stolenBases: { type: integer }
+        groundIntoDoublePlay: { type: integer }
+
+    TeamStatsBlock:
+      type: object
+      additionalProperties: true
+      properties:
+        pitching: { $ref: "#/components/schemas/PitchingStats" }
+        batting: { $ref: "#/components/schemas/BattingStats" }
+
+    InfoItem:
+      type: object
+      additionalProperties: true
+      properties:
+        label: { type: string }
+        value: { type: string }
+
+    InfoSection:
+      type: object
+      additionalProperties: true
+      properties:
+        title: { type: string, description: "BATTING | FIELDING | …" }
+        fieldList:
+          type: array
+          items: { $ref: "#/components/schemas/InfoItem" }
+
+    BoxscoreSide:
+      type: object
+      additionalProperties: true
+      properties:
+        team: { $ref: "#/components/schemas/Team" }
+        teamStats: { $ref: "#/components/schemas/TeamStatsBlock" }
+        info:
+          type: array
+          items: { $ref: "#/components/schemas/InfoSection" }
+          description: |
+            Free-text annotations grouped by section. The MLB API exposes
+            per-game team double-plays only here, under FIELDING / DP.
+
+    BoxscoreTeams:
+      type: object
+      additionalProperties: true
+      properties:
+        home: { $ref: "#/components/schemas/BoxscoreSide" }
+        away: { $ref: "#/components/schemas/BoxscoreSide" }
+
+    BoxscoreResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        teams: { $ref: "#/components/schemas/BoxscoreTeams" }
+
+    PlayResult:
+      type: object
+      additionalProperties: true
+      properties:
+        event: { type: string, description: "e.g. Grounded Into DP, Strikeout" }
+        eventType: { type: string, description: "e.g. grounded_into_double_play" }
+        description: { type: string }
+
+    PlayCount:
+      type: object
+      additionalProperties: true
+      properties:
+        outs: { type: integer }
+        balls: { type: integer }
+        strikes: { type: integer }
+
+    PlayAbout:
+      type: object
+      additionalProperties: true
+      properties:
+        inning: { type: integer }
+        halfInning: { type: string }
+        outs: { type: integer }
+
+    Play:
+      type: object
+      additionalProperties: true
+      properties:
+        result: { $ref: "#/components/schemas/PlayResult" }
+        count: { $ref: "#/components/schemas/PlayCount" }
+        about: { $ref: "#/components/schemas/PlayAbout" }
+
+    PlayByPlayResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        allPlays:
+          type: array
+          items: { $ref: "#/components/schemas/Play" }
+
+    LiveData:
+      type: object
+      additionalProperties: true
+      properties:
+        plays: { $ref: "#/components/schemas/PlayByPlayResponse" }
+
+    LiveFeedResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        liveData: { $ref: "#/components/schemas/LiveData" }
+
+    StatSplit:
+      type: object
+      additionalProperties: true
+      properties:
+        season: { type: string }
+        stat:
+          type: object
+          additionalProperties: true
+
+    DisplayLabel:
+      type: object
+      additionalProperties: true
+      properties:
+        displayName: { type: string }
+
+    StatGroup:
+      type: object
+      additionalProperties: true
+      properties:
+        type: { $ref: "#/components/schemas/DisplayLabel" }
+        group: { $ref: "#/components/schemas/DisplayLabel" }
+        splits:
+          type: array
+          items: { $ref: "#/components/schemas/StatSplit" }
+
+    TeamStatsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        stats:
+          type: array
+          items: { $ref: "#/components/schemas/StatGroup" }
