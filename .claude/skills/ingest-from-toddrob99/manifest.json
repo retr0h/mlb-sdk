@@ -1,40 +1,47 @@
 {
-  "_comment": "Tracks which toddrob99/MLB-StatsAPI endpoints have already been ported into pkg/mlb. The ingest-from-toddrob99 skill (.claude/skills/ingest-from-toddrob99/) consults this file in batch mode to avoid re-doing finished work. Keyed by toddrob99's endpoint name; value records the SDK method, the spec operationId, and the date it was ingested.",
+  "_comment": "Tracks which toddrob99/MLB-StatsAPI endpoints have been ported into pkg/mlb. Keyed by toddrob99's endpoint name in statsapi/endpoints.py. The skill consults this in batch mode to skip work already done, and in re-scan mode to detect upstream drift via the upstreamSha fingerprint (computed by fingerprint.py). The top-level upstreamRef records the toddrob99 commit we last synced against; bump it whenever the skill ingests or re-scans.",
+  "upstreamRef": "https://github.com/toddrob99/MLB-StatsAPI@4658baa93d14b40dd3d83d44425cf3ee2ce73680",
   "endpoints": {
     "schedule": {
       "method": "Client.Schedule",
       "operationId": "getSchedule",
       "ingestedOn": "2026-05-09",
+      "upstreamSha": "b49012f82b545fa02422e300833ad29934af74e2d50e049329affdd3900a47f7",
       "source": "hand-authored before the skill existed"
     },
-    "boxscore": {
+    "game_boxscore": {
       "method": "Client.Boxscore",
       "operationId": "getBoxscore",
       "ingestedOn": "2026-05-10",
+      "upstreamSha": "277292eff48d3ac1ced6e879584b09eaec27d02c3ae6e500e7cef4cff2901a93",
       "source": "hand-authored before the skill existed"
     },
-    "playByPlay": {
+    "game_playByPlay": {
       "method": "Client.PlayByPlay",
       "operationId": "getPlayByPlay",
       "ingestedOn": "2026-05-10",
+      "upstreamSha": "0987e2964514e4d6cfdbefcd51c07c8f3125084a66c24b33cd70e08de0a55d8a",
       "source": "hand-authored before the skill existed"
     },
     "game": {
       "method": "Client.LiveFeed",
       "operationId": "getLiveFeed",
       "ingestedOn": "2026-05-10",
+      "upstreamSha": "863bfc9b6cdc9468ab1f2c7a7e1bedc3994b461c67f0e6675e2082f3ce98c0f9",
       "source": "hand-authored before the skill existed"
     },
     "team_stats": {
       "method": "Client.TeamStats",
       "operationId": "getTeamStats",
       "ingestedOn": "2026-05-10",
+      "upstreamSha": "9707830fc68bf2f549660124f46d3c2e4476fdc616f6f0606fded7ba61e967a5",
       "source": "hand-authored before the skill existed"
     },
     "standings": {
       "method": "Client.Standings",
       "operationId": "getStandings",
       "ingestedOn": "2026-05-10",
+      "upstreamSha": "3b9fa94b3a9d9c7b721d87b0afad47a04c05dbebe304f6825041b45054ac92df",
       "source": "ingest-from-toddrob99 skill — first endpoint ported via the skill"
     }
   }

@@ -65,6 +65,13 @@ See the [package documentation][] on pkg.go.dev for API details.
 See the [Development][] guide for prerequisites, setup, and conventions.
 See the [Contributing][] guide before submitting a PR.
 
+## ⚖️ Copyright notice
+
+This package and its author are not affiliated with MLB or any MLB team. This
+module is a typed Go client for MLB's public Stats API. Use of MLB data is
+subject to the notice posted at
+<http://gdx.mlb.com/components/copyright.txt>.
+
 ## 📄 License
 
 The [MIT][] License.

@@ -26,14 +26,47 @@ their work into our typed Go SDK without us re-doing the discovery.
 
 ## Modes
 
-Two ways to invoke this skill:
+Three ways to invoke this skill:
 
-| Mode    | Trigger                                          | What it does                                                                                |
-| ------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Single  | "ingest the `<name>` endpoint" / `--endpoint X`  | Port one endpoint, run `just ready`, commit, push.                                          |
-| Batch   | "ingest everything new" / `--all`                | Iterate every endpoint not yet in `manifest.json (sibling of this file)`. **One commit per endpoint.** |
+| Mode    | Trigger                                                       | What it does                                                                                              |
+| ------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Single  | "ingest the `<name>` endpoint" / `--endpoint X`               | Port one endpoint, run `just ready`, commit, push.                                                        |
+| Batch   | "ingest everything new" / "port all from toddrob99" / `--all` | Iterate every endpoint not in `manifest.json` (sibling of this file). **One commit per endpoint.**         |
+| Rescan  | "check toddrob99 for updates" / "rescan upstream" / `--rescan` | Re-fingerprint every ingested endpoint, diff against the manifest, surface drift. See Rescan procedure below. |
 
-Default to single mode unless the user explicitly says "all" / "everything" / "batch".
+Default to single mode unless the user explicitly says "all" / "everything" / "batch" / "rescan".
+
+## Rescan procedure
+
+The MLB Stats API and toddrob99's wrappers evolve. Without rescan, our
+ported endpoints silently rot when toddrob99 adds query params or fixes
+path bugs. The manifest's `upstreamSha` per entry plus the fingerprint
+helper detect this.
+
+1. Clone toddrob99 fresh (`git clone --depth 1 ...`); record its commit SHA.
+2. Run `python3 .claude/skills/ingest-from-toddrob99/fingerprint.py <clone>`
+   — emits `{endpoint_name: sha256_hex}` JSON to stdout.
+3. For every entry in `manifest.json#endpoints`:
+   - If the upstream key is **missing** from the fingerprint output → 🔴
+     endpoint disappeared upstream. Surface and let the user decide
+     (deprecate, rename, leave).
+   - If the upstream `sha` matches the manifest's `upstreamSha` → 🟢 in sync.
+   - If the upstream `sha` differs → 🟡 drift. Inspect the diff between
+     the upstream entry and what we last ingested, classify:
+     - **Additive** (new optional query param, new hydrate option): apply
+       the diff to `api/openapi.yaml`, regenerate, update the wrapper if
+       needed, run `just ready`, bump the `upstreamSha` in manifest.json.
+     - **Breaking** (path changed, required-combo changed, param removed):
+       stop, surface to the user with the diff inline, do not auto-apply.
+4. Also report endpoints in the upstream fingerprint that are **not** in
+   our manifest — those are unported endpoints (candidates for batch
+   ingest).
+5. Bump the manifest's top-level `upstreamRef` to the new clone's SHA so
+   the next rescan starts from the same baseline.
+
+Rescan is **read-only by default**. Mutating actions (apply additive
+diff, re-ingest a drifted endpoint) need explicit user confirmation
+unless the user originally said "rescan and auto-apply additive drift".
 
 ## Step 0: load the universal rules into your context (REQUIRED)
 

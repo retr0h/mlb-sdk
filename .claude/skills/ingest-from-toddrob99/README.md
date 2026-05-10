@@ -21,17 +21,20 @@ Treats toddrob99's `endpoints.py` dict as upstream truth. Translates one entry
 The skill activates when you ask Claude (in this repo) to port endpoints from
 toddrob99. Use any of these phrasings:
 
-| You say                                                  | What runs                                                          |
-| -------------------------------------------------------- | ------------------------------------------------------------------ |
-| `ingest the team_leaders endpoint from toddrob99`        | Single mode — port `team_leaders`, one commit, push.               |
-| `port the standings endpoint`                            | Single mode — same flow, alternate phrasing.                       |
-| `port everything new from toddrob99`                     | Batch mode — every endpoint not in `tools/ingest/manifest.json`.   |
-| `ingest the next 5 unported endpoints`                   | Bounded batch — same as above, capped to 5.                        |
-| `regenerate the manifest from current SDK state`         | Manifest sync — re-derive `manifest.json` from `pkg/mlb/`.         |
+| You say                                              | What runs                                                              |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| `ingest the team_leaders endpoint from toddrob99`    | Single mode — port `team_leaders`, one commit, push.                   |
+| `port the standings endpoint`                        | Single mode — same flow, alternate phrasing.                           |
+| `port everything new from toddrob99`                 | Batch mode — every endpoint not in `manifest.json`.                    |
+| `ingest the next 5 unported endpoints`               | Bounded batch — same as above, capped to 5.                            |
+| `check toddrob99 for updates`                        | Rescan — fingerprint upstream and surface drift since last ingest.     |
+| `rescan and auto-apply additive drift`               | Rescan + auto-apply non-breaking changes (new optional query params).  |
+| `regenerate the manifest from current SDK state`     | Manifest sync — re-derive `manifest.json` from `pkg/mlb/`.             |
 
 The keywords Claude looks for are **`ingest` / `port` / `from toddrob99` /
-`unported`**. Mention any of those alongside an endpoint name (or `everything`
-/ `all` / `unported`) and the skill takes over.
+`unported` / `rescan` / `check toddrob99`**. Mention any of those alongside
+an endpoint name (or `everything` / `all` / `unported`) and the skill
+takes over.
 
 You don't need to know toddrob99's exact endpoint key — just paste the URL or
 say "the team-leaders one" and Claude will resolve it from
@@ -81,8 +84,20 @@ including how to handle `path_params`, `query_params`, `required_params`,
 `hydrate_options`, and response shapes (which toddrob99 does not document —
 sample the live API and translate).
 
-## 📦 Manifest
+## 📦 Manifest & drift detection
 
-`tools/ingest/manifest.json` tracks which endpoints we've already ported, keyed
-by toddrob99's name (e.g. `team_stats`). The skill consults this in batch mode
-to skip work already done.
+`manifest.json` (sibling of this file) tracks which endpoints we've ported,
+keyed by toddrob99's name (e.g. `team_stats`, `game_boxscore`). Each entry
+records the SDK method, spec operationId, ingest date, and an `upstreamSha`
+fingerprint of toddrob99's dict entry at the moment we ingested it.
+
+`fingerprint.py` (also a sibling) recomputes those fingerprints by parsing
+`statsapi/endpoints.py` via Python's `ast` module — no toddrob99 import
+deps required. Rescan mode runs this and diffs against the manifest:
+
+- 🟢 sha matches → in sync
+- 🟡 sha differs → drift (skill classifies as additive vs breaking)
+- 🔴 endpoint missing upstream → disappeared / renamed
+
+The top-level `upstreamRef` field records the toddrob99 commit we last
+synced against; rescan bumps it after each pass.
