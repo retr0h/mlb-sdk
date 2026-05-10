@@ -1,0 +1,35 @@
+{
+  "_comment": "Tracks which toddrob99/MLB-StatsAPI endpoints have already been ported into pkg/mlb. The ingest-from-toddrob99 skill (.claude/skills/ingest-from-toddrob99/) consults this file in batch mode to avoid re-doing finished work. Keyed by toddrob99's endpoint name; value records the SDK method, the spec operationId, and the date it was ingested.",
+  "endpoints": {
+    "schedule": {
+      "method": "Client.Schedule",
+      "operationId": "getSchedule",
+      "ingestedOn": "2026-05-09",
+      "source": "hand-authored before the skill existed"
+    },
+    "boxscore": {
+      "method": "Client.Boxscore",
+      "operationId": "getBoxscore",
+      "ingestedOn": "2026-05-10",
+      "source": "hand-authored before the skill existed"
+    },
+    "playByPlay": {
+      "method": "Client.PlayByPlay",
+      "operationId": "getPlayByPlay",
+      "ingestedOn": "2026-05-10",
+      "source": "hand-authored before the skill existed"
+    },
+    "game": {
+      "method": "Client.LiveFeed",
+      "operationId": "getLiveFeed",
+      "ingestedOn": "2026-05-10",
+      "source": "hand-authored before the skill existed"
+    },
+    "team_stats": {
+      "method": "Client.TeamStats",
+      "operationId": "getTeamStats",
+      "ingestedOn": "2026-05-10",
+      "source": "hand-authored before the skill existed"
+    }
+  }
+}

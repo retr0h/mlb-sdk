@@ -15,6 +15,12 @@ this repo and generate a typed client from it via
 > [docs/development.md → Adding a new endpoint](docs/development.md#adding-a-new-endpoint).
 > Each step lists the exact file to touch — skipping any of them leaves
 > the public surface incomplete.
+>
+> **Porting an endpoint that already exists in
+> [toddrob99/MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI)?**
+> Use the [`ingest-from-toddrob99`](.claude/skills/ingest-from-toddrob99/)
+> skill instead of writing it from scratch. Treat toddrob99 as the
+> canonical endpoint catalog — we don't maintain our own.
 
 ## Layout
 

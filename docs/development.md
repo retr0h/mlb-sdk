@@ -62,6 +62,11 @@ reference, so no separate install step is required.
 
 ## Adding a new endpoint
 
+> **Porting from [toddrob99/MLB-StatsAPI][toddrob99]?** Use the
+> [`ingest-from-toddrob99`](../.claude/skills/ingest-from-toddrob99/) skill — it
+> wraps the recipe below with the Python→OpenAPI translation table and handles
+> the manifest/commit cadence automatically.
+
 When wrapping a new MLB Stats API path, touch every one of these files in this
 order. Skipping any of them leaves the public surface incomplete.
 
@@ -292,3 +297,5 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
 - **Scopes**: `api` (OpenAPI spec), `gen` (generated client), `mlb` (public
   SDK), `cli`, `docs`
+
+[toddrob99]: https://github.com/toddrob99/MLB-StatsAPI
