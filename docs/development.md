@@ -154,6 +154,21 @@ table per function, with rows covering both the happy path and every
 failure mode the function can produce. Failure rows belong in the same
 table as the happy row — not in a separate test.
 
+> **Anti-pattern (do not do this):** writing a separate one-off test
+> function for a failure scenario. If you find yourself drafting a
+> `TestClient_BoxscoreReturnsErrorOn500`, stop — instead add a row to
+> the existing `TestClient_Boxscore` table. Each public function gets
+> exactly **one** `Test*` function in the codebase. Reviewers should
+> reject PRs that introduce additional one-off tests for the same
+> function.
+
+> **Anti-pattern:** asserting on `gen.X` types from a public-package
+> test. Tests should assert on the public types we wrap (`Boxscore`,
+> `Game`, `Play`, etc.), proving the wrapping actually happens. The
+> only place a `gen.X` reference is acceptable in a test is when
+> *constructing* fake input for a private conversion helper —
+> `boxscoreFromGen`, `playFromGen`, etc.
+
 ### Table shape
 
 For pure functions:

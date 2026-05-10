@@ -6,6 +6,7 @@ require github.com/oapi-codegen/runtime v1.4.0
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/boumenot/gocover-cobertura v1.4.0 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
 	github.com/getkin/kin-openapi v0.135.0 // indirect
 	github.com/go-openapi/jsonpointer v0.22.4 // indirect
@@ -30,4 +31,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
+tool (
+	github.com/boumenot/gocover-cobertura
+	github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
+)
