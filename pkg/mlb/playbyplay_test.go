@@ -55,7 +55,11 @@ func TestPlay_IsDoublePlay(t *testing.T) {
 		{"zero value", Play{}, false},
 		{"strikeout", Play{EventType: EventStrikeout}, false},
 		{"single", Play{EventType: EventSingle}, false},
-		{"force out (records 2 outs but not officially a DP)", Play{EventType: EventForceOut}, false},
+		{
+			"force out (records 2 outs but not officially a DP)",
+			Play{EventType: EventForceOut},
+			false,
+		},
 		{"grounded into double play", Play{EventType: EventGroundedIntoDoublePlay}, true},
 		{"unknown event type string", Play{EventType: EventType("triple_play")}, false},
 	}
@@ -75,7 +79,7 @@ func TestClient_PlayByPlay(t *testing.T) {
 		respBody    string
 		gamePk      int
 		wantLen     int
-		wantDPCount int   // count of plays where IsDoublePlay() == true
+		wantDPCount int // count of plays where IsDoublePlay() == true
 		wantIs      error
 		wantErr     string
 	}{
@@ -121,11 +125,13 @@ func TestClient_PlayByPlay(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(c.respStatus)
-				_, _ = w.Write([]byte(c.respBody))
-			}))
+			srv := httptest.NewServer(
+				http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(c.respStatus)
+					_, _ = w.Write([]byte(c.respBody))
+				}),
+			)
 			urlStr := srv.URL
 			if c.respStatus == 0 {
 				srv.Close()

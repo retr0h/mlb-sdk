@@ -29,16 +29,16 @@ type EventType string
 // Common play event types. The full upstream vocabulary is larger; add new
 // constants when a deal or downstream feature needs to match on one.
 const (
-	EventSingle                EventType = "single"
-	EventDouble                EventType = "double"
-	EventTriple                EventType = "triple"
-	EventHomeRun               EventType = "home_run"
-	EventWalk                  EventType = "walk"
-	EventStrikeout             EventType = "strikeout"
-	EventHitByPitch            EventType = "hit_by_pitch"
-	EventFieldError            EventType = "field_error"
-	EventFieldOut              EventType = "field_out"
-	EventForceOut              EventType = "force_out"
+	EventSingle                 EventType = "single"
+	EventDouble                 EventType = "double"
+	EventTriple                 EventType = "triple"
+	EventHomeRun                EventType = "home_run"
+	EventWalk                   EventType = "walk"
+	EventStrikeout              EventType = "strikeout"
+	EventHitByPitch             EventType = "hit_by_pitch"
+	EventFieldError             EventType = "field_error"
+	EventFieldOut               EventType = "field_out"
+	EventForceOut               EventType = "force_out"
 	EventGroundedIntoDoublePlay EventType = "grounded_into_double_play"
 )
 

@@ -189,7 +189,12 @@ func TestTeamStats_Group(t *testing.T) {
 		{"nil receiver", nil, TeamStatGroupFielding, false},
 		{"miss", ts, TeamStatGroupPitching, false},
 		{"hit (exact case)", ts, TeamStatGroupFielding, true},
-		{"hit (case-insensitive)", &TeamStats{Groups: []TeamStatGroupResult{{Group: "Fielding"}}}, TeamStatGroupFielding, true},
+		{
+			"hit (case-insensitive)",
+			&TeamStats{Groups: []TeamStatGroupResult{{Group: "Fielding"}}},
+			TeamStatGroupFielding,
+			true,
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -203,17 +208,17 @@ func TestTeamStats_Group(t *testing.T) {
 
 func TestClient_TeamStats(t *testing.T) {
 	cases := []struct {
-		name           string
-		query          TeamStatsQuery
-		respStatus     int
-		respBody       string
-		wantErr        string
-		wantIs         error
-		wantPath       string
-		wantQuery      url.Values
-		wantNumGroups  int
-		wantDPs        int    // checked when wantNumGroups > 0; 0 means don't check
-		wantHomeRuns   int    // checked when wantNumGroups > 0
+		name          string
+		query         TeamStatsQuery
+		respStatus    int
+		respBody      string
+		wantErr       string
+		wantIs        error
+		wantPath      string
+		wantQuery     url.Values
+		wantNumGroups int
+		wantDPs       int // checked when wantNumGroups > 0; 0 means don't check
+		wantHomeRuns  int // checked when wantNumGroups > 0
 	}{
 		{
 			name: "happy path: fielding stats with two season splits",
@@ -221,10 +226,14 @@ func TestClient_TeamStats(t *testing.T) {
 				Team: LAD, Season: 2026,
 				Type: TeamStatTypeSeason, Group: TeamStatGroupFielding,
 			},
-			respStatus:    200,
-			respBody:      teamStatsHappyBody,
-			wantPath:      "/api/v1/teams/119/stats",
-			wantQuery:     url.Values{"season": {"2026"}, "stats": {"season"}, "group": {"fielding"}},
+			respStatus: 200,
+			respBody:   teamStatsHappyBody,
+			wantPath:   "/api/v1/teams/119/stats",
+			wantQuery: url.Values{
+				"season": {"2026"},
+				"stats":  {"season"},
+				"group":  {"fielding"},
+			},
 			wantNumGroups: 1,
 			wantDPs:       23,
 		},
@@ -284,13 +293,15 @@ func TestClient_TeamStats(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
 			var seenQuery url.Values
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				seenPath = r.URL.Path
-				seenQuery = r.URL.Query()
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(c.respStatus)
-				_, _ = w.Write([]byte(c.respBody))
-			}))
+			srv := httptest.NewServer(
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					seenPath = r.URL.Path
+					seenQuery = r.URL.Query()
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(c.respStatus)
+					_, _ = w.Write([]byte(c.respBody))
+				}),
+			)
 			urlStr := srv.URL
 			if c.respStatus == 0 {
 				srv.Close()

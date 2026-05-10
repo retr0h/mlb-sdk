@@ -64,7 +64,7 @@ func TestClient_Schedule(t *testing.T) {
 	cases := []struct {
 		name        string
 		query       ScheduleQuery
-		respStatus  int    // 0 to simulate network failure
+		respStatus  int // 0 to simulate network failure
 		respBody    string
 		wantQuery   url.Values // expected query string the server saw (subset; nil to skip)
 		wantLen     int
@@ -109,7 +109,11 @@ func TestClient_Schedule(t *testing.T) {
 			},
 			respStatus: 200,
 			respBody:   `{"dates":[]}`,
-			wantQuery:  url.Values{"sportId": {"1"}, "startDate": {"2026-05-01"}, "endDate": {"2026-05-07"}},
+			wantQuery: url.Values{
+				"sportId":   {"1"},
+				"startDate": {"2026-05-01"},
+				"endDate":   {"2026-05-07"},
+			},
 		},
 		{
 			name:       "200 with no dates yields empty slice",
@@ -145,12 +149,14 @@ func TestClient_Schedule(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenQuery url.Values
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				seenQuery = r.URL.Query()
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(c.respStatus)
-				_, _ = w.Write([]byte(c.respBody))
-			}))
+			srv := httptest.NewServer(
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					seenQuery = r.URL.Query()
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(c.respStatus)
+					_, _ = w.Write([]byte(c.respBody))
+				}),
+			)
 			urlStr := srv.URL
 			if c.respStatus == 0 {
 				srv.Close()

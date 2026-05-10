@@ -105,14 +105,16 @@ func TestClient_LiveFeed(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if !strings.Contains(r.URL.Path, "/api/v1.1/game/") {
-					t.Errorf("LiveFeed must hit v1.1, got %q", r.URL.Path)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(c.respStatus)
-				_, _ = w.Write([]byte(c.respBody))
-			}))
+			srv := httptest.NewServer(
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					if !strings.Contains(r.URL.Path, "/api/v1.1/game/") {
+						t.Errorf("LiveFeed must hit v1.1, got %q", r.URL.Path)
+					}
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(c.respStatus)
+					_, _ = w.Write([]byte(c.respBody))
+				}),
+			)
 			urlStr := srv.URL
 			if c.respStatus == 0 {
 				srv.Close()

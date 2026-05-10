@@ -41,7 +41,11 @@ func TestParseDPCount(t *testing.T) {
 		{"whitespace only", "   ", 0},
 		{"single DP, no leading number", "(Freeman, F-Rojas, M).", 1},
 		{"two DPs with leading 2", "2 (Freeland, A-Betts-Freeman, F; Betts-Freeman, F).", 2},
-		{"three DPs with leading 3", "3 (2 Rocchio-Arias, G-Hoskins; Hoskins-Arias, G-Hoskins).", 3},
+		{
+			"three DPs with leading 3",
+			"3 (2 Rocchio-Arias, G-Hoskins; Hoskins-Arias, G-Hoskins).",
+			3,
+		},
 		{"leading whitespace then number", "  2 (X-Y).", 2},
 	}
 	for _, c := range cases {
@@ -74,8 +78,10 @@ func TestBoxscoreTeam_DoublePlaysTurned(t *testing.T) {
 		{
 			"fielding section without DP entry",
 			mkTeam(gen.InfoSection{
-				Title:     strPtr("FIELDING"),
-				FieldList: &[]gen.InfoItem{{Label: strPtr("E"), Value: strPtr("Jarvis (1, throw).")}},
+				Title: strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{
+					{Label: strPtr("E"), Value: strPtr("Jarvis (1, throw).")},
+				},
 			}),
 			0,
 		},
@@ -90,16 +96,20 @@ func TestBoxscoreTeam_DoublePlaysTurned(t *testing.T) {
 		{
 			"single DP entry",
 			mkTeam(gen.InfoSection{
-				Title:     strPtr("FIELDING"),
-				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: strPtr("(Freeman, F-Rojas, M).")}},
+				Title: strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{
+					{Label: strPtr("DP"), Value: strPtr("(Freeman, F-Rojas, M).")},
+				},
 			}),
 			1,
 		},
 		{
 			"two DPs",
 			mkTeam(gen.InfoSection{
-				Title:     strPtr("FIELDING"),
-				FieldList: &[]gen.InfoItem{{Label: strPtr("DP"), Value: strPtr("2 (Freeland; Betts-Freeman).")}},
+				Title: strPtr("FIELDING"),
+				FieldList: &[]gen.InfoItem{
+					{Label: strPtr("DP"), Value: strPtr("2 (Freeland; Betts-Freeman).")},
+				},
 			}),
 			2,
 		},
@@ -116,8 +126,12 @@ func TestBoxscoreTeam_DoublePlaysTurned(t *testing.T) {
 func TestBoxscore_Team(t *testing.T) {
 	resp := &gen.BoxscoreResponse{
 		Teams: &gen.BoxscoreTeams{
-			Home: &gen.BoxscoreSide{Team: &gen.Team{Id: intPtr(int(LAD)), Name: strPtr("Los Angeles Dodgers")}},
-			Away: &gen.BoxscoreSide{Team: &gen.Team{Id: intPtr(int(ATL)), Name: strPtr("Atlanta Braves")}},
+			Home: &gen.BoxscoreSide{
+				Team: &gen.Team{Id: intPtr(int(LAD)), Name: strPtr("Los Angeles Dodgers")},
+			},
+			Away: &gen.BoxscoreSide{
+				Team: &gen.Team{Id: intPtr(int(ATL)), Name: strPtr("Atlanta Braves")},
+			},
 		},
 	}
 	box := boxscoreFromGen(resp)
@@ -145,7 +159,14 @@ func TestBoxscore_Team(t *testing.T) {
 				return
 			}
 			if got.ID != c.wantID || got.Name != c.wantName {
-				t.Errorf("Team(%v) = {%v %q}, want {%v %q}", c.lookup, got.ID, got.Name, c.wantID, c.wantName)
+				t.Errorf(
+					"Team(%v) = {%v %q}, want {%v %q}",
+					c.lookup,
+					got.ID,
+					got.Name,
+					c.wantID,
+					c.wantName,
+				)
 			}
 		})
 	}
@@ -164,7 +185,7 @@ func TestClient_Boxscore(t *testing.T) {
 
 	cases := []struct {
 		name       string
-		respStatus int    // 0 means close server before request to simulate net failure
+		respStatus int // 0 means close server before request to simulate net failure
 		respBody   string
 		gamePk     int
 		wantNil    bool
@@ -221,11 +242,13 @@ func TestClient_Boxscore(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(c.respStatus)
-				_, _ = w.Write([]byte(c.respBody))
-			}))
+			srv := httptest.NewServer(
+				http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(c.respStatus)
+					_, _ = w.Write([]byte(c.respBody))
+				}),
+			)
 			url := srv.URL
 			if c.respStatus == 0 {
 				srv.Close()
