@@ -48,11 +48,38 @@ func (b *Boxscore) Team(id TeamID) *BoxscoreTeam {
 	return nil
 }
 
-// BoxscoreTeam is one side of a boxscore. Methods on this type read from the
-// generated response shape without exposing it.
+// BoxscoreTeam is one side of a boxscore. Every meaningful field from the
+// API is exposed as a public Go field; DoublePlaysTurned() is an additive
+// helper because the API hides team-level double-plays in a free-text info
+// block rather than a structured field.
 type BoxscoreTeam struct {
-	ID   TeamID
-	Name string
+	ID       TeamID
+	Name     string
+	Pitching PitchingStats
+	Batting  BattingStats
 
+	// raw is retained ONLY so DoublePlaysTurned() can walk the Info block.
+	// Field promotion is the default; raw is the escape hatch.
 	raw *gen.BoxscoreSide
+}
+
+// PitchingStats is the team-level pitching line for a single game — i.e.
+// what the team's pitchers did. Field names follow Go conventions; the
+// underlying API uses camelCase (strikeOuts, baseOnBalls).
+type PitchingStats struct {
+	Strikeouts int
+	Hits       int // hits allowed
+	Runs       int // runs allowed
+	HomeRuns   int // HRs allowed
+	Walks      int // mapped from API's baseOnBalls
+}
+
+// BattingStats is the team-level offensive line for a single game.
+type BattingStats struct {
+	Runs                 int
+	Hits                 int
+	HomeRuns             int
+	RBI                  int
+	StolenBases          int
+	GroundIntoDoublePlay int // batter-side GIDP (not double plays the team turned)
 }

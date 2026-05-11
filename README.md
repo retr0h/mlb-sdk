@@ -6,6 +6,7 @@
 ![github commit activity](https://img.shields.io/github/commit-activity/m/retr0h/mlb-sdk?style=for-the-badge)
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=for-the-badge)](https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb)
 [![hovnokod](https://raw.githubusercontent.com/tekk/hovnokod-badge/main/assets/badges/hovnokod-for-the-badge.svg)](https://github.com/tekk/hovnokod-badge)
+[![MLB](https://img.shields.io/badge/MLB-002D72?style=for-the-badge&logo=mlb&logoColor=white)](https://mlb.com)
 
 # mlb-sdk
 

@@ -166,6 +166,46 @@ Defaults live inside the constructor; options override.
   `fmt.Errorf("mlb: <method>: unexpected status %d", code)`.
 - Public methods never panic; they always return errors.
 
+### Expose every field — helpers are additive
+
+**Every field the upstream API returns is exposed as a public Go field on the
+wrapping type.** This is the most important authoring rule, because the whole
+point of the SDK is for consumers to read the data without us having to write a
+method for every field.
+
+Helpers like `BoxscoreTeam.DoublePlaysTurned()` exist to encode awkward parsing
+the structured fields can't express (DPs come from a free-text info block) or
+domain shortcuts (`Play.IsDoublePlay()` matches an `EventType`). They are
+**additive on top** of the public fields — never a replacement.
+
+Concrete shape:
+
+```go
+// Good: every field readable; helper for the awkward bit.
+type BoxscoreTeam struct {
+    ID       TeamID
+    Name     string
+    Pitching PitchingStats   // public sub-struct with typed public fields
+    Batting  BattingStats
+    raw      *gen.BoxscoreSide  // retained ONLY for helpers like DoublePlaysTurned
+}
+
+func (t *BoxscoreTeam) DoublePlaysTurned() int { /* parses raw.Info */ }
+
+// Bad: hides data the API freely returns.
+type BoxscoreTeam struct {
+    ID   TeamID
+    Name string
+    raw  *gen.BoxscoreSide  // ← consumers can't reach Strikeouts/Hits/Runs
+}
+func (t *BoxscoreTeam) Strikeouts() int { /* ... */ }  // wrong — should be a field
+```
+
+Exception: when the API returns a free-form object whose keys vary at runtime
+(e.g. `TeamStatsSplit.Stat` — different fields per `group`), keep it as a public
+`map[string]any` field so callers can iterate, and provide typed accessors
+(`.Int(key)`, `.Float(key)`) as additive convenience.
+
 ### Conversion pattern
 
 The generated layer makes every field `*T` because the spec uses
@@ -175,8 +215,10 @@ The generated layer makes every field `*T` because the spec uses
 2. Copy fields onto a public type with non-pointer fields where the value
    semantics are clear (`int` for counts, `string` for names, `time.Time` for
    dates).
-3. Retain the underlying `raw *gen.X` on the public type when downstream helpers
-   may need fields we have not yet promoted (see `BoxscoreTeam.raw`).
+3. Retain the underlying `raw *gen.X` on the public type **only when** additive
+   helpers need fields not yet promoted to public (see `BoxscoreTeam.raw`,
+   retained for `DoublePlaysTurned()` to read the info block). Promoting fields
+   is the default; `raw` is the escape hatch, not the storage strategy.
 
 ### Generic helpers
 

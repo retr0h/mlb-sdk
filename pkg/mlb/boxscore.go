@@ -67,6 +67,47 @@ func teamFromGen(s *gen.BoxscoreSide) *BoxscoreTeam {
 			out.Name = *s.Team.Name
 		}
 	}
+	if s.TeamStats != nil {
+		if s.TeamStats.Pitching != nil {
+			p := s.TeamStats.Pitching
+			if p.StrikeOuts != nil {
+				out.Pitching.Strikeouts = *p.StrikeOuts
+			}
+			if p.Hits != nil {
+				out.Pitching.Hits = *p.Hits
+			}
+			if p.Runs != nil {
+				out.Pitching.Runs = *p.Runs
+			}
+			if p.HomeRuns != nil {
+				out.Pitching.HomeRuns = *p.HomeRuns
+			}
+			if p.BaseOnBalls != nil {
+				out.Pitching.Walks = *p.BaseOnBalls
+			}
+		}
+		if s.TeamStats.Batting != nil {
+			b := s.TeamStats.Batting
+			if b.Runs != nil {
+				out.Batting.Runs = *b.Runs
+			}
+			if b.Hits != nil {
+				out.Batting.Hits = *b.Hits
+			}
+			if b.HomeRuns != nil {
+				out.Batting.HomeRuns = *b.HomeRuns
+			}
+			if b.Rbi != nil {
+				out.Batting.RBI = *b.Rbi
+			}
+			if b.StolenBases != nil {
+				out.Batting.StolenBases = *b.StolenBases
+			}
+			if b.GroundIntoDoublePlay != nil {
+				out.Batting.GroundIntoDoublePlay = *b.GroundIntoDoublePlay
+			}
+		}
+	}
 	return out
 }
 

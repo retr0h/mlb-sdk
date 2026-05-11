@@ -49,7 +49,7 @@ const teamStatsMultiGroupBody = `{
 }`
 
 func TestTeamStatsSplit_Int(t *testing.T) {
-	split := &TeamStatsSplit{stat: map[string]any{
+	split := &TeamStatsSplit{Stat: map[string]any{
 		"a": float64(7),
 		"b": int64(99),
 		"c": int(5),
@@ -78,7 +78,7 @@ func TestTeamStatsSplit_Int(t *testing.T) {
 }
 
 func TestTeamStatsSplit_Float(t *testing.T) {
-	split := &TeamStatsSplit{stat: map[string]any{
+	split := &TeamStatsSplit{Stat: map[string]any{
 		"a": float64(4.5),
 		"b": "string not number",
 		"c": int(3),
@@ -105,7 +105,7 @@ func TestTeamStatsSplit_Float(t *testing.T) {
 }
 
 func TestTeamStatsSplit_String(t *testing.T) {
-	split := &TeamStatsSplit{stat: map[string]any{
+	split := &TeamStatsSplit{Stat: map[string]any{
 		"a": "good",
 		"b": float64(7),
 	}}
@@ -136,8 +136,8 @@ func TestTeamStatsSplit_DoublePlays(t *testing.T) {
 		want  int
 	}{
 		{"nil receiver", nil, 0},
-		{"missing field", &TeamStatsSplit{stat: map[string]any{"errors": 3.0}}, 0},
-		{"present field", &TeamStatsSplit{stat: map[string]any{"doublePlays": float64(23)}}, 23},
+		{"missing field", &TeamStatsSplit{Stat: map[string]any{"errors": 3.0}}, 0},
+		{"present field", &TeamStatsSplit{Stat: map[string]any{"doublePlays": float64(23)}}, 23},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

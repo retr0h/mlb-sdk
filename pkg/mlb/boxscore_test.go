@@ -207,6 +207,10 @@ func TestClient_Boxscore(t *testing.T) {
 		"teams": {
 			"home": {
 				"team": {"id": 119, "name": "Los Angeles Dodgers"},
+				"teamStats": {
+					"pitching": {"strikeOuts": 11, "hits": 5, "runs": 1, "homeRuns": 0, "baseOnBalls": 3},
+					"batting": {"runs": 4, "hits": 9, "homeRuns": 2, "rbi": 4, "stolenBases": 1, "groundIntoDoublePlay": 1}
+				},
 				"info": [{"title":"FIELDING","fieldList":[{"label":"DP","value":"3 (a; b; c)."}]}]
 			},
 			"away": {"team": {"id": 144, "name": "Atlanta Braves"}}
@@ -214,21 +218,27 @@ func TestClient_Boxscore(t *testing.T) {
 	}`
 
 	cases := []struct {
-		name       string
-		respStatus int // 0 means close server before request to simulate net failure
-		respBody   string
-		gamePk     int
-		wantNil    bool
-		wantDPs    int   // for happy rows; checked when wantErr == ""
-		wantIs     error // errors.Is target; nil means no errors.Is check
-		wantErr    string
+		name         string
+		respStatus   int // 0 means close server before request to simulate net failure
+		respBody     string
+		gamePk       int
+		wantNil      bool
+		wantDPs      int           // for happy rows; checked when wantErr == ""
+		wantPitching PitchingStats // zero-value = don't check
+		wantBatting  BattingStats  // zero-value = don't check
+		wantIs       error         // errors.Is target; nil means no errors.Is check
+		wantErr      string
 	}{
 		{
-			name:       "happy path returns parsed boxscore",
-			respStatus: 200,
-			respBody:   happyBody,
-			gamePk:     823957,
-			wantDPs:    3,
+			name:         "happy path returns parsed boxscore with full stats",
+			respStatus:   200,
+			respBody:     happyBody,
+			gamePk:       823957,
+			wantDPs:      3,
+			wantPitching: PitchingStats{Strikeouts: 11, Hits: 5, Runs: 1, HomeRuns: 0, Walks: 3},
+			wantBatting: BattingStats{
+				Runs: 4, Hits: 9, HomeRuns: 2, RBI: 4, StolenBases: 1, GroundIntoDoublePlay: 1,
+			},
 		},
 		{
 			name:       "200 with empty body yields zero-value boxscore",
@@ -299,6 +309,16 @@ func TestClient_Boxscore(t *testing.T) {
 				if c.wantDPs > 0 {
 					if got := box.Team(LAD).DoublePlaysTurned(); got != c.wantDPs {
 						t.Errorf("DoublePlaysTurned() = %d, want %d", got, c.wantDPs)
+					}
+				}
+				if (c.wantPitching != PitchingStats{}) {
+					if got := box.Team(LAD).Pitching; got != c.wantPitching {
+						t.Errorf("Pitching = %+v, want %+v", got, c.wantPitching)
+					}
+				}
+				if (c.wantBatting != BattingStats{}) {
+					if got := box.Team(LAD).Batting; got != c.wantBatting {
+						t.Errorf("Batting = %+v, want %+v", got, c.wantBatting)
 					}
 				}
 				return

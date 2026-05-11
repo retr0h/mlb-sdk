@@ -105,12 +105,12 @@ func statGroupFromGen(g gen.StatGroup) TeamStatGroupResult {
 }
 
 func splitFromGen(s gen.StatSplit) TeamStatsSplit {
-	out := TeamStatsSplit{stat: map[string]any{}}
+	out := TeamStatsSplit{Stat: map[string]any{}}
 	if s.Season != nil {
 		out.Season = *s.Season
 	}
 	if s.Stat != nil {
-		out.stat = *s.Stat
+		out.Stat = *s.Stat
 	}
 	return out
 }

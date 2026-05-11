@@ -118,22 +118,21 @@ func (g *TeamStatGroupResult) Season(season string) *TeamStatsSplit {
 }
 
 // TeamStatsSplit is a single time-window row of stats. The MLB API returns
-// the stat block as a free-form object whose keys vary by group; we keep it
-// as a map and provide typed accessors.
+// the stat block as a free-form object whose keys vary by group (hitting vs
+// pitching vs fielding), so Stat stays as a public map for iteration —
+// the typed accessors below are additive convenience.
 type TeamStatsSplit struct {
 	Season string
-
-	stat map[string]any
+	Stat   map[string]any
 }
 
-// Int reads key from the underlying stat map and coerces it to int. Returns
-// 0 when the key is missing, the receiver is nil, or the value is not a
-// number-like type.
+// Int reads key from Stat and coerces it to int. Returns 0 when the key is
+// missing, the receiver is nil, or the value is not a number-like type.
 func (s *TeamStatsSplit) Int(key string) int {
 	if s == nil {
 		return 0
 	}
-	v, ok := s.stat[key]
+	v, ok := s.Stat[key]
 	if !ok {
 		return 0
 	}
@@ -149,13 +148,13 @@ func (s *TeamStatsSplit) Int(key string) int {
 	}
 }
 
-// Float reads key from the underlying stat map as float64. Returns 0 when
-// the key is missing or the value is not a JSON number.
+// Float reads key from Stat as float64. Returns 0 when the key is missing
+// or the value is not a JSON number.
 func (s *TeamStatsSplit) Float(key string) float64 {
 	if s == nil {
 		return 0
 	}
-	v, ok := s.stat[key]
+	v, ok := s.Stat[key]
 	if !ok {
 		return 0
 	}
@@ -163,13 +162,13 @@ func (s *TeamStatsSplit) Float(key string) float64 {
 	return f
 }
 
-// String reads key from the underlying stat map as string. Returns ""
-// when the key is missing or the value is not a JSON string.
+// String reads key from Stat as string. Returns "" when the key is missing
+// or the value is not a JSON string.
 func (s *TeamStatsSplit) String(key string) string {
 	if s == nil {
 		return ""
 	}
-	v, ok := s.stat[key]
+	v, ok := s.Stat[key]
 	if !ok {
 		return ""
 	}

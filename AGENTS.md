@@ -42,14 +42,21 @@ applicable instead of improvising.
 
 1. **Never expose `internal/gen` types in `pkg/mlb` signatures.** The whole
    point of the wrapping layer is to hide those.
-2. **Every public function gets exactly one table-driven test.** Failure rows
+2. **Every field the upstream API returns is exposed as a public Go field
+   on the wrapping type.** Helper methods (e.g. `BoxscoreTeam.DoublePlaysTurned()`,
+   `TeamStatsSplit.Int(key)`) are **additive** — they encode awkward parsing or
+   domain shortcuts. They do **not** replace direct field access. If the API
+   returns `pitching.strikeOuts`, the public type has
+   `BoxscoreTeam.Pitching.Strikeouts` (a public int field) — not just a
+   `Strikeouts()` method that hides the underlying number.
+3. **Every public function gets exactly one table-driven test.** Failure rows
    live in the same table as the happy row — no separate one-off failure
    tests.
-3. **Coverage is 100.0% of statements.** A change that drops coverage is a
+4. **Coverage is 100.0% of statements.** A change that drops coverage is a
    regression and must be brought back to 100% before commit.
-4. **Every nested OpenAPI object is a named component.** Inline `type: object`
+5. **Every nested OpenAPI object is a named component.** Inline `type: object`
    with `properties:` is forbidden in path responses and request bodies.
-5. **`just ready` is the gate before committing.** Runs codegen, fmt, vet,
+6. **`just ready` is the gate before committing.** Runs codegen, fmt, vet,
    and lint.
 
 ## Commit messages

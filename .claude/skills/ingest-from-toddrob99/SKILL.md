@@ -9,14 +9,24 @@ description: Port MLB Stats API endpoints from the toddrob99/MLB-StatsAPI Python
 years of human reverse-engineering of `statsapi.mlb.com`. This skill ports
 their work into our typed Go SDK without us re-doing the discovery.
 
-> **Architectural reminder before you read anything else:** `internal/gen/`
-> is the generated implementation detail; `pkg/mlb/` is the public surface
-> that wraps it. **No `gen.X` type ever appears in an exported signature.**
-> Every public method on `*mlb.Client` has a private `<name>FromGen`
-> converter that translates the pointer-heavy generated structs into clean
-> idiomatic Go. The full rules are in AGENTS.md and docs/development.md
-> (read them in step 0 below); this paragraph is the single most important
-> thing to internalize.
+> **Architectural reminders before you read anything else:**
+>
+> 1. `internal/gen/` is the generated implementation detail; `pkg/mlb/`
+>    is the public surface that wraps it. **No `gen.X` type ever appears
+>    in an exported signature.** Every public method on `*mlb.Client`
+>    has a private `<name>FromGen` converter that translates the
+>    pointer-heavy generated structs into clean idiomatic Go.
+>
+> 2. **Every field the upstream API returns is exposed as a public Go
+>    field on the wrapping type.** Helper methods are additive — they
+>    encode awkward parsing (`DoublePlaysTurned()` reads a free-text
+>    info block) or domain shortcuts. They never replace direct field
+>    access. If the API returns `runs`, the wrapping type has a
+>    `Runs int` field, not just a `Runs()` method that hides it.
+>
+> The full rules are in AGENTS.md and docs/development.md (read them in
+> step 0 below); these two paragraphs are the most important things to
+> internalize before touching code.
 
 ## Source of truth
 
