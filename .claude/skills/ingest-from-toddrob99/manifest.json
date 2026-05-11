@@ -64,6 +64,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "11f2d4f42997613da65047baf4c1d0d583f4bf00dcd8de97757dc7aa8f6b439f",
       "source": "ingest skill"
+    },
+    "sports": {
+      "method": "Client.Sports",
+      "operationId": "getSports",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "b06295346fbd787aab38296ec8ca8aa8f717a96f61bb130d3fc2289eb56f334f",
+      "source": "ingest skill"
     }
   }
 }

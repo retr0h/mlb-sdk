@@ -167,6 +167,23 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DivisionsResponse" }
 
+  /api/v1/sports:
+    get:
+      operationId: getSports
+      summary: List of sports the MLB API tracks
+      description: |
+        Returns every sport the MLB Stats API exposes (MLB, AAA, AA, …) when
+        called with no parameters. Filter to a single sport via sportId.
+      parameters:
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Sports
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SportsResponse" }
+
   /api/v1/venues/{venueId}:
     get:
       operationId: getVenue
@@ -607,3 +624,26 @@ components:
         seasons:
           type: array
           items: { $ref: "#/components/schemas/Season" }
+
+    Sport:
+      type: object
+      additionalProperties: true
+      description: |
+        One sport tracked by the MLB Stats API. Covers MLB plus affiliated
+        minor leagues, college, and independent baseball.
+      properties:
+        id:           { type: integer }
+        code:         { type: string, description: "e.g. mlb, aaa, aax" }
+        link:         { type: string }
+        name:         { type: string }
+        abbreviation: { type: string }
+        sortOrder:    { type: integer }
+        activeStatus: { type: boolean }
+
+    SportsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        sports:
+          type: array
+          items: { $ref: "#/components/schemas/Sport" }

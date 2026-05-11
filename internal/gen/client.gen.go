@@ -305,6 +305,27 @@ type SideScoreboard struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Sport One sport tracked by the MLB Stats API. Covers MLB plus affiliated
+// minor leagues, college, and independent baseball.
+type Sport struct {
+	Abbreviation *string `json:"abbreviation,omitempty"`
+	ActiveStatus *bool   `json:"activeStatus,omitempty"`
+
+	// Code e.g. mlb, aaa, aax
+	Code                 *string                `json:"code,omitempty"`
+	Id                   *int                   `json:"id,omitempty"`
+	Link                 *string                `json:"link,omitempty"`
+	Name                 *string                `json:"name,omitempty"`
+	SortOrder            *int                   `json:"sortOrder,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// SportsResponse defines model for SportsResponse.
+type SportsResponse struct {
+	Sports               *[]Sport               `json:"sports,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // StandingsResponse defines model for StandingsResponse.
 type StandingsResponse struct {
 	Records              *[]DivisionStandings   `json:"records,omitempty"`
@@ -509,6 +530,15 @@ type GetAllSeasonsParams struct {
 	DivisionId *int    `form:"divisionId,omitempty" json:"divisionId,omitempty"`
 	LeagueId   *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
 	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetSportsParams defines parameters for GetSports.
+type GetSportsParams struct {
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Fields comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStandingsParams defines parameters for GetStandings.
@@ -3393,6 +3423,232 @@ func (a SideScoreboard) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Sport. Returns the specified
+// element and whether it was found
+func (a Sport) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Sport
+func (a *Sport) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Sport to handle AdditionalProperties
+func (a *Sport) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["activeStatus"]; found {
+		err = json.Unmarshal(raw, &a.ActiveStatus)
+		if err != nil {
+			return fmt.Errorf("error reading 'activeStatus': %w", err)
+		}
+		delete(object, "activeStatus")
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["sortOrder"]; found {
+		err = json.Unmarshal(raw, &a.SortOrder)
+		if err != nil {
+			return fmt.Errorf("error reading 'sortOrder': %w", err)
+		}
+		delete(object, "sortOrder")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Sport to handle AdditionalProperties
+func (a Sport) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.ActiveStatus != nil {
+		object["activeStatus"], err = json.Marshal(a.ActiveStatus)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'activeStatus': %w", err)
+		}
+	}
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.SortOrder != nil {
+		object["sortOrder"], err = json.Marshal(a.SortOrder)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sortOrder': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for SportsResponse. Returns the specified
+// element and whether it was found
+func (a SportsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for SportsResponse
+func (a *SportsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for SportsResponse to handle AdditionalProperties
+func (a *SportsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["sports"]; found {
+		err = json.Unmarshal(raw, &a.Sports)
+		if err != nil {
+			return fmt.Errorf("error reading 'sports': %w", err)
+		}
+		delete(object, "sports")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for SportsResponse to handle AdditionalProperties
+func (a SportsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Sports != nil {
+		object["sports"], err = json.Marshal(a.Sports)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sports': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for StandingsResponse. Returns the specified
 // element and whether it was found
 func (a StandingsResponse) Get(fieldName string) (value interface{}, found bool) {
@@ -5279,6 +5535,9 @@ type ClientInterface interface {
 	// GetAllSeasons request
 	GetAllSeasons(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetSports request
+	GetSports(ctx context.Context, params *GetSportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetStandings request
 	GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -5363,6 +5622,18 @@ func (c *Client) GetSeasons(ctx context.Context, params *GetSeasonsParams, reqEd
 
 func (c *Client) GetAllSeasons(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAllSeasonsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSports(ctx context.Context, params *GetSportsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSportsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -5907,6 +6178,72 @@ func NewGetAllSeasonsRequest(server string, params *GetAllSeasonsParams) (*http.
 	return req, nil
 }
 
+// NewGetSportsRequest generates requests for GetSports
+func NewGetSportsRequest(server string, params *GetSportsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/sports")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetStandingsRequest generates requests for GetStandings
 func NewGetStandingsRequest(server string, params *GetStandingsParams) (*http.Request, error) {
 	var err error
@@ -6251,6 +6588,9 @@ type ClientWithResponsesInterface interface {
 	// GetAllSeasonsWithResponse request
 	GetAllSeasonsWithResponse(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*GetAllSeasonsResponse, error)
 
+	// GetSportsWithResponse request
+	GetSportsWithResponse(ctx context.Context, params *GetSportsParams, reqEditors ...RequestEditorFn) (*GetSportsResponse, error)
+
 	// GetStandingsWithResponse request
 	GetStandingsWithResponse(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*GetStandingsResponse, error)
 
@@ -6471,6 +6811,36 @@ func (r GetAllSeasonsResponse) ContentType() string {
 	return ""
 }
 
+type GetSportsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SportsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSportsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSportsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetSportsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetStandingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -6622,6 +6992,15 @@ func (c *ClientWithResponses) GetAllSeasonsWithResponse(ctx context.Context, par
 		return nil, err
 	}
 	return ParseGetAllSeasonsResponse(rsp)
+}
+
+// GetSportsWithResponse request returning *GetSportsResponse
+func (c *ClientWithResponses) GetSportsWithResponse(ctx context.Context, params *GetSportsParams, reqEditors ...RequestEditorFn) (*GetSportsResponse, error) {
+	rsp, err := c.GetSports(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSportsResponse(rsp)
 }
 
 // GetStandingsWithResponse request returning *GetStandingsResponse
@@ -6823,6 +7202,32 @@ func ParseGetAllSeasonsResponse(rsp *http.Response) (*GetAllSeasonsResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest SeasonsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSportsResponse parses an HTTP response from a GetSportsWithResponse call
+func ParseGetSportsResponse(rsp *http.Response) (*GetSportsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSportsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SportsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
