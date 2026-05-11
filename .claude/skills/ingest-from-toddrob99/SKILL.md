@@ -9,24 +9,14 @@ description: Port MLB Stats API endpoints from the toddrob99/MLB-StatsAPI Python
 years of human reverse-engineering of `statsapi.mlb.com`. This skill ports
 their work into our typed Go SDK without us re-doing the discovery.
 
-> **Architectural reminders before you read anything else:**
+> **Two rules dominate every step below.** Full text in AGENTS.md (Hard
+> rules 1 and 2); step 0 makes you read them. Stated here so you can't
+> miss them:
 >
-> 1. `internal/gen/` is the generated implementation detail; `pkg/mlb/`
->    is the public surface that wraps it. **No `gen.X` type ever appears
->    in an exported signature.** Every public method on `*mlb.Client`
->    has a private `<name>FromGen` converter that translates the
->    pointer-heavy generated structs into clean idiomatic Go.
->
-> 2. **Every field the upstream API returns is exposed as a public Go
->    field on the wrapping type.** Helper methods are additive — they
->    encode awkward parsing (`DoublePlaysTurned()` reads a free-text
->    info block) or domain shortcuts. They never replace direct field
->    access. If the API returns `runs`, the wrapping type has a
->    `Runs int` field, not just a `Runs()` method that hides it.
->
-> The full rules are in AGENTS.md and docs/development.md (read them in
-> step 0 below); these two paragraphs are the most important things to
-> internalize before touching code.
+> 1. No `gen.X` type in any exported signature — `pkg/mlb` wraps gen,
+>    always.
+> 2. Every field gen returns is a public field on the wrapping type;
+>    helpers are additive, never replacements.
 
 ## Source of truth
 
@@ -149,12 +139,29 @@ The toddrob99 translation hints below are the only thing this skill
 adds beyond that recipe — gotchas only relevant when the upstream
 input is a Python dict from `endpoints.py`.
 
-### 4. Update the manifest
+### 4. Field promotion audit (non-negotiable)
+
+toddrob99 doesn't model responses, so it can't tell you what fields to
+expose. The authoritative list is whatever step 3 emitted into
+`internal/gen/client.gen.go` — gen is derived from the live response.
+
+Before writing the wrapper:
+
+1. Find every gen struct reachable from your endpoint's response type.
+2. Every field on those structs (skip `AdditionalProperties`) must
+   reach a public field on the `pkg/mlb` counterpart. Rename is fine
+   (`baseOnBalls` → `Walks`); dropping is a bug.
+3. If a gen field has no public peer, add one before committing.
+
+A field is only droppable if the curl sample proves it never appears —
+in that case, remove it from `api/openapi.yaml`, not from the Go side.
+
+### 5. Update the manifest
 
 Append the endpoint name to `manifest.json (sibling of this file)` once verified. The
 manifest is how batch mode knows what's already done.
 
-### 5. Verify
+### 6. Verify
 
 - `just ready` passes (fmt + vet + lint).
 - `go test -coverprofile=/tmp/c.out ./pkg/mlb/...` reports 100.0%.
