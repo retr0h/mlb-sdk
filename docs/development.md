@@ -325,6 +325,15 @@ Pure helpers (`parseDPCount`, `doublePlaysTurned`, `<resource>FromGen`) need
 only the failure rows that apply to them — typically empty input, nil fields,
 malformed input.
 
+### Branchy query params need branch-per-row coverage
+
+When a `Client` method conditionally mutates `params` based on a query-field
+branch (`if q.SportID != 0 { params.SportID = ptr(q.SportID) }`), the happy-path
+row only exercises one branch — the rest get marked uncovered. Add one table row
+per branch (one for SportID, one for DivisionID, one for LeagueID) so each path
+through the converter is exercised. Same applies to any `if q.All { … }`
+path-switch.
+
 ### Server-per-case pattern
 
 Use a fresh `httptest.NewServer` inside each `t.Run` so that test cases are
