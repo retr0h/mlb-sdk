@@ -194,6 +194,13 @@ manifest is how batch mode knows what's already done.
 
 ## Tooling notes
 
+**Precondition: your shell's `cwd` must be the mlb-sdk repo root** (or
+inside it). Claude-Code's sandbox blocks every write outside `cwd` —
+that includes `tmp` paths and the target repo when invoked from a
+sibling directory. Run `pwd` first; if you're not in `mlb-sdk`, `cd`
+there before doing anything else. Subagents inherit the parent's `cwd`,
+so the leader has to set this up before spawning.
+
 Some Claude-Code sandbox modes block `git clone` and Edit/Write under
 `.claude/skills/**`. Workarounds known to succeed:
 
