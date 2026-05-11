@@ -33,7 +33,8 @@ const playByPlayHappyBody = `{
   "allPlays": [
     {
       "result": {"event": "Strikeout", "eventType": "strikeout", "description": "Smith strikes out swinging."},
-      "about": {"inning": 1, "halfInning": "top", "outs": 1}
+      "about": {"inning": 1, "halfInning": "top", "outs": 1},
+      "count": {"balls": 2, "strikes": 3, "outs": 1}
     },
     {
       "result": {"event": "Grounded Into DP", "eventType": "grounded_into_double_play", "description": "Jones grounds into a double play, 6-4-3."},
@@ -80,6 +81,8 @@ func TestClient_PlayByPlay(t *testing.T) {
 		gamePk      int
 		wantLen     int
 		wantDPCount int // count of plays where IsDoublePlay() == true
+		wantBalls   int // balls on first play; checked only when wantLen > 0
+		wantStrikes int // strikes on first play; checked only when wantLen > 0
 		wantIs      error
 		wantErr     string
 	}{
@@ -90,6 +93,8 @@ func TestClient_PlayByPlay(t *testing.T) {
 			gamePk:      823970,
 			wantLen:     3,
 			wantDPCount: 1,
+			wantBalls:   2,
+			wantStrikes: 3,
 		},
 		{
 			name:       "200 with no plays yields empty slice",
@@ -168,6 +173,14 @@ func TestClient_PlayByPlay(t *testing.T) {
 			}
 			if gotDPs != c.wantDPCount {
 				t.Errorf("DP count = %d, want %d", gotDPs, c.wantDPCount)
+			}
+			if c.wantLen > 0 {
+				if plays[0].Balls != c.wantBalls {
+					t.Errorf("plays[0].Balls = %d, want %d", plays[0].Balls, c.wantBalls)
+				}
+				if plays[0].Strikes != c.wantStrikes {
+					t.Errorf("plays[0].Strikes = %d, want %d", plays[0].Strikes, c.wantStrikes)
+				}
 			}
 		})
 	}

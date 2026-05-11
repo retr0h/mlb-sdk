@@ -80,5 +80,13 @@ func playFromGen(p gen.Play) Play {
 			out.Outs = *p.About.Outs
 		}
 	}
+	if p.Count != nil {
+		if p.Count.Balls != nil {
+			out.Balls = *p.Count.Balls
+		}
+		if p.Count.Strikes != nil {
+			out.Strikes = *p.Count.Strikes
+		}
+	}
 	return out
 }

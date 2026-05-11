@@ -76,7 +76,7 @@ func (c *Client) TeamStats(ctx context.Context, q TeamStatsQuery) (*TeamStats, e
 }
 
 func teamStatsFromGen(r *gen.TeamStatsResponse) *TeamStats {
-	out := &TeamStats{raw: r}
+	out := &TeamStats{}
 	if r == nil || r.Stats == nil {
 		return out
 	}

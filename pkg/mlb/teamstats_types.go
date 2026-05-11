@@ -20,11 +20,7 @@
 
 package mlb
 
-import (
-	"strings"
-
-	"github.com/retr0h/mlb-sdk/internal/gen"
-)
+import "strings"
 
 // TeamStatGroup is the MLB Stats API's `group` query parameter — the side of
 // the game the requested stats are about.
@@ -72,8 +68,6 @@ type TeamStatsQuery struct {
 // requested), each containing one or more season splits.
 type TeamStats struct {
 	Groups []TeamStatGroupResult
-
-	raw *gen.TeamStatsResponse
 }
 
 // Group returns the first group in the response whose group-name matches g

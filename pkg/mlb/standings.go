@@ -59,7 +59,7 @@ func (c *Client) Standings(ctx context.Context, q StandingsQuery) (*Standings, e
 }
 
 func standingsFromGen(r *gen.StandingsResponse) *Standings {
-	out := &Standings{raw: r}
+	out := &Standings{}
 	if r == nil || r.Records == nil {
 		return out
 	}
@@ -75,14 +75,14 @@ func divisionStandingsFromGen(d gen.DivisionStandings) DivisionStandings {
 	if d.StandingsType != nil {
 		out.StandingsType = *d.StandingsType
 	}
-	if d.League != nil && d.League.Id != nil {
-		out.LeagueID = *d.League.Id
+	if d.League != nil {
+		out.League = refFromGen(d.League)
 	}
-	if d.Division != nil && d.Division.Id != nil {
-		out.DivisionID = *d.Division.Id
+	if d.Division != nil {
+		out.Division = refFromGen(d.Division)
 	}
-	if d.Sport != nil && d.Sport.Id != nil {
-		out.SportID = *d.Sport.Id
+	if d.Sport != nil {
+		out.Sport = refFromGen(d.Sport)
 	}
 	if d.LastUpdated != nil {
 		out.LastUpdated = *d.LastUpdated
@@ -168,6 +168,17 @@ func teamRecordFromGen(t gen.TeamRecord) TeamRecord {
 	}
 	if t.LastUpdated != nil {
 		out.LastUpdated = *t.LastUpdated
+	}
+	return out
+}
+
+func refFromGen(r *gen.Ref) Ref {
+	out := Ref{}
+	if r.Id != nil {
+		out.ID = *r.Id
+	}
+	if r.Link != nil {
+		out.Link = *r.Link
 	}
 	return out
 }

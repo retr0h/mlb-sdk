@@ -39,7 +39,7 @@ const scheduleHappyBody = `{
       {
         "gamePk": 823957,
         "gameDate": "2026-05-08T19:10:00Z",
-        "status": {"abstractGameState": "Final"},
+        "status": {"abstractGameState": "Final", "detailedState": "Final"},
         "teams": {
           "home": {"team": {"id": 119, "name": "Los Angeles Dodgers"}, "score": 3},
           "away": {"team": {"id": 144, "name": "Atlanta Braves"},      "score": 1}
@@ -80,11 +80,12 @@ func TestClient_Schedule(t *testing.T) {
 			wantLen:     2,
 			wantFirstPk: 823957,
 			wantFirst: &Game{
-				GamePk: 823957,
-				Date:   parsed,
-				Status: StatusFinal,
-				Home:   TeamScore{ID: LAD, Name: "Los Angeles Dodgers", Score: 3},
-				Away:   TeamScore{ID: ATL, Name: "Atlanta Braves", Score: 1},
+				GamePk:         823957,
+				Date:           parsed,
+				Status:         StatusFinal,
+				DetailedStatus: "Final",
+				Home:           TeamScore{ID: LAD, Name: "Los Angeles Dodgers", Score: 3},
+				Away:           TeamScore{ID: ATL, Name: "Atlanta Braves", Score: 1},
 			},
 		},
 		{

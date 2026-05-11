@@ -4,11 +4,7 @@
 
 package mlb
 
-import (
-	"time"
-
-	"github.com/retr0h/mlb-sdk/internal/gen"
-)
+import "time"
 
 // StandingsQuery filters a standings lookup. League is required; the rest are
 // optional. Set Date to view standings as of a specific calendar date.
@@ -35,8 +31,6 @@ type StandingsQuery struct {
 // per-division standings, each containing a team-record list.
 type Standings struct {
 	Records []DivisionStandings
-
-	raw *gen.StandingsResponse
 }
 
 // Division returns the division-standings entry for a given division id, or
@@ -46,7 +40,7 @@ func (s *Standings) Division(id int) *DivisionStandings {
 		return nil
 	}
 	for i := range s.Records {
-		if s.Records[i].DivisionID == id {
+		if s.Records[i].Division.ID == id {
 			return &s.Records[i]
 		}
 	}
@@ -56,9 +50,9 @@ func (s *Standings) Division(id int) *DivisionStandings {
 // DivisionStandings is one division block in a standings response.
 type DivisionStandings struct {
 	StandingsType string
-	LeagueID      int
-	DivisionID    int
-	SportID       int
+	League        Ref
+	Division      Ref
+	Sport         Ref
 	LastUpdated   time.Time
 	TeamRecords   []TeamRecord
 }
@@ -75,6 +69,15 @@ func (d *DivisionStandings) Team(id TeamID) *TeamRecord {
 		}
 	}
 	return nil
+}
+
+// Ref is the API's lightweight reference object — `{id, link}` — used for
+// league, division, and sport pointers. The MLB API doesn't include a name
+// in these references; resolve via the Sport/League/Division endpoints if
+// you need one.
+type Ref struct {
+	ID   int
+	Link string
 }
 
 // TeamRecord is one team's standings slot. Several rank fields are typed as

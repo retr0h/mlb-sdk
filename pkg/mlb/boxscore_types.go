@@ -20,17 +20,13 @@
 
 package mlb
 
-import "github.com/retr0h/mlb-sdk/internal/gen"
-
 // Boxscore is the per-game team-stats view served by the MLB Stats API,
-// flattened to two sides and re-presented through methods that hide the
-// API's awkward bits. The raw response is retained on the value so future
-// helpers can pull from any field without changing the public type.
+// flattened to two sides. Every field upstream returns is promoted to
+// public fields on Home / Away; awkward bits (e.g. team-level double plays)
+// live behind additive helpers like BoxscoreTeam.DoublePlaysTurned.
 type Boxscore struct {
 	Home *BoxscoreTeam
 	Away *BoxscoreTeam
-
-	raw *gen.BoxscoreResponse
 }
 
 // Team returns the BoxscoreTeam for a given team ID, or nil if neither side
@@ -51,16 +47,32 @@ func (b *Boxscore) Team(id TeamID) *BoxscoreTeam {
 // BoxscoreTeam is one side of a boxscore. Every meaningful field from the
 // API is exposed as a public Go field; DoublePlaysTurned() is an additive
 // helper because the API hides team-level double-plays in a free-text info
-// block rather than a structured field.
+// block (see Info) rather than a structured field.
 type BoxscoreTeam struct {
 	ID       TeamID
 	Name     string
 	Pitching PitchingStats
 	Batting  BattingStats
 
-	// raw is retained ONLY so DoublePlaysTurned() can walk the Info block.
-	// Field promotion is the default; raw is the escape hatch.
-	raw *gen.BoxscoreSide
+	// Info is the API's free-text annotation block, grouped by section
+	// (e.g. "BATTING", "FIELDING"). The MLB API stuffs team-level
+	// double-plays in here under FIELDING / DP — DoublePlaysTurned()
+	// parses that for you.
+	Info []InfoSection
+}
+
+// InfoSection is one titled block of the boxscore's free-text annotations
+// (e.g. Title="FIELDING").
+type InfoSection struct {
+	Title     string
+	FieldList []InfoItem
+}
+
+// InfoItem is one labelled annotation inside an InfoSection — e.g.
+// Label="DP", Value="2 (Freeman, F-Rojas, M; Betts-Freeman, F).".
+type InfoItem struct {
+	Label string
+	Value string
 }
 
 // PitchingStats is the team-level pitching line for a single game — i.e.

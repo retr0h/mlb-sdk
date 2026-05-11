@@ -58,7 +58,15 @@ type TeamScore struct {
 type Game struct {
 	GamePk int
 	Date   time.Time
+
+	// Status is the coarse-grained game state (Final / Live / Preview).
 	Status GameStatus
-	Home   TeamScore
-	Away   TeamScore
+
+	// DetailedStatus is the API's free-form detailed state string —
+	// values like "Final", "In Progress", "Scheduled", "Postponed",
+	// "Suspended: Rain". Use this when the coarse Status isn't enough.
+	DetailedStatus string
+
+	Home TeamScore
+	Away TeamScore
 }

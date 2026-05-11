@@ -45,7 +45,7 @@ func (c *Client) Boxscore(ctx context.Context, gamePk int) (*Boxscore, error) {
 }
 
 func boxscoreFromGen(r *gen.BoxscoreResponse) *Boxscore {
-	out := &Boxscore{raw: r}
+	out := &Boxscore{}
 	if r == nil || r.Teams == nil {
 		return out
 	}
@@ -58,7 +58,7 @@ func teamFromGen(s *gen.BoxscoreSide) *BoxscoreTeam {
 	if s == nil {
 		return nil
 	}
-	out := &BoxscoreTeam{raw: s}
+	out := &BoxscoreTeam{}
 	if s.Team != nil {
 		if s.Team.Id != nil {
 			out.ID = TeamID(*s.Team.Id)
@@ -108,6 +108,37 @@ func teamFromGen(s *gen.BoxscoreSide) *BoxscoreTeam {
 			}
 		}
 	}
+	if s.Info != nil {
+		out.Info = make([]InfoSection, 0, len(*s.Info))
+		for _, sec := range *s.Info {
+			out.Info = append(out.Info, infoSectionFromGen(sec))
+		}
+	}
+	return out
+}
+
+func infoSectionFromGen(s gen.InfoSection) InfoSection {
+	out := InfoSection{}
+	if s.Title != nil {
+		out.Title = *s.Title
+	}
+	if s.FieldList != nil {
+		out.FieldList = make([]InfoItem, 0, len(*s.FieldList))
+		for _, it := range *s.FieldList {
+			out.FieldList = append(out.FieldList, infoItemFromGen(it))
+		}
+	}
+	return out
+}
+
+func infoItemFromGen(i gen.InfoItem) InfoItem {
+	out := InfoItem{}
+	if i.Label != nil {
+		out.Label = *i.Label
+	}
+	if i.Value != nil {
+		out.Value = *i.Value
+	}
 	return out
 }
 
@@ -117,24 +148,18 @@ func teamFromGen(s *gen.BoxscoreSide) *BoxscoreTeam {
 // info section under FIELDING / DP, with values like "(Smith-Jones)." for
 // one DP or "2 (...)." for two. Returns 0 when no DP entry is present.
 func (t *BoxscoreTeam) DoublePlaysTurned() int {
-	if t == nil || t.raw == nil || t.raw.Info == nil {
+	if t == nil {
 		return 0
 	}
-	for _, section := range *t.raw.Info {
-		if section.Title == nil || *section.Title != "FIELDING" {
+	for _, section := range t.Info {
+		if section.Title != "FIELDING" {
 			continue
 		}
-		if section.FieldList == nil {
-			continue
-		}
-		for _, item := range *section.FieldList {
-			if item.Label == nil || *item.Label != "DP" {
+		for _, item := range section.FieldList {
+			if item.Label != "DP" {
 				continue
 			}
-			if item.Value == nil {
-				return 0
-			}
-			return parseDPCount(*item.Value)
+			return parseDPCount(item.Value)
 		}
 	}
 	return 0

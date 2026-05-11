@@ -75,6 +75,14 @@ type Play struct {
 	// Outs reflects the total number of outs after this play. Use
 	// successive Plays to derive per-play outs recorded.
 	Outs int
+
+	// Balls is the ball count at the end of this play (0-3).
+	Balls int
+
+	// Strikes is the strike count at the end of this play (0-2; the third
+	// strike ends the at-bat, so a "strikeout" play reports Strikes=3
+	// only because the count is captured before the at-bat resets).
+	Strikes int
 }
 
 // IsDoublePlay reports whether this play was officially scored as a

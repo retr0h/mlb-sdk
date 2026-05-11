@@ -54,8 +54,8 @@ const standingsHappyBody = `{
 func TestStandings_Division(t *testing.T) {
 	st := standingsFromGen(nil) // nil → empty Standings
 	full := &Standings{Records: []DivisionStandings{
-		{DivisionID: 200},
-		{DivisionID: 204},
+		{Division: Ref{ID: 200}},
+		{Division: Ref{ID: 204}},
 	}}
 
 	cases := []struct {
@@ -76,11 +76,11 @@ func TestStandings_Division(t *testing.T) {
 			if (got != nil) != c.wantOk {
 				t.Fatalf("Division(%d) ok=%v, want %v", c.divisionID, got != nil, c.wantOk)
 			}
-			if got != nil && got.DivisionID != c.wantID {
+			if got != nil && got.Division.ID != c.wantID {
 				t.Errorf(
-					"Division(%d).DivisionID = %d, want %d",
+					"Division(%d).Division.ID = %d, want %d",
 					c.divisionID,
-					got.DivisionID,
+					got.Division.ID,
 					c.wantID,
 				)
 			}
@@ -253,7 +253,17 @@ func TestClient_Standings(t *testing.T) {
 				t.Errorf("len(Records) = %d, want %d", got, c.wantNumDivs)
 			}
 			if c.wantWins > 0 {
-				tr := st.Records[0].Team(LAD)
+				rec := st.Records[0]
+				if rec.League.ID != 104 || rec.League.Link != "/api/v1/league/104" {
+					t.Errorf("League = %+v, want {104 /api/v1/league/104}", rec.League)
+				}
+				if rec.Division.ID != 204 || rec.Division.Link != "/api/v1/divisions/204" {
+					t.Errorf("Division = %+v, want {204 /api/v1/divisions/204}", rec.Division)
+				}
+				if rec.Sport.ID != 1 || rec.Sport.Link != "/api/v1/sports/1" {
+					t.Errorf("Sport = %+v, want {1 /api/v1/sports/1}", rec.Sport)
+				}
+				tr := rec.Team(LAD)
 				if tr == nil {
 					t.Fatal("expected Dodgers in first division")
 				}

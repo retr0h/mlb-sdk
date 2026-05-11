@@ -86,8 +86,13 @@ func gameFromGen(g gen.ScheduleGame) Game {
 	if g.GameDate != nil {
 		out.Date = *g.GameDate
 	}
-	if g.Status != nil && g.Status.AbstractGameState != nil {
-		out.Status = GameStatus(*g.Status.AbstractGameState)
+	if g.Status != nil {
+		if g.Status.AbstractGameState != nil {
+			out.Status = GameStatus(*g.Status.AbstractGameState)
+		}
+		if g.Status.DetailedState != nil {
+			out.DetailedStatus = *g.Status.DetailedState
+		}
 	}
 	if g.Teams != nil {
 		out.Home = teamScoreFromGen(g.Teams.Home)
