@@ -130,6 +130,43 @@ type InfoSection struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// LeagueInfo Rich league record. Used directly by /api/v1/league and embedded in
+// the team payload's `league` and `springLeague` fields. Many fields
+// are only populated when the API hydrates the league sub-object
+// (most embedded references only carry id/name/link).
+type LeagueInfo struct {
+	Abbreviation     *string `json:"abbreviation,omitempty"`
+	Active           *bool   `json:"active,omitempty"`
+	ConferencesInUse *bool   `json:"conferencesInUse,omitempty"`
+	DivisionsInUse   *bool   `json:"divisionsInUse,omitempty"`
+	HasPlayoffPoints *bool   `json:"hasPlayoffPoints,omitempty"`
+	HasSplitSeason   *bool   `json:"hasSplitSeason,omitempty"`
+	HasWildCard      *bool   `json:"hasWildCard,omitempty"`
+	Id               *int    `json:"id,omitempty"`
+	Link             *string `json:"link,omitempty"`
+	Name             *string `json:"name,omitempty"`
+	NameShort        *string `json:"nameShort,omitempty"`
+	NumGames         *int    `json:"numGames,omitempty"`
+	NumTeams         *int    `json:"numTeams,omitempty"`
+	NumWildcardTeams *int    `json:"numWildcardTeams,omitempty"`
+	OrgCode          *string `json:"orgCode,omitempty"`
+	Season           *string `json:"season,omitempty"`
+
+	// SeasonDateInfo One season's metadata. Many fields are optional in older history
+	// rows — pre-divisional eras did not have wildcards, all-star breaks,
+	// or post-season windows recorded.
+	SeasonDateInfo *Season `json:"seasonDateInfo,omitempty"`
+
+	// SeasonState e.g. inseason, offseason
+	SeasonState *string `json:"seasonState,omitempty"`
+	SortOrder   *int    `json:"sortOrder,omitempty"`
+
+	// Sport Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Sport                *Ref                   `json:"sport,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // LiveData defines model for LiveData.
 type LiveData struct {
 	Plays                *PlayByPlayResponse    `json:"plays,omitempty"`
@@ -365,6 +402,50 @@ type Team struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// TeamInfo Rich team record as returned by /api/v1/teams and /api/v1/teams/{teamId}.
+// Sub-objects (league, division, sport, springLeague, venue) carry
+// only id/name/link until the request hydrates the corresponding key.
+type TeamInfo struct {
+	Abbreviation    *string   `json:"abbreviation,omitempty"`
+	Active          *bool     `json:"active,omitempty"`
+	AllStarStatus   *string   `json:"allStarStatus,omitempty"`
+	ClubName        *string   `json:"clubName,omitempty"`
+	Division        *Division `json:"division,omitempty"`
+	FileCode        *string   `json:"fileCode,omitempty"`
+	FirstYearOfPlay *string   `json:"firstYearOfPlay,omitempty"`
+	FranchiseName   *string   `json:"franchiseName,omitempty"`
+	Id              *int      `json:"id,omitempty"`
+
+	// League Rich league record. Used directly by /api/v1/league and embedded in
+	// the team payload's `league` and `springLeague` fields. Many fields
+	// are only populated when the API hydrates the league sub-object
+	// (most embedded references only carry id/name/link).
+	League       *LeagueInfo `json:"league,omitempty"`
+	Link         *string     `json:"link,omitempty"`
+	LocationName *string     `json:"locationName,omitempty"`
+	Name         *string     `json:"name,omitempty"`
+	Season       *int        `json:"season,omitempty"`
+	ShortName    *string     `json:"shortName,omitempty"`
+
+	// Sport One sport tracked by the MLB Stats API. Covers MLB plus affiliated
+	// minor leagues, college, and independent baseball.
+	Sport *Sport `json:"sport,omitempty"`
+
+	// SpringLeague Rich league record. Used directly by /api/v1/league and embedded in
+	// the team payload's `league` and `springLeague` fields. Many fields
+	// are only populated when the API hydrates the league sub-object
+	// (most embedded references only carry id/name/link).
+	SpringLeague *LeagueInfo `json:"springLeague,omitempty"`
+
+	// SpringVenue Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	SpringVenue          *Ref                   `json:"springVenue,omitempty"`
+	TeamCode             *string                `json:"teamCode,omitempty"`
+	TeamName             *string                `json:"teamName,omitempty"`
+	Venue                *Venue                 `json:"venue,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // TeamRecord One team's slot in a division standings block. Fields like
 // gamesBack, divisionRank, eliminationNumber and winningPercentage
 // are intentionally typed as strings because the MLB API uses "-"
@@ -407,6 +488,12 @@ type TeamStatsBlock struct {
 // TeamStatsResponse defines model for TeamStatsResponse.
 type TeamStatsResponse struct {
 	Stats                *[]StatGroup           `json:"stats,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// TeamsResponse defines model for TeamsResponse.
+type TeamsResponse struct {
+	Teams                *[]TeamInfo            `json:"teams,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -563,6 +650,18 @@ type GetStandingsParams struct {
 	Date *string `form:"date,omitempty" json:"date,omitempty"`
 
 	// Hydrate comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetTeamParams defines parameters for GetTeam.
+type GetTeamParams struct {
+	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Hydrate comma-separated hydrate flags (e.g. league,division,sport,springLeague,venue)
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 
 	// Fields comma-separated field projection
@@ -1732,6 +1831,359 @@ func (a InfoSection) MarshalJSON() ([]byte, error) {
 		object["title"], err = json.Marshal(a.Title)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'title': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LeagueInfo. Returns the specified
+// element and whether it was found
+func (a LeagueInfo) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LeagueInfo
+func (a *LeagueInfo) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LeagueInfo to handle AdditionalProperties
+func (a *LeagueInfo) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["active"]; found {
+		err = json.Unmarshal(raw, &a.Active)
+		if err != nil {
+			return fmt.Errorf("error reading 'active': %w", err)
+		}
+		delete(object, "active")
+	}
+
+	if raw, found := object["conferencesInUse"]; found {
+		err = json.Unmarshal(raw, &a.ConferencesInUse)
+		if err != nil {
+			return fmt.Errorf("error reading 'conferencesInUse': %w", err)
+		}
+		delete(object, "conferencesInUse")
+	}
+
+	if raw, found := object["divisionsInUse"]; found {
+		err = json.Unmarshal(raw, &a.DivisionsInUse)
+		if err != nil {
+			return fmt.Errorf("error reading 'divisionsInUse': %w", err)
+		}
+		delete(object, "divisionsInUse")
+	}
+
+	if raw, found := object["hasPlayoffPoints"]; found {
+		err = json.Unmarshal(raw, &a.HasPlayoffPoints)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasPlayoffPoints': %w", err)
+		}
+		delete(object, "hasPlayoffPoints")
+	}
+
+	if raw, found := object["hasSplitSeason"]; found {
+		err = json.Unmarshal(raw, &a.HasSplitSeason)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasSplitSeason': %w", err)
+		}
+		delete(object, "hasSplitSeason")
+	}
+
+	if raw, found := object["hasWildCard"]; found {
+		err = json.Unmarshal(raw, &a.HasWildCard)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasWildCard': %w", err)
+		}
+		delete(object, "hasWildCard")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["nameShort"]; found {
+		err = json.Unmarshal(raw, &a.NameShort)
+		if err != nil {
+			return fmt.Errorf("error reading 'nameShort': %w", err)
+		}
+		delete(object, "nameShort")
+	}
+
+	if raw, found := object["numGames"]; found {
+		err = json.Unmarshal(raw, &a.NumGames)
+		if err != nil {
+			return fmt.Errorf("error reading 'numGames': %w", err)
+		}
+		delete(object, "numGames")
+	}
+
+	if raw, found := object["numTeams"]; found {
+		err = json.Unmarshal(raw, &a.NumTeams)
+		if err != nil {
+			return fmt.Errorf("error reading 'numTeams': %w", err)
+		}
+		delete(object, "numTeams")
+	}
+
+	if raw, found := object["numWildcardTeams"]; found {
+		err = json.Unmarshal(raw, &a.NumWildcardTeams)
+		if err != nil {
+			return fmt.Errorf("error reading 'numWildcardTeams': %w", err)
+		}
+		delete(object, "numWildcardTeams")
+	}
+
+	if raw, found := object["orgCode"]; found {
+		err = json.Unmarshal(raw, &a.OrgCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'orgCode': %w", err)
+		}
+		delete(object, "orgCode")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["seasonDateInfo"]; found {
+		err = json.Unmarshal(raw, &a.SeasonDateInfo)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonDateInfo': %w", err)
+		}
+		delete(object, "seasonDateInfo")
+	}
+
+	if raw, found := object["seasonState"]; found {
+		err = json.Unmarshal(raw, &a.SeasonState)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonState': %w", err)
+		}
+		delete(object, "seasonState")
+	}
+
+	if raw, found := object["sortOrder"]; found {
+		err = json.Unmarshal(raw, &a.SortOrder)
+		if err != nil {
+			return fmt.Errorf("error reading 'sortOrder': %w", err)
+		}
+		delete(object, "sortOrder")
+	}
+
+	if raw, found := object["sport"]; found {
+		err = json.Unmarshal(raw, &a.Sport)
+		if err != nil {
+			return fmt.Errorf("error reading 'sport': %w", err)
+		}
+		delete(object, "sport")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LeagueInfo to handle AdditionalProperties
+func (a LeagueInfo) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.Active != nil {
+		object["active"], err = json.Marshal(a.Active)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'active': %w", err)
+		}
+	}
+
+	if a.ConferencesInUse != nil {
+		object["conferencesInUse"], err = json.Marshal(a.ConferencesInUse)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'conferencesInUse': %w", err)
+		}
+	}
+
+	if a.DivisionsInUse != nil {
+		object["divisionsInUse"], err = json.Marshal(a.DivisionsInUse)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'divisionsInUse': %w", err)
+		}
+	}
+
+	if a.HasPlayoffPoints != nil {
+		object["hasPlayoffPoints"], err = json.Marshal(a.HasPlayoffPoints)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasPlayoffPoints': %w", err)
+		}
+	}
+
+	if a.HasSplitSeason != nil {
+		object["hasSplitSeason"], err = json.Marshal(a.HasSplitSeason)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasSplitSeason': %w", err)
+		}
+	}
+
+	if a.HasWildCard != nil {
+		object["hasWildCard"], err = json.Marshal(a.HasWildCard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasWildCard': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.NameShort != nil {
+		object["nameShort"], err = json.Marshal(a.NameShort)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nameShort': %w", err)
+		}
+	}
+
+	if a.NumGames != nil {
+		object["numGames"], err = json.Marshal(a.NumGames)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numGames': %w", err)
+		}
+	}
+
+	if a.NumTeams != nil {
+		object["numTeams"], err = json.Marshal(a.NumTeams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numTeams': %w", err)
+		}
+	}
+
+	if a.NumWildcardTeams != nil {
+		object["numWildcardTeams"], err = json.Marshal(a.NumWildcardTeams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numWildcardTeams': %w", err)
+		}
+	}
+
+	if a.OrgCode != nil {
+		object["orgCode"], err = json.Marshal(a.OrgCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'orgCode': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.SeasonDateInfo != nil {
+		object["seasonDateInfo"], err = json.Marshal(a.SeasonDateInfo)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonDateInfo': %w", err)
+		}
+	}
+
+	if a.SeasonState != nil {
+		object["seasonState"], err = json.Marshal(a.SeasonState)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonState': %w", err)
+		}
+	}
+
+	if a.SortOrder != nil {
+		object["sortOrder"], err = json.Marshal(a.SortOrder)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sortOrder': %w", err)
+		}
+	}
+
+	if a.Sport != nil {
+		object["sport"], err = json.Marshal(a.Sport)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sport': %w", err)
 		}
 	}
 
@@ -4088,6 +4540,374 @@ func (a Team) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for TeamInfo. Returns the specified
+// element and whether it was found
+func (a TeamInfo) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for TeamInfo
+func (a *TeamInfo) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for TeamInfo to handle AdditionalProperties
+func (a *TeamInfo) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["active"]; found {
+		err = json.Unmarshal(raw, &a.Active)
+		if err != nil {
+			return fmt.Errorf("error reading 'active': %w", err)
+		}
+		delete(object, "active")
+	}
+
+	if raw, found := object["allStarStatus"]; found {
+		err = json.Unmarshal(raw, &a.AllStarStatus)
+		if err != nil {
+			return fmt.Errorf("error reading 'allStarStatus': %w", err)
+		}
+		delete(object, "allStarStatus")
+	}
+
+	if raw, found := object["clubName"]; found {
+		err = json.Unmarshal(raw, &a.ClubName)
+		if err != nil {
+			return fmt.Errorf("error reading 'clubName': %w", err)
+		}
+		delete(object, "clubName")
+	}
+
+	if raw, found := object["division"]; found {
+		err = json.Unmarshal(raw, &a.Division)
+		if err != nil {
+			return fmt.Errorf("error reading 'division': %w", err)
+		}
+		delete(object, "division")
+	}
+
+	if raw, found := object["fileCode"]; found {
+		err = json.Unmarshal(raw, &a.FileCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'fileCode': %w", err)
+		}
+		delete(object, "fileCode")
+	}
+
+	if raw, found := object["firstYearOfPlay"]; found {
+		err = json.Unmarshal(raw, &a.FirstYearOfPlay)
+		if err != nil {
+			return fmt.Errorf("error reading 'firstYearOfPlay': %w", err)
+		}
+		delete(object, "firstYearOfPlay")
+	}
+
+	if raw, found := object["franchiseName"]; found {
+		err = json.Unmarshal(raw, &a.FranchiseName)
+		if err != nil {
+			return fmt.Errorf("error reading 'franchiseName': %w", err)
+		}
+		delete(object, "franchiseName")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["league"]; found {
+		err = json.Unmarshal(raw, &a.League)
+		if err != nil {
+			return fmt.Errorf("error reading 'league': %w", err)
+		}
+		delete(object, "league")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["locationName"]; found {
+		err = json.Unmarshal(raw, &a.LocationName)
+		if err != nil {
+			return fmt.Errorf("error reading 'locationName': %w", err)
+		}
+		delete(object, "locationName")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["shortName"]; found {
+		err = json.Unmarshal(raw, &a.ShortName)
+		if err != nil {
+			return fmt.Errorf("error reading 'shortName': %w", err)
+		}
+		delete(object, "shortName")
+	}
+
+	if raw, found := object["sport"]; found {
+		err = json.Unmarshal(raw, &a.Sport)
+		if err != nil {
+			return fmt.Errorf("error reading 'sport': %w", err)
+		}
+		delete(object, "sport")
+	}
+
+	if raw, found := object["springLeague"]; found {
+		err = json.Unmarshal(raw, &a.SpringLeague)
+		if err != nil {
+			return fmt.Errorf("error reading 'springLeague': %w", err)
+		}
+		delete(object, "springLeague")
+	}
+
+	if raw, found := object["springVenue"]; found {
+		err = json.Unmarshal(raw, &a.SpringVenue)
+		if err != nil {
+			return fmt.Errorf("error reading 'springVenue': %w", err)
+		}
+		delete(object, "springVenue")
+	}
+
+	if raw, found := object["teamCode"]; found {
+		err = json.Unmarshal(raw, &a.TeamCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'teamCode': %w", err)
+		}
+		delete(object, "teamCode")
+	}
+
+	if raw, found := object["teamName"]; found {
+		err = json.Unmarshal(raw, &a.TeamName)
+		if err != nil {
+			return fmt.Errorf("error reading 'teamName': %w", err)
+		}
+		delete(object, "teamName")
+	}
+
+	if raw, found := object["venue"]; found {
+		err = json.Unmarshal(raw, &a.Venue)
+		if err != nil {
+			return fmt.Errorf("error reading 'venue': %w", err)
+		}
+		delete(object, "venue")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for TeamInfo to handle AdditionalProperties
+func (a TeamInfo) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.Active != nil {
+		object["active"], err = json.Marshal(a.Active)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'active': %w", err)
+		}
+	}
+
+	if a.AllStarStatus != nil {
+		object["allStarStatus"], err = json.Marshal(a.AllStarStatus)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'allStarStatus': %w", err)
+		}
+	}
+
+	if a.ClubName != nil {
+		object["clubName"], err = json.Marshal(a.ClubName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'clubName': %w", err)
+		}
+	}
+
+	if a.Division != nil {
+		object["division"], err = json.Marshal(a.Division)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'division': %w", err)
+		}
+	}
+
+	if a.FileCode != nil {
+		object["fileCode"], err = json.Marshal(a.FileCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fileCode': %w", err)
+		}
+	}
+
+	if a.FirstYearOfPlay != nil {
+		object["firstYearOfPlay"], err = json.Marshal(a.FirstYearOfPlay)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'firstYearOfPlay': %w", err)
+		}
+	}
+
+	if a.FranchiseName != nil {
+		object["franchiseName"], err = json.Marshal(a.FranchiseName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'franchiseName': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.League != nil {
+		object["league"], err = json.Marshal(a.League)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'league': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.LocationName != nil {
+		object["locationName"], err = json.Marshal(a.LocationName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'locationName': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.ShortName != nil {
+		object["shortName"], err = json.Marshal(a.ShortName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'shortName': %w", err)
+		}
+	}
+
+	if a.Sport != nil {
+		object["sport"], err = json.Marshal(a.Sport)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sport': %w", err)
+		}
+	}
+
+	if a.SpringLeague != nil {
+		object["springLeague"], err = json.Marshal(a.SpringLeague)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'springLeague': %w", err)
+		}
+	}
+
+	if a.SpringVenue != nil {
+		object["springVenue"], err = json.Marshal(a.SpringVenue)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'springVenue': %w", err)
+		}
+	}
+
+	if a.TeamCode != nil {
+		object["teamCode"], err = json.Marshal(a.TeamCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'teamCode': %w", err)
+		}
+	}
+
+	if a.TeamName != nil {
+		object["teamName"], err = json.Marshal(a.TeamName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'teamName': %w", err)
+		}
+	}
+
+	if a.Venue != nil {
+		object["venue"], err = json.Marshal(a.Venue)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'venue': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for TeamRecord. Returns the specified
 // element and whether it was found
 func (a TeamRecord) Get(fieldName string) (value interface{}, found bool) {
@@ -4610,6 +5430,74 @@ func (a TeamStatsResponse) MarshalJSON() ([]byte, error) {
 		object["stats"], err = json.Marshal(a.Stats)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'stats': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for TeamsResponse. Returns the specified
+// element and whether it was found
+func (a TeamsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for TeamsResponse
+func (a *TeamsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for TeamsResponse to handle AdditionalProperties
+func (a *TeamsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["teams"]; found {
+		err = json.Unmarshal(raw, &a.Teams)
+		if err != nil {
+			return fmt.Errorf("error reading 'teams': %w", err)
+		}
+		delete(object, "teams")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for TeamsResponse to handle AdditionalProperties
+func (a TeamsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Teams != nil {
+		object["teams"], err = json.Marshal(a.Teams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'teams': %w", err)
 		}
 	}
 
@@ -5553,6 +6441,9 @@ type ClientInterface interface {
 	// GetStandings request
 	GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTeam request
+	GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTeamStats request
 	GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -5670,6 +6561,18 @@ func (c *Client) GetSports(ctx context.Context, params *GetSportsParams, reqEdit
 
 func (c *Client) GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStandingsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamRequest(c.Server, teamId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -6447,6 +7350,103 @@ func NewGetStandingsRequest(server string, params *GetStandingsParams) (*http.Re
 	return req, nil
 }
 
+// NewGetTeamRequest generates requests for GetTeam
+func NewGetTeamRequest(server string, teamId int, params *GetTeamParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "teamId", teamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/teams/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamStatsRequest generates requests for GetTeamStats
 func NewGetTeamStatsRequest(server string, teamId int, params *GetTeamStatsParams) (*http.Request, error) {
 	var err error
@@ -6689,6 +7689,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetStandingsWithResponse request
 	GetStandingsWithResponse(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*GetStandingsResponse, error)
+
+	// GetTeamWithResponse request
+	GetTeamWithResponse(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
 
 	// GetTeamStatsWithResponse request
 	GetTeamStatsWithResponse(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*GetTeamStatsResponse, error)
@@ -6997,6 +8000,36 @@ func (r GetStandingsResponse) ContentType() string {
 	return ""
 }
 
+type GetTeamResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TeamsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetTeamStatsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -7145,6 +8178,15 @@ func (c *ClientWithResponses) GetStandingsWithResponse(ctx context.Context, para
 		return nil, err
 	}
 	return ParseGetStandingsResponse(rsp)
+}
+
+// GetTeamWithResponse request returning *GetTeamResponse
+func (c *ClientWithResponses) GetTeamWithResponse(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*GetTeamResponse, error) {
+	rsp, err := c.GetTeam(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamResponse(rsp)
 }
 
 // GetTeamStatsWithResponse request returning *GetTeamStatsResponse
@@ -7415,6 +8457,32 @@ func ParseGetStandingsResponse(rsp *http.Response) (*GetStandingsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest StandingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamResponse parses an HTTP response from a GetTeamWithResponse call
+func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TeamsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

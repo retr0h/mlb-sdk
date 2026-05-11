@@ -187,6 +187,28 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DivisionsResponse" }
 
+  /api/v1/teams/{teamId}:
+    get:
+      operationId: getTeam
+      summary: Single team by id
+      description: |
+        Returns metadata for one team. Hydrate sub-objects (league, division,
+        sport, springLeague, venue) by passing them in the hydrate query
+        param. The response is `{"teams": [<one entry>]}`; the SDK collapses
+        the wrapper and maps an empty array to ErrNotFound.
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags (e.g. league,division,sport,springLeague,venue)" }
+        - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Team
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamsResponse" }
+
   /api/v1/sports:
     get:
       operationId: getSports
@@ -667,3 +689,71 @@ components:
         sports:
           type: array
           items: { $ref: "#/components/schemas/Sport" }
+
+    LeagueInfo:
+      type: object
+      additionalProperties: true
+      description: |
+        Rich league record. Used directly by /api/v1/league and embedded in
+        the team payload's `league` and `springLeague` fields. Many fields
+        are only populated when the API hydrates the league sub-object
+        (most embedded references only carry id/name/link).
+      properties:
+        id:                { type: integer }
+        name:              { type: string }
+        link:              { type: string }
+        abbreviation:      { type: string }
+        nameShort:         { type: string }
+        seasonState:       { type: string, description: "e.g. inseason, offseason" }
+        hasWildCard:       { type: boolean }
+        hasSplitSeason:    { type: boolean }
+        numGames:          { type: integer }
+        hasPlayoffPoints:  { type: boolean }
+        numTeams:          { type: integer }
+        numWildcardTeams:  { type: integer }
+        seasonDateInfo:    { $ref: "#/components/schemas/Season" }
+        season:            { type: string }
+        orgCode:           { type: string }
+        conferencesInUse:  { type: boolean }
+        divisionsInUse:    { type: boolean }
+        sport:             { $ref: "#/components/schemas/Ref" }
+        sortOrder:         { type: integer }
+        active:            { type: boolean }
+
+    TeamInfo:
+      type: object
+      additionalProperties: true
+      description: |
+        Rich team record as returned by /api/v1/teams and /api/v1/teams/{teamId}.
+        Sub-objects (league, division, sport, springLeague, venue) carry
+        only id/name/link until the request hydrates the corresponding key.
+      properties:
+        id:              { type: integer }
+        name:            { type: string }
+        link:            { type: string }
+        season:          { type: integer }
+        venue:           { $ref: "#/components/schemas/Venue" }
+        springLeague:    { $ref: "#/components/schemas/LeagueInfo" }
+        springVenue:     { $ref: "#/components/schemas/Ref" }
+        teamCode:        { type: string }
+        fileCode:        { type: string }
+        abbreviation:    { type: string }
+        teamName:        { type: string }
+        locationName:    { type: string }
+        firstYearOfPlay: { type: string }
+        league:          { $ref: "#/components/schemas/LeagueInfo" }
+        division:        { $ref: "#/components/schemas/Division" }
+        sport:           { $ref: "#/components/schemas/Sport" }
+        shortName:       { type: string }
+        franchiseName:   { type: string }
+        clubName:        { type: string }
+        active:          { type: boolean }
+        allStarStatus:   { type: string }
+
+    TeamsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        teams:
+          type: array
+          items: { $ref: "#/components/schemas/TeamInfo" }
