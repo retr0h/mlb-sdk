@@ -71,6 +71,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "b06295346fbd787aab38296ec8ca8aa8f717a96f61bb130d3fc2289eb56f334f",
       "source": "ingest skill"
+    },
+    "season": {
+      "method": "Client.Season",
+      "operationId": "getSeason",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "badb23ca392bcc4386c126976c9063b18bb36183776c6ad4983e0fc8e4e45c39",
+      "source": "ingest skill"
     }
   }
 }

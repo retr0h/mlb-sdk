@@ -127,6 +127,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SeasonsResponse" }
 
+  /api/v1/seasons/{seasonId}:
+    get:
+      operationId: getSeason
+      summary: Single season by id
+      description: |
+        Returns metadata for one season. sportId is required by the MLB API
+        (and encoded as `required_params: [["sportId"]]` in toddrob99). The
+        response is a `{"seasons": [...]}` array of one element; the SDK
+        collapses it to *Season and maps an empty array to ErrNotFound.
+      parameters:
+        - { name: seasonId, in: path, required: true, schema: { type: string }, description: "e.g. 2024" }
+        - { name: sportId, in: query, required: true, schema: { type: integer }, description: "1 = MLB" }
+        - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Season
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SeasonsResponse" }
+
   /api/v1/seasons/all:
     get:
       operationId: getAllSeasons
