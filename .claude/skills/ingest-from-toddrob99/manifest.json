@@ -85,6 +85,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "c641b1b08cbca797d3bdbc51891091c3c7d0ef19ab31a13396515fcfbb0f56bb",
       "source": "ingest skill"
+    },
+    "teams": {
+      "method": "Client.Teams",
+      "operationId": "getTeams",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "a11adb61e06fa121eb7372b1867b319daac270591c33ab1b889b9ba092575dd5",
+      "source": "ingest skill"
     }
   }
 }

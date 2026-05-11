@@ -656,6 +656,28 @@ type GetStandingsParams struct {
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetTeamsParams defines parameters for GetTeams.
+type GetTeamsParams struct {
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// ActiveStatus ACTIVE | INACTIVE | BOTH
+	ActiveStatus *string `form:"activeStatus,omitempty" json:"activeStatus,omitempty"`
+
+	// LeagueIds comma-separated league ids
+	LeagueIds *string `form:"leagueIds,omitempty" json:"leagueIds,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// SportIds comma-separated sport ids
+	SportIds *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+
+	// GameType R | S | E | A | D | F | L | W
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	Hydrate  *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetTeamParams defines parameters for GetTeam.
 type GetTeamParams struct {
 	Season  *int `form:"season,omitempty" json:"season,omitempty"`
@@ -6441,6 +6463,9 @@ type ClientInterface interface {
 	// GetStandings request
 	GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTeams request
+	GetTeams(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTeam request
 	GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -6561,6 +6586,18 @@ func (c *Client) GetSports(ctx context.Context, params *GetSportsParams, reqEdit
 
 func (c *Client) GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStandingsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeams(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -7350,6 +7387,144 @@ func NewGetStandingsRequest(server string, params *GetStandingsParams) (*http.Re
 	return req, nil
 }
 
+// NewGetTeamsRequest generates requests for GetTeams
+func NewGetTeamsRequest(server string, params *GetTeamsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/teams")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ActiveStatus != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "activeStatus", *params.ActiveStatus, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueIds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueIds", *params.LeagueIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportIds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportIds", *params.SportIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamRequest generates requests for GetTeam
 func NewGetTeamRequest(server string, teamId int, params *GetTeamParams) (*http.Request, error) {
 	var err error
@@ -7690,6 +7865,9 @@ type ClientWithResponsesInterface interface {
 	// GetStandingsWithResponse request
 	GetStandingsWithResponse(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*GetStandingsResponse, error)
 
+	// GetTeamsWithResponse request
+	GetTeamsWithResponse(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
+
 	// GetTeamWithResponse request
 	GetTeamWithResponse(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
 
@@ -8000,6 +8178,36 @@ func (r GetStandingsResponse) ContentType() string {
 	return ""
 }
 
+type GetTeamsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TeamsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -8178,6 +8386,15 @@ func (c *ClientWithResponses) GetStandingsWithResponse(ctx context.Context, para
 		return nil, err
 	}
 	return ParseGetStandingsResponse(rsp)
+}
+
+// GetTeamsWithResponse request returning *GetTeamsResponse
+func (c *ClientWithResponses) GetTeamsWithResponse(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error) {
+	rsp, err := c.GetTeams(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamsResponse(rsp)
 }
 
 // GetTeamWithResponse request returning *GetTeamResponse
@@ -8457,6 +8674,32 @@ func ParseGetStandingsResponse(rsp *http.Response) (*GetStandingsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest StandingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamsResponse parses an HTTP response from a GetTeamsWithResponse call
+func ParseGetTeamsResponse(rsp *http.Response) (*GetTeamsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TeamsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

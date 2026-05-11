@@ -187,6 +187,30 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DivisionsResponse" }
 
+  /api/v1/teams:
+    get:
+      operationId: getTeams
+      summary: List teams across sports / leagues / seasons
+      description: |
+        Returns every team the MLB API tracks when called with no filters.
+        Filter by sport, league(s), and season. Hydrate sub-objects via
+        the hydrate query parameter as documented on /teams/{teamId}.
+      parameters:
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: activeStatus, in: query, schema: { type: string }, description: "ACTIVE | INACTIVE | BOTH" }
+        - { name: leagueIds, in: query, schema: { type: string }, description: "comma-separated league ids" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: sportIds, in: query, schema: { type: string }, description: "comma-separated sport ids" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R | S | E | A | D | F | L | W" }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Teams
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamsResponse" }
+
   /api/v1/teams/{teamId}:
     get:
       operationId: getTeam

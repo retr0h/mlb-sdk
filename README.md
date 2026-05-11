@@ -40,6 +40,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/seasons`                     | [Client.Seasons][d-seas]      | [seasons.go](examples/seasons.go)        |
 | `/api/v1/seasons/{seasonId}`          | [Client.Season][d-season]     | [season.go](examples/season.go)          |
 | `/api/v1/sports`                      | [Client.Sports][d-sports]     | [sports.go](examples/sports.go)          |
+| `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
 | `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
@@ -102,3 +103,4 @@ The [MIT][] License.
 [d-season]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Season
 [d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports
 [d-team]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
+[d-teams]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Teams
