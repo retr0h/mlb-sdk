@@ -43,6 +43,13 @@
       "ingestedOn": "2026-05-10",
       "upstreamSha": "3b9fa94b3a9d9c7b721d87b0afad47a04c05dbebe304f6825041b45054ac92df",
       "source": "ingest-from-toddrob99 skill — first endpoint ported via the skill"
+    },
+    "venue": {
+      "method": "Client.Venue",
+      "operationId": "getVenue",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "6569400f0b3a844ea702ed0c489bb2cf596d24bf24aa0283af0d2aafb3e2d680",
+      "source": "ingest skill"
     }
   }
 }

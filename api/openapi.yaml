@@ -104,6 +104,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/TeamStatsResponse" }
 
+  /api/v1/venues/{venueId}:
+    get:
+      operationId: getVenue
+      summary: Single venue by id
+      description: |
+        Returns metadata for a single venue. The MLB API also accepts a
+        comma-separated `venueIds` query parameter at `/api/v1/venues`, but
+        this SDK exposes the path-based single-object lookup form.
+      parameters:
+        - { name: venueId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags (e.g. location,fieldInfo,timezone)" }
+        - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Venue
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VenueResponse" }
+
 components:
   schemas:
     Team:
@@ -386,3 +406,78 @@ components:
         records:
           type: array
           items: { $ref: "#/components/schemas/DivisionStandings" }
+
+    VenueCoordinates:
+      type: object
+      additionalProperties: true
+      properties:
+        latitude:  { type: number, format: double }
+        longitude: { type: number, format: double }
+
+    VenueLocation:
+      type: object
+      additionalProperties: true
+      description: |
+        Postal address and geographic placement of a venue. Only present in
+        responses that hydrate `location`.
+      properties:
+        address1:           { type: string }
+        address2:           { type: string }
+        city:               { type: string }
+        state:              { type: string }
+        stateAbbrev:        { type: string }
+        postalCode:         { type: string }
+        defaultCoordinates: { $ref: "#/components/schemas/VenueCoordinates" }
+        azimuthAngle:       { type: number, format: double }
+        elevation:          { type: integer }
+        country:            { type: string }
+        phone:              { type: string }
+
+    VenueTimeZone:
+      type: object
+      additionalProperties: true
+      description: |
+        Local time-zone of the venue. Only present in responses that hydrate
+        `timezone`.
+      properties:
+        tz:               { type: string }
+        id:               { type: string }
+        offset:           { type: integer }
+        offsetAtGameTime: { type: integer }
+
+    VenueFieldInfo:
+      type: object
+      additionalProperties: true
+      description: |
+        Field dimensions and surface details. Only present in responses that
+        hydrate `fieldInfo`.
+      properties:
+        capacity:    { type: integer }
+        turfType:    { type: string }
+        roofType:    { type: string }
+        leftLine:    { type: integer }
+        leftCenter:  { type: integer }
+        center:      { type: integer }
+        rightCenter: { type: integer }
+        rightLine:   { type: integer }
+
+    Venue:
+      type: object
+      additionalProperties: true
+      properties:
+        id:        { type: integer }
+        name:      { type: string }
+        link:      { type: string }
+        active:    { type: boolean }
+        season:    { type: string }
+        location:  { $ref: "#/components/schemas/VenueLocation" }
+        timeZone:  { $ref: "#/components/schemas/VenueTimeZone" }
+        fieldInfo: { $ref: "#/components/schemas/VenueFieldInfo" }
+
+    VenueResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        venues:
+          type: array
+          items: { $ref: "#/components/schemas/Venue" }

@@ -295,6 +295,82 @@ type TeamStatsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Venue defines model for Venue.
+type Venue struct {
+	Active *bool `json:"active,omitempty"`
+
+	// FieldInfo Field dimensions and surface details. Only present in responses that
+	// hydrate `fieldInfo`.
+	FieldInfo *VenueFieldInfo `json:"fieldInfo,omitempty"`
+	Id        *int            `json:"id,omitempty"`
+	Link      *string         `json:"link,omitempty"`
+
+	// Location Postal address and geographic placement of a venue. Only present in
+	// responses that hydrate `location`.
+	Location *VenueLocation `json:"location,omitempty"`
+	Name     *string        `json:"name,omitempty"`
+	Season   *string        `json:"season,omitempty"`
+
+	// TimeZone Local time-zone of the venue. Only present in responses that hydrate
+	// `timezone`.
+	TimeZone             *VenueTimeZone         `json:"timeZone,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// VenueCoordinates defines model for VenueCoordinates.
+type VenueCoordinates struct {
+	Latitude             *float64               `json:"latitude,omitempty"`
+	Longitude            *float64               `json:"longitude,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// VenueFieldInfo Field dimensions and surface details. Only present in responses that
+// hydrate `fieldInfo`.
+type VenueFieldInfo struct {
+	Capacity             *int                   `json:"capacity,omitempty"`
+	Center               *int                   `json:"center,omitempty"`
+	LeftCenter           *int                   `json:"leftCenter,omitempty"`
+	LeftLine             *int                   `json:"leftLine,omitempty"`
+	RightCenter          *int                   `json:"rightCenter,omitempty"`
+	RightLine            *int                   `json:"rightLine,omitempty"`
+	RoofType             *string                `json:"roofType,omitempty"`
+	TurfType             *string                `json:"turfType,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// VenueLocation Postal address and geographic placement of a venue. Only present in
+// responses that hydrate `location`.
+type VenueLocation struct {
+	Address1             *string                `json:"address1,omitempty"`
+	Address2             *string                `json:"address2,omitempty"`
+	AzimuthAngle         *float64               `json:"azimuthAngle,omitempty"`
+	City                 *string                `json:"city,omitempty"`
+	Country              *string                `json:"country,omitempty"`
+	DefaultCoordinates   *VenueCoordinates      `json:"defaultCoordinates,omitempty"`
+	Elevation            *int                   `json:"elevation,omitempty"`
+	Phone                *string                `json:"phone,omitempty"`
+	PostalCode           *string                `json:"postalCode,omitempty"`
+	State                *string                `json:"state,omitempty"`
+	StateAbbrev          *string                `json:"stateAbbrev,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// VenueResponse defines model for VenueResponse.
+type VenueResponse struct {
+	Venues               *[]Venue               `json:"venues,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// VenueTimeZone Local time-zone of the venue. Only present in responses that hydrate
+// `timezone`.
+type VenueTimeZone struct {
+	Id                   *string                `json:"id,omitempty"`
+	Offset               *int                   `json:"offset,omitempty"`
+	OffsetAtGameTime     *int                   `json:"offsetAtGameTime,omitempty"`
+	Tz                   *string                `json:"tz,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // GetScheduleParams defines parameters for GetSchedule.
 type GetScheduleParams struct {
 	// SportId 1 = MLB
@@ -340,6 +416,17 @@ type GetTeamStatsParams struct {
 
 	// Group hitting | pitching | fielding
 	Group *string `form:"group,omitempty" json:"group,omitempty"`
+}
+
+// GetVenueParams defines parameters for GetVenue.
+type GetVenueParams struct {
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Hydrate comma-separated hydrate flags (e.g. location,fieldInfo,timezone)
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // Getter for additional properties for BattingStats. Returns the specified
@@ -3410,6 +3497,834 @@ func (a TeamStatsResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Venue. Returns the specified
+// element and whether it was found
+func (a Venue) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Venue
+func (a *Venue) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Venue to handle AdditionalProperties
+func (a *Venue) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["active"]; found {
+		err = json.Unmarshal(raw, &a.Active)
+		if err != nil {
+			return fmt.Errorf("error reading 'active': %w", err)
+		}
+		delete(object, "active")
+	}
+
+	if raw, found := object["fieldInfo"]; found {
+		err = json.Unmarshal(raw, &a.FieldInfo)
+		if err != nil {
+			return fmt.Errorf("error reading 'fieldInfo': %w", err)
+		}
+		delete(object, "fieldInfo")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["location"]; found {
+		err = json.Unmarshal(raw, &a.Location)
+		if err != nil {
+			return fmt.Errorf("error reading 'location': %w", err)
+		}
+		delete(object, "location")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["timeZone"]; found {
+		err = json.Unmarshal(raw, &a.TimeZone)
+		if err != nil {
+			return fmt.Errorf("error reading 'timeZone': %w", err)
+		}
+		delete(object, "timeZone")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Venue to handle AdditionalProperties
+func (a Venue) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Active != nil {
+		object["active"], err = json.Marshal(a.Active)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'active': %w", err)
+		}
+	}
+
+	if a.FieldInfo != nil {
+		object["fieldInfo"], err = json.Marshal(a.FieldInfo)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fieldInfo': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Location != nil {
+		object["location"], err = json.Marshal(a.Location)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'location': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.TimeZone != nil {
+		object["timeZone"], err = json.Marshal(a.TimeZone)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'timeZone': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for VenueCoordinates. Returns the specified
+// element and whether it was found
+func (a VenueCoordinates) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for VenueCoordinates
+func (a *VenueCoordinates) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for VenueCoordinates to handle AdditionalProperties
+func (a *VenueCoordinates) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["latitude"]; found {
+		err = json.Unmarshal(raw, &a.Latitude)
+		if err != nil {
+			return fmt.Errorf("error reading 'latitude': %w", err)
+		}
+		delete(object, "latitude")
+	}
+
+	if raw, found := object["longitude"]; found {
+		err = json.Unmarshal(raw, &a.Longitude)
+		if err != nil {
+			return fmt.Errorf("error reading 'longitude': %w", err)
+		}
+		delete(object, "longitude")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for VenueCoordinates to handle AdditionalProperties
+func (a VenueCoordinates) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Latitude != nil {
+		object["latitude"], err = json.Marshal(a.Latitude)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'latitude': %w", err)
+		}
+	}
+
+	if a.Longitude != nil {
+		object["longitude"], err = json.Marshal(a.Longitude)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'longitude': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for VenueFieldInfo. Returns the specified
+// element and whether it was found
+func (a VenueFieldInfo) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for VenueFieldInfo
+func (a *VenueFieldInfo) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for VenueFieldInfo to handle AdditionalProperties
+func (a *VenueFieldInfo) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["capacity"]; found {
+		err = json.Unmarshal(raw, &a.Capacity)
+		if err != nil {
+			return fmt.Errorf("error reading 'capacity': %w", err)
+		}
+		delete(object, "capacity")
+	}
+
+	if raw, found := object["center"]; found {
+		err = json.Unmarshal(raw, &a.Center)
+		if err != nil {
+			return fmt.Errorf("error reading 'center': %w", err)
+		}
+		delete(object, "center")
+	}
+
+	if raw, found := object["leftCenter"]; found {
+		err = json.Unmarshal(raw, &a.LeftCenter)
+		if err != nil {
+			return fmt.Errorf("error reading 'leftCenter': %w", err)
+		}
+		delete(object, "leftCenter")
+	}
+
+	if raw, found := object["leftLine"]; found {
+		err = json.Unmarshal(raw, &a.LeftLine)
+		if err != nil {
+			return fmt.Errorf("error reading 'leftLine': %w", err)
+		}
+		delete(object, "leftLine")
+	}
+
+	if raw, found := object["rightCenter"]; found {
+		err = json.Unmarshal(raw, &a.RightCenter)
+		if err != nil {
+			return fmt.Errorf("error reading 'rightCenter': %w", err)
+		}
+		delete(object, "rightCenter")
+	}
+
+	if raw, found := object["rightLine"]; found {
+		err = json.Unmarshal(raw, &a.RightLine)
+		if err != nil {
+			return fmt.Errorf("error reading 'rightLine': %w", err)
+		}
+		delete(object, "rightLine")
+	}
+
+	if raw, found := object["roofType"]; found {
+		err = json.Unmarshal(raw, &a.RoofType)
+		if err != nil {
+			return fmt.Errorf("error reading 'roofType': %w", err)
+		}
+		delete(object, "roofType")
+	}
+
+	if raw, found := object["turfType"]; found {
+		err = json.Unmarshal(raw, &a.TurfType)
+		if err != nil {
+			return fmt.Errorf("error reading 'turfType': %w", err)
+		}
+		delete(object, "turfType")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for VenueFieldInfo to handle AdditionalProperties
+func (a VenueFieldInfo) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Capacity != nil {
+		object["capacity"], err = json.Marshal(a.Capacity)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'capacity': %w", err)
+		}
+	}
+
+	if a.Center != nil {
+		object["center"], err = json.Marshal(a.Center)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'center': %w", err)
+		}
+	}
+
+	if a.LeftCenter != nil {
+		object["leftCenter"], err = json.Marshal(a.LeftCenter)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leftCenter': %w", err)
+		}
+	}
+
+	if a.LeftLine != nil {
+		object["leftLine"], err = json.Marshal(a.LeftLine)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leftLine': %w", err)
+		}
+	}
+
+	if a.RightCenter != nil {
+		object["rightCenter"], err = json.Marshal(a.RightCenter)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rightCenter': %w", err)
+		}
+	}
+
+	if a.RightLine != nil {
+		object["rightLine"], err = json.Marshal(a.RightLine)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rightLine': %w", err)
+		}
+	}
+
+	if a.RoofType != nil {
+		object["roofType"], err = json.Marshal(a.RoofType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'roofType': %w", err)
+		}
+	}
+
+	if a.TurfType != nil {
+		object["turfType"], err = json.Marshal(a.TurfType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'turfType': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for VenueLocation. Returns the specified
+// element and whether it was found
+func (a VenueLocation) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for VenueLocation
+func (a *VenueLocation) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for VenueLocation to handle AdditionalProperties
+func (a *VenueLocation) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["address1"]; found {
+		err = json.Unmarshal(raw, &a.Address1)
+		if err != nil {
+			return fmt.Errorf("error reading 'address1': %w", err)
+		}
+		delete(object, "address1")
+	}
+
+	if raw, found := object["address2"]; found {
+		err = json.Unmarshal(raw, &a.Address2)
+		if err != nil {
+			return fmt.Errorf("error reading 'address2': %w", err)
+		}
+		delete(object, "address2")
+	}
+
+	if raw, found := object["azimuthAngle"]; found {
+		err = json.Unmarshal(raw, &a.AzimuthAngle)
+		if err != nil {
+			return fmt.Errorf("error reading 'azimuthAngle': %w", err)
+		}
+		delete(object, "azimuthAngle")
+	}
+
+	if raw, found := object["city"]; found {
+		err = json.Unmarshal(raw, &a.City)
+		if err != nil {
+			return fmt.Errorf("error reading 'city': %w", err)
+		}
+		delete(object, "city")
+	}
+
+	if raw, found := object["country"]; found {
+		err = json.Unmarshal(raw, &a.Country)
+		if err != nil {
+			return fmt.Errorf("error reading 'country': %w", err)
+		}
+		delete(object, "country")
+	}
+
+	if raw, found := object["defaultCoordinates"]; found {
+		err = json.Unmarshal(raw, &a.DefaultCoordinates)
+		if err != nil {
+			return fmt.Errorf("error reading 'defaultCoordinates': %w", err)
+		}
+		delete(object, "defaultCoordinates")
+	}
+
+	if raw, found := object["elevation"]; found {
+		err = json.Unmarshal(raw, &a.Elevation)
+		if err != nil {
+			return fmt.Errorf("error reading 'elevation': %w", err)
+		}
+		delete(object, "elevation")
+	}
+
+	if raw, found := object["phone"]; found {
+		err = json.Unmarshal(raw, &a.Phone)
+		if err != nil {
+			return fmt.Errorf("error reading 'phone': %w", err)
+		}
+		delete(object, "phone")
+	}
+
+	if raw, found := object["postalCode"]; found {
+		err = json.Unmarshal(raw, &a.PostalCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'postalCode': %w", err)
+		}
+		delete(object, "postalCode")
+	}
+
+	if raw, found := object["state"]; found {
+		err = json.Unmarshal(raw, &a.State)
+		if err != nil {
+			return fmt.Errorf("error reading 'state': %w", err)
+		}
+		delete(object, "state")
+	}
+
+	if raw, found := object["stateAbbrev"]; found {
+		err = json.Unmarshal(raw, &a.StateAbbrev)
+		if err != nil {
+			return fmt.Errorf("error reading 'stateAbbrev': %w", err)
+		}
+		delete(object, "stateAbbrev")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for VenueLocation to handle AdditionalProperties
+func (a VenueLocation) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Address1 != nil {
+		object["address1"], err = json.Marshal(a.Address1)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'address1': %w", err)
+		}
+	}
+
+	if a.Address2 != nil {
+		object["address2"], err = json.Marshal(a.Address2)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'address2': %w", err)
+		}
+	}
+
+	if a.AzimuthAngle != nil {
+		object["azimuthAngle"], err = json.Marshal(a.AzimuthAngle)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'azimuthAngle': %w", err)
+		}
+	}
+
+	if a.City != nil {
+		object["city"], err = json.Marshal(a.City)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'city': %w", err)
+		}
+	}
+
+	if a.Country != nil {
+		object["country"], err = json.Marshal(a.Country)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'country': %w", err)
+		}
+	}
+
+	if a.DefaultCoordinates != nil {
+		object["defaultCoordinates"], err = json.Marshal(a.DefaultCoordinates)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'defaultCoordinates': %w", err)
+		}
+	}
+
+	if a.Elevation != nil {
+		object["elevation"], err = json.Marshal(a.Elevation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'elevation': %w", err)
+		}
+	}
+
+	if a.Phone != nil {
+		object["phone"], err = json.Marshal(a.Phone)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'phone': %w", err)
+		}
+	}
+
+	if a.PostalCode != nil {
+		object["postalCode"], err = json.Marshal(a.PostalCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'postalCode': %w", err)
+		}
+	}
+
+	if a.State != nil {
+		object["state"], err = json.Marshal(a.State)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'state': %w", err)
+		}
+	}
+
+	if a.StateAbbrev != nil {
+		object["stateAbbrev"], err = json.Marshal(a.StateAbbrev)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'stateAbbrev': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for VenueResponse. Returns the specified
+// element and whether it was found
+func (a VenueResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for VenueResponse
+func (a *VenueResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for VenueResponse to handle AdditionalProperties
+func (a *VenueResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["venues"]; found {
+		err = json.Unmarshal(raw, &a.Venues)
+		if err != nil {
+			return fmt.Errorf("error reading 'venues': %w", err)
+		}
+		delete(object, "venues")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for VenueResponse to handle AdditionalProperties
+func (a VenueResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Venues != nil {
+		object["venues"], err = json.Marshal(a.Venues)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'venues': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for VenueTimeZone. Returns the specified
+// element and whether it was found
+func (a VenueTimeZone) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for VenueTimeZone
+func (a *VenueTimeZone) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for VenueTimeZone to handle AdditionalProperties
+func (a *VenueTimeZone) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["offset"]; found {
+		err = json.Unmarshal(raw, &a.Offset)
+		if err != nil {
+			return fmt.Errorf("error reading 'offset': %w", err)
+		}
+		delete(object, "offset")
+	}
+
+	if raw, found := object["offsetAtGameTime"]; found {
+		err = json.Unmarshal(raw, &a.OffsetAtGameTime)
+		if err != nil {
+			return fmt.Errorf("error reading 'offsetAtGameTime': %w", err)
+		}
+		delete(object, "offsetAtGameTime")
+	}
+
+	if raw, found := object["tz"]; found {
+		err = json.Unmarshal(raw, &a.Tz)
+		if err != nil {
+			return fmt.Errorf("error reading 'tz': %w", err)
+		}
+		delete(object, "tz")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for VenueTimeZone to handle AdditionalProperties
+func (a VenueTimeZone) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Offset != nil {
+		object["offset"], err = json.Marshal(a.Offset)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'offset': %w", err)
+		}
+	}
+
+	if a.OffsetAtGameTime != nil {
+		object["offsetAtGameTime"], err = json.Marshal(a.OffsetAtGameTime)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'offsetAtGameTime': %w", err)
+		}
+	}
+
+	if a.Tz != nil {
+		object["tz"], err = json.Marshal(a.Tz)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'tz': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -3500,6 +4415,9 @@ type ClientInterface interface {
 
 	// GetTeamStats request
 	GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetVenue request
+	GetVenue(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -3564,6 +4482,18 @@ func (c *Client) GetStandings(ctx context.Context, params *GetStandingsParams, r
 
 func (c *Client) GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamStatsRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetVenue(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetVenueRequest(c.Server, venueId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -3985,6 +4915,91 @@ func NewGetTeamStatsRequest(server string, teamId int, params *GetTeamStatsParam
 	return req, nil
 }
 
+// NewGetVenueRequest generates requests for GetVenue
+func NewGetVenueRequest(server string, venueId int, params *GetVenueParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "venueId", venueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/venues/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -4045,6 +5060,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetTeamStatsWithResponse request
 	GetTeamStatsWithResponse(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*GetTeamStatsResponse, error)
+
+	// GetVenueWithResponse request
+	GetVenueWithResponse(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*GetVenueResponse, error)
 }
 
 type GetLiveFeedResponse struct {
@@ -4227,6 +5245,36 @@ func (r GetTeamStatsResponse) ContentType() string {
 	return ""
 }
 
+type GetVenueResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *VenueResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetVenueResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetVenueResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetVenueResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // GetLiveFeedWithResponse request returning *GetLiveFeedResponse
 func (c *ClientWithResponses) GetLiveFeedWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetLiveFeedResponse, error) {
 	rsp, err := c.GetLiveFeed(ctx, gamePk, reqEditors...)
@@ -4279,6 +5327,15 @@ func (c *ClientWithResponses) GetTeamStatsWithResponse(ctx context.Context, team
 		return nil, err
 	}
 	return ParseGetTeamStatsResponse(rsp)
+}
+
+// GetVenueWithResponse request returning *GetVenueResponse
+func (c *ClientWithResponses) GetVenueWithResponse(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*GetVenueResponse, error) {
+	rsp, err := c.GetVenue(ctx, venueId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetVenueResponse(rsp)
 }
 
 // ParseGetLiveFeedResponse parses an HTTP response from a GetLiveFeedWithResponse call
@@ -4427,6 +5484,32 @@ func ParseGetTeamStatsResponse(rsp *http.Response) (*GetTeamStatsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest TeamStatsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetVenueResponse parses an HTTP response from a GetVenueWithResponse call
+func ParseGetVenueResponse(rsp *http.Response) (*GetVenueResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetVenueResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest VenueResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
