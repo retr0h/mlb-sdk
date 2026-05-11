@@ -56,6 +56,29 @@ type DisplayLabel struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Division defines model for Division.
+type Division struct {
+	Abbreviation *string `json:"abbreviation,omitempty"`
+	Active       *bool   `json:"active,omitempty"`
+	HasWildcard  *bool   `json:"hasWildcard,omitempty"`
+	Id           *int    `json:"id,omitempty"`
+
+	// League Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	League          *Ref    `json:"league,omitempty"`
+	Link            *string `json:"link,omitempty"`
+	Name            *string `json:"name,omitempty"`
+	NameShort       *string `json:"nameShort,omitempty"`
+	NumPlayoffTeams *int    `json:"numPlayoffTeams,omitempty"`
+	Season          *string `json:"season,omitempty"`
+	SortOrder       *int    `json:"sortOrder,omitempty"`
+
+	// Sport Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Sport                *Ref                   `json:"sport,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // DivisionStandings defines model for DivisionStandings.
 type DivisionStandings struct {
 	// Division Lightweight reference object — `{id, link}` — that the MLB API uses
@@ -74,6 +97,12 @@ type DivisionStandings struct {
 	// StandingsType e.g. regularSeason
 	StandingsType        *string                `json:"standingsType,omitempty"`
 	TeamRecords          *[]TeamRecord          `json:"teamRecords,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DivisionsResponse defines model for DivisionsResponse.
+type DivisionsResponse struct {
+	Divisions            *[]Division            `json:"divisions,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -369,6 +398,16 @@ type VenueTimeZone struct {
 	OffsetAtGameTime     *int                   `json:"offsetAtGameTime,omitempty"`
 	Tz                   *string                `json:"tz,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// GetDivisionsParams defines parameters for GetDivisions.
+type GetDivisionsParams struct {
+	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
+	LeagueId   *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Season  *int `form:"season,omitempty" json:"season,omitempty"`
 }
 
 // GetScheduleParams defines parameters for GetSchedule.
@@ -889,6 +928,239 @@ func (a DisplayLabel) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Division. Returns the specified
+// element and whether it was found
+func (a Division) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Division
+func (a *Division) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Division to handle AdditionalProperties
+func (a *Division) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["active"]; found {
+		err = json.Unmarshal(raw, &a.Active)
+		if err != nil {
+			return fmt.Errorf("error reading 'active': %w", err)
+		}
+		delete(object, "active")
+	}
+
+	if raw, found := object["hasWildcard"]; found {
+		err = json.Unmarshal(raw, &a.HasWildcard)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasWildcard': %w", err)
+		}
+		delete(object, "hasWildcard")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["league"]; found {
+		err = json.Unmarshal(raw, &a.League)
+		if err != nil {
+			return fmt.Errorf("error reading 'league': %w", err)
+		}
+		delete(object, "league")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["nameShort"]; found {
+		err = json.Unmarshal(raw, &a.NameShort)
+		if err != nil {
+			return fmt.Errorf("error reading 'nameShort': %w", err)
+		}
+		delete(object, "nameShort")
+	}
+
+	if raw, found := object["numPlayoffTeams"]; found {
+		err = json.Unmarshal(raw, &a.NumPlayoffTeams)
+		if err != nil {
+			return fmt.Errorf("error reading 'numPlayoffTeams': %w", err)
+		}
+		delete(object, "numPlayoffTeams")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["sortOrder"]; found {
+		err = json.Unmarshal(raw, &a.SortOrder)
+		if err != nil {
+			return fmt.Errorf("error reading 'sortOrder': %w", err)
+		}
+		delete(object, "sortOrder")
+	}
+
+	if raw, found := object["sport"]; found {
+		err = json.Unmarshal(raw, &a.Sport)
+		if err != nil {
+			return fmt.Errorf("error reading 'sport': %w", err)
+		}
+		delete(object, "sport")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Division to handle AdditionalProperties
+func (a Division) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.Active != nil {
+		object["active"], err = json.Marshal(a.Active)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'active': %w", err)
+		}
+	}
+
+	if a.HasWildcard != nil {
+		object["hasWildcard"], err = json.Marshal(a.HasWildcard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasWildcard': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.League != nil {
+		object["league"], err = json.Marshal(a.League)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'league': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.NameShort != nil {
+		object["nameShort"], err = json.Marshal(a.NameShort)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nameShort': %w", err)
+		}
+	}
+
+	if a.NumPlayoffTeams != nil {
+		object["numPlayoffTeams"], err = json.Marshal(a.NumPlayoffTeams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numPlayoffTeams': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.SortOrder != nil {
+		object["sortOrder"], err = json.Marshal(a.SortOrder)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sortOrder': %w", err)
+		}
+	}
+
+	if a.Sport != nil {
+		object["sport"], err = json.Marshal(a.Sport)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sport': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for DivisionStandings. Returns the specified
 // element and whether it was found
 func (a DivisionStandings) Get(fieldName string) (value interface{}, found bool) {
@@ -1020,6 +1292,74 @@ func (a DivisionStandings) MarshalJSON() ([]byte, error) {
 		object["teamRecords"], err = json.Marshal(a.TeamRecords)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'teamRecords': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DivisionsResponse. Returns the specified
+// element and whether it was found
+func (a DivisionsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DivisionsResponse
+func (a *DivisionsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DivisionsResponse to handle AdditionalProperties
+func (a *DivisionsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["divisions"]; found {
+		err = json.Unmarshal(raw, &a.Divisions)
+		if err != nil {
+			return fmt.Errorf("error reading 'divisions': %w", err)
+		}
+		delete(object, "divisions")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DivisionsResponse to handle AdditionalProperties
+func (a DivisionsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Divisions != nil {
+		object["divisions"], err = json.Marshal(a.Divisions)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'divisions': %w", err)
 		}
 	}
 
@@ -4401,6 +4741,9 @@ type ClientInterface interface {
 	// GetLiveFeed request
 	GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetDivisions request
+	GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -4422,6 +4765,18 @@ type ClientInterface interface {
 
 func (c *Client) GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLiveFeedRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDivisionsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -4528,6 +4883,96 @@ func NewGetLiveFeedRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetDivisionsRequest generates requests for GetDivisions
+func NewGetDivisionsRequest(server string, params *GetDivisionsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/divisions")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.DivisionId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "divisionId", *params.DivisionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -5046,6 +5491,9 @@ type ClientWithResponsesInterface interface {
 	// GetLiveFeedWithResponse request
 	GetLiveFeedWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetLiveFeedResponse, error)
 
+	// GetDivisionsWithResponse request
+	GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error)
+
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
@@ -5089,6 +5537,36 @@ func (r GetLiveFeedResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetLiveFeedResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetDivisionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DivisionsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDivisionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDivisionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDivisionsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -5284,6 +5762,15 @@ func (c *ClientWithResponses) GetLiveFeedWithResponse(ctx context.Context, gameP
 	return ParseGetLiveFeedResponse(rsp)
 }
 
+// GetDivisionsWithResponse request returning *GetDivisionsResponse
+func (c *ClientWithResponses) GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error) {
+	rsp, err := c.GetDivisions(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDivisionsResponse(rsp)
+}
+
 // GetBoxscoreWithResponse request returning *GetBoxscoreResponse
 func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error) {
 	rsp, err := c.GetBoxscore(ctx, gamePk, reqEditors...)
@@ -5354,6 +5841,32 @@ func ParseGetLiveFeedResponse(rsp *http.Response) (*GetLiveFeedResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest LiveFeedResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetDivisionsResponse parses an HTTP response from a GetDivisionsWithResponse call
+func ParseGetDivisionsResponse(rsp *http.Response) (*GetDivisionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDivisionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DivisionsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

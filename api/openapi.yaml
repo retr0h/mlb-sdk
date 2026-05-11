@@ -104,6 +104,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/TeamStatsResponse" }
 
+  /api/v1/divisions:
+    get:
+      operationId: getDivisions
+      summary: List divisions across MLB and affiliated leagues
+      description: |
+        Returns a list of divisions. Calling with no query parameters returns
+        every division the MLB API tracks (MLB, minor leagues, college,
+        etc.). Filter via divisionId, leagueId, sportId, or season.
+      parameters:
+        - { name: divisionId, in: query, schema: { type: integer } }
+        - { name: leagueId,   in: query, schema: { type: integer } }
+        - { name: sportId,    in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: season,     in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Divisions
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DivisionsResponse" }
+
   /api/v1/venues/{venueId}:
     get:
       operationId: getVenue
@@ -481,3 +501,28 @@ components:
         venues:
           type: array
           items: { $ref: "#/components/schemas/Venue" }
+
+    Division:
+      type: object
+      additionalProperties: true
+      properties:
+        id:               { type: integer }
+        name:             { type: string }
+        season:           { type: string }
+        nameShort:        { type: string }
+        link:             { type: string }
+        abbreviation:     { type: string }
+        league:           { $ref: "#/components/schemas/Ref" }
+        sport:            { $ref: "#/components/schemas/Ref" }
+        hasWildcard:      { type: boolean }
+        sortOrder:        { type: integer }
+        numPlayoffTeams:  { type: integer }
+        active:           { type: boolean }
+
+    DivisionsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        divisions:
+          type: array
+          items: { $ref: "#/components/schemas/Division" }

@@ -36,6 +36,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
 | `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 | `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
+| `/api/v1/divisions`                   | [Client.Divisions][d-divs]    | [divisions.go](examples/divisions.go)    |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
 endpoints lives in [docs/roadmap.md][].
@@ -92,3 +93,4 @@ The [MIT][] License.
 [d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
 [d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats
 [d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
+[d-divs]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Divisions

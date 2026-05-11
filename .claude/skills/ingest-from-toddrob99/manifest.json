@@ -50,6 +50,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "6569400f0b3a844ea702ed0c489bb2cf596d24bf24aa0283af0d2aafb3e2d680",
       "source": "ingest skill"
+    },
+    "divisions": {
+      "method": "Client.Divisions",
+      "operationId": "getDivisions",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "55d53e0a1a7afaa21c2b39365d757c5886660e0e964cdc3f1a116caea2f6aaa7",
+      "source": "ingest skill"
     }
   }
 }
