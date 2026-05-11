@@ -187,6 +187,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DivisionsResponse" }
 
+  /api/v1/league:
+    get:
+      operationId: getLeagues
+      summary: List leagues across a sport / season(s)
+      description: |
+        Returns the leagues the MLB API tracks. The toddrob99 catalog
+        marks `sportId` or `leagueIds` as required (one-of). The SDK
+        enforces this with an ErrInvalidQuery runtime check.
+      parameters:
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: leagueIds, in: query, schema: { type: string }, description: "comma-separated league ids" }
+        - { name: seasons, in: query, schema: { type: string }, description: "comma-separated seasons" }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Leagues
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LeaguesResponse" }
+
   /api/v1/teams:
     get:
       operationId: getTeams
@@ -781,3 +801,11 @@ components:
         teams:
           type: array
           items: { $ref: "#/components/schemas/TeamInfo" }
+
+    LeaguesResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        leagues:
+          type: array
+          items: { $ref: "#/components/schemas/LeagueInfo" }

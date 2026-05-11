@@ -92,6 +92,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "a11adb61e06fa121eb7372b1867b319daac270591c33ab1b889b9ba092575dd5",
       "source": "ingest skill"
+    },
+    "league": {
+      "method": "Client.Leagues",
+      "operationId": "getLeagues",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "735fd6c50475aaf7c579c3a09c6adaea2ecc43fc0fc4b8ffcbf7d2ad40a48519",
+      "source": "ingest skill"
     }
   }
 }

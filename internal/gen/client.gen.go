@@ -167,6 +167,12 @@ type LeagueInfo struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// LeaguesResponse defines model for LeaguesResponse.
+type LeaguesResponse struct {
+	Leagues              *[]LeagueInfo          `json:"leagues,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // LiveData defines model for LiveData.
 type LiveData struct {
 	Plays                *PlayByPlayResponse    `json:"plays,omitempty"`
@@ -581,6 +587,19 @@ type GetDivisionsParams struct {
 	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
 	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+}
+
+// GetLeaguesParams defines parameters for GetLeagues.
+type GetLeaguesParams struct {
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// LeagueIds comma-separated league ids
+	LeagueIds *string `form:"leagueIds,omitempty" json:"leagueIds,omitempty"`
+
+	// Seasons comma-separated seasons
+	Seasons *string `form:"seasons,omitempty" json:"seasons,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetScheduleParams defines parameters for GetSchedule.
@@ -2206,6 +2225,74 @@ func (a LeagueInfo) MarshalJSON() ([]byte, error) {
 		object["sport"], err = json.Marshal(a.Sport)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'sport': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LeaguesResponse. Returns the specified
+// element and whether it was found
+func (a LeaguesResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LeaguesResponse
+func (a *LeaguesResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LeaguesResponse to handle AdditionalProperties
+func (a *LeaguesResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["leagues"]; found {
+		err = json.Unmarshal(raw, &a.Leagues)
+		if err != nil {
+			return fmt.Errorf("error reading 'leagues': %w", err)
+		}
+		delete(object, "leagues")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LeaguesResponse to handle AdditionalProperties
+func (a LeaguesResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Leagues != nil {
+		object["leagues"], err = json.Marshal(a.Leagues)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leagues': %w", err)
 		}
 	}
 
@@ -6445,6 +6532,9 @@ type ClientInterface interface {
 	// GetPlayByPlay request
 	GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetLeagues request
+	GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetSchedule request
 	GetSchedule(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -6514,6 +6604,18 @@ func (c *Client) GetBoxscore(ctx context.Context, gamePk int, reqEditors ...Requ
 
 func (c *Client) GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPlayByPlayRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLeaguesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -6826,6 +6928,96 @@ func NewGetPlayByPlayRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLeaguesRequest generates requests for GetLeagues
+func NewGetLeaguesRequest(server string, params *GetLeaguesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/league")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueIds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueIds", *params.LeagueIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Seasons != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "seasons", *params.Seasons, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -7847,6 +8039,9 @@ type ClientWithResponsesInterface interface {
 	// GetPlayByPlayWithResponse request
 	GetPlayByPlayWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetPlayByPlayResponse, error)
 
+	// GetLeaguesWithResponse request
+	GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error)
+
 	// GetScheduleWithResponse request
 	GetScheduleWithResponse(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*GetScheduleResponse, error)
 
@@ -7992,6 +8187,36 @@ func (r GetPlayByPlayResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetPlayByPlayResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetLeaguesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *LeaguesResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLeaguesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLeaguesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetLeaguesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -8334,6 +8559,15 @@ func (c *ClientWithResponses) GetPlayByPlayWithResponse(ctx context.Context, gam
 	return ParseGetPlayByPlayResponse(rsp)
 }
 
+// GetLeaguesWithResponse request returning *GetLeaguesResponse
+func (c *ClientWithResponses) GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error) {
+	rsp, err := c.GetLeagues(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLeaguesResponse(rsp)
+}
+
 // GetScheduleWithResponse request returning *GetScheduleResponse
 func (c *ClientWithResponses) GetScheduleWithResponse(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*GetScheduleResponse, error) {
 	rsp, err := c.GetSchedule(ctx, params, reqEditors...)
@@ -8518,6 +8752,32 @@ func ParseGetPlayByPlayResponse(rsp *http.Response) (*GetPlayByPlayResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest PlayByPlayResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLeaguesResponse parses an HTTP response from a GetLeaguesWithResponse call
+func ParseGetLeaguesResponse(rsp *http.Response) (*GetLeaguesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLeaguesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest LeaguesResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
