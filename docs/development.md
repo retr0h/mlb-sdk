@@ -187,19 +187,25 @@ type BoxscoreTeam struct {
     Name     string
     Pitching PitchingStats   // public sub-struct with typed public fields
     Batting  BattingStats
-    raw      *gen.BoxscoreSide  // retained ONLY for helpers like DoublePlaysTurned
+    Info     []InfoSection   // free-text annotation block — public, walkable
 }
 
-func (t *BoxscoreTeam) DoublePlaysTurned() int { /* parses raw.Info */ }
+// Additive helper: encodes the awkward parsing of the FIELDING/DP entry
+// inside Info. Consumers can walk Info themselves; this is convenience.
+func (t *BoxscoreTeam) DoublePlaysTurned() int { /* parses t.Info */ }
 
-// Bad: hides data the API freely returns.
+// Bad: hides data the API freely returns behind a private field.
 type BoxscoreTeam struct {
     ID   TeamID
     Name string
-    raw  *gen.BoxscoreSide  // ← consumers can't reach Strikeouts/Hits/Runs
+    raw  *gen.BoxscoreSide  // ← consumers can't reach Strikeouts/Hits/Runs/Info
 }
 func (t *BoxscoreTeam) Strikeouts() int { /* ... */ }  // wrong — should be a field
 ```
+
+**No `raw *gen.X` data field on any public wrapping type.** If a helper needs
+gen state, promote that state to a public field and have the helper read the
+public field. `Client.raw` (the transport) is the only allowed gen reference.
 
 Exception: when the API returns a free-form object whose keys vary at runtime
 (e.g. `TeamStatsSplit.Stat` — different fields per `group`), keep it as a public
@@ -245,6 +251,15 @@ not in a separate test.
 > proving the wrapping actually happens. The only place a `gen.X` reference is
 > acceptable in a test is when _constructing_ fake input for a private
 > conversion helper — `boxscoreFromGen`, `playFromGen`, etc.
+
+### File naming (non-negotiable)
+
+**One test file per production file.** `boxscore.go` is tested by
+`boxscore_test.go` — never `handlers_boxscore_test.go` or similar. If tests
+outgrow one file, split the production file first.
+
+Two exceptions: shared fixtures in `helpers_test.go` / `fakes_test.go`, and
+`main_test.go` for `TestMain`.
 
 ### Table shape
 
