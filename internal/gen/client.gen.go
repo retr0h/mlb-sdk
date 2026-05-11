@@ -233,6 +233,71 @@ type ScheduleResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Season One season's metadata. Many fields are optional in older history
+// rows — pre-divisional eras did not have wildcards, all-star breaks,
+// or post-season windows recorded.
+type Season struct {
+	// AllStarDate YYYY-MM-DD
+	AllStarDate *string `json:"allStarDate,omitempty"`
+
+	// FirstDate2ndHalf YYYY-MM-DD
+	FirstDate2ndHalf     *string `json:"firstDate2ndHalf,omitempty"`
+	GameLevelGamedayType *string `json:"gameLevelGamedayType,omitempty"`
+	HasWildcard          *bool   `json:"hasWildcard,omitempty"`
+
+	// LastDate1stHalf YYYY-MM-DD
+	LastDate1stHalf *string `json:"lastDate1stHalf,omitempty"`
+
+	// OffSeasonEndDate YYYY-MM-DD
+	OffSeasonEndDate *string `json:"offSeasonEndDate,omitempty"`
+
+	// OffseasonStartDate YYYY-MM-DD
+	OffseasonStartDate *string `json:"offseasonStartDate,omitempty"`
+
+	// PostSeasonEndDate YYYY-MM-DD
+	PostSeasonEndDate *string `json:"postSeasonEndDate,omitempty"`
+
+	// PostSeasonStartDate YYYY-MM-DD
+	PostSeasonStartDate *string `json:"postSeasonStartDate,omitempty"`
+
+	// PreSeasonEndDate YYYY-MM-DD
+	PreSeasonEndDate *string `json:"preSeasonEndDate,omitempty"`
+
+	// PreSeasonStartDate YYYY-MM-DD
+	PreSeasonStartDate        *string  `json:"preSeasonStartDate,omitempty"`
+	QualifierOutsPitched      *float64 `json:"qualifierOutsPitched,omitempty"`
+	QualifierPlateAppearances *float64 `json:"qualifierPlateAppearances,omitempty"`
+
+	// RegularSeasonEndDate YYYY-MM-DD
+	RegularSeasonEndDate *string `json:"regularSeasonEndDate,omitempty"`
+
+	// RegularSeasonStartDate YYYY-MM-DD
+	RegularSeasonStartDate *string `json:"regularSeasonStartDate,omitempty"`
+
+	// SeasonEndDate YYYY-MM-DD
+	SeasonEndDate *string `json:"seasonEndDate,omitempty"`
+	SeasonId      *string `json:"seasonId,omitempty"`
+
+	// SeasonLevelGamedayType e.g. P, S
+	SeasonLevelGamedayType *string `json:"seasonLevelGamedayType,omitempty"`
+
+	// SeasonStartDate YYYY-MM-DD
+	SeasonStartDate *string `json:"seasonStartDate,omitempty"`
+
+	// SpringEndDate YYYY-MM-DD
+	SpringEndDate *string `json:"springEndDate,omitempty"`
+
+	// SpringStartDate YYYY-MM-DD
+	SpringStartDate      *string                `json:"springStartDate,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// SeasonsResponse defines model for SeasonsResponse.
+type SeasonsResponse struct {
+	Seasons              *[]Season              `json:"seasons,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // SideScoreboard defines model for SideScoreboard.
 type SideScoreboard struct {
 	Score                *int                   `json:"score,omitempty"`
@@ -425,6 +490,25 @@ type GetScheduleParams struct {
 
 	// EndDate YYYY-MM-DD
 	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+}
+
+// GetSeasonsParams defines parameters for GetSeasons.
+type GetSeasonsParams struct {
+	Season     *int `form:"season,omitempty" json:"season,omitempty"`
+	SportId    *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
+	LeagueId   *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// Fields comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetAllSeasonsParams defines parameters for GetAllSeasons.
+type GetAllSeasonsParams struct {
+	SportId    *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	DivisionId *int    `form:"divisionId,omitempty" json:"divisionId,omitempty"`
+	LeagueId   *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStandingsParams defines parameters for GetStandings.
@@ -2790,6 +2874,442 @@ func (a ScheduleResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Season. Returns the specified
+// element and whether it was found
+func (a Season) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Season
+func (a *Season) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Season to handle AdditionalProperties
+func (a *Season) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["allStarDate"]; found {
+		err = json.Unmarshal(raw, &a.AllStarDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'allStarDate': %w", err)
+		}
+		delete(object, "allStarDate")
+	}
+
+	if raw, found := object["firstDate2ndHalf"]; found {
+		err = json.Unmarshal(raw, &a.FirstDate2ndHalf)
+		if err != nil {
+			return fmt.Errorf("error reading 'firstDate2ndHalf': %w", err)
+		}
+		delete(object, "firstDate2ndHalf")
+	}
+
+	if raw, found := object["gameLevelGamedayType"]; found {
+		err = json.Unmarshal(raw, &a.GameLevelGamedayType)
+		if err != nil {
+			return fmt.Errorf("error reading 'gameLevelGamedayType': %w", err)
+		}
+		delete(object, "gameLevelGamedayType")
+	}
+
+	if raw, found := object["hasWildcard"]; found {
+		err = json.Unmarshal(raw, &a.HasWildcard)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasWildcard': %w", err)
+		}
+		delete(object, "hasWildcard")
+	}
+
+	if raw, found := object["lastDate1stHalf"]; found {
+		err = json.Unmarshal(raw, &a.LastDate1stHalf)
+		if err != nil {
+			return fmt.Errorf("error reading 'lastDate1stHalf': %w", err)
+		}
+		delete(object, "lastDate1stHalf")
+	}
+
+	if raw, found := object["offSeasonEndDate"]; found {
+		err = json.Unmarshal(raw, &a.OffSeasonEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'offSeasonEndDate': %w", err)
+		}
+		delete(object, "offSeasonEndDate")
+	}
+
+	if raw, found := object["offseasonStartDate"]; found {
+		err = json.Unmarshal(raw, &a.OffseasonStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'offseasonStartDate': %w", err)
+		}
+		delete(object, "offseasonStartDate")
+	}
+
+	if raw, found := object["postSeasonEndDate"]; found {
+		err = json.Unmarshal(raw, &a.PostSeasonEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'postSeasonEndDate': %w", err)
+		}
+		delete(object, "postSeasonEndDate")
+	}
+
+	if raw, found := object["postSeasonStartDate"]; found {
+		err = json.Unmarshal(raw, &a.PostSeasonStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'postSeasonStartDate': %w", err)
+		}
+		delete(object, "postSeasonStartDate")
+	}
+
+	if raw, found := object["preSeasonEndDate"]; found {
+		err = json.Unmarshal(raw, &a.PreSeasonEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'preSeasonEndDate': %w", err)
+		}
+		delete(object, "preSeasonEndDate")
+	}
+
+	if raw, found := object["preSeasonStartDate"]; found {
+		err = json.Unmarshal(raw, &a.PreSeasonStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'preSeasonStartDate': %w", err)
+		}
+		delete(object, "preSeasonStartDate")
+	}
+
+	if raw, found := object["qualifierOutsPitched"]; found {
+		err = json.Unmarshal(raw, &a.QualifierOutsPitched)
+		if err != nil {
+			return fmt.Errorf("error reading 'qualifierOutsPitched': %w", err)
+		}
+		delete(object, "qualifierOutsPitched")
+	}
+
+	if raw, found := object["qualifierPlateAppearances"]; found {
+		err = json.Unmarshal(raw, &a.QualifierPlateAppearances)
+		if err != nil {
+			return fmt.Errorf("error reading 'qualifierPlateAppearances': %w", err)
+		}
+		delete(object, "qualifierPlateAppearances")
+	}
+
+	if raw, found := object["regularSeasonEndDate"]; found {
+		err = json.Unmarshal(raw, &a.RegularSeasonEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'regularSeasonEndDate': %w", err)
+		}
+		delete(object, "regularSeasonEndDate")
+	}
+
+	if raw, found := object["regularSeasonStartDate"]; found {
+		err = json.Unmarshal(raw, &a.RegularSeasonStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'regularSeasonStartDate': %w", err)
+		}
+		delete(object, "regularSeasonStartDate")
+	}
+
+	if raw, found := object["seasonEndDate"]; found {
+		err = json.Unmarshal(raw, &a.SeasonEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonEndDate': %w", err)
+		}
+		delete(object, "seasonEndDate")
+	}
+
+	if raw, found := object["seasonId"]; found {
+		err = json.Unmarshal(raw, &a.SeasonId)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonId': %w", err)
+		}
+		delete(object, "seasonId")
+	}
+
+	if raw, found := object["seasonLevelGamedayType"]; found {
+		err = json.Unmarshal(raw, &a.SeasonLevelGamedayType)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonLevelGamedayType': %w", err)
+		}
+		delete(object, "seasonLevelGamedayType")
+	}
+
+	if raw, found := object["seasonStartDate"]; found {
+		err = json.Unmarshal(raw, &a.SeasonStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasonStartDate': %w", err)
+		}
+		delete(object, "seasonStartDate")
+	}
+
+	if raw, found := object["springEndDate"]; found {
+		err = json.Unmarshal(raw, &a.SpringEndDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'springEndDate': %w", err)
+		}
+		delete(object, "springEndDate")
+	}
+
+	if raw, found := object["springStartDate"]; found {
+		err = json.Unmarshal(raw, &a.SpringStartDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'springStartDate': %w", err)
+		}
+		delete(object, "springStartDate")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Season to handle AdditionalProperties
+func (a Season) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AllStarDate != nil {
+		object["allStarDate"], err = json.Marshal(a.AllStarDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'allStarDate': %w", err)
+		}
+	}
+
+	if a.FirstDate2ndHalf != nil {
+		object["firstDate2ndHalf"], err = json.Marshal(a.FirstDate2ndHalf)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'firstDate2ndHalf': %w", err)
+		}
+	}
+
+	if a.GameLevelGamedayType != nil {
+		object["gameLevelGamedayType"], err = json.Marshal(a.GameLevelGamedayType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gameLevelGamedayType': %w", err)
+		}
+	}
+
+	if a.HasWildcard != nil {
+		object["hasWildcard"], err = json.Marshal(a.HasWildcard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasWildcard': %w", err)
+		}
+	}
+
+	if a.LastDate1stHalf != nil {
+		object["lastDate1stHalf"], err = json.Marshal(a.LastDate1stHalf)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'lastDate1stHalf': %w", err)
+		}
+	}
+
+	if a.OffSeasonEndDate != nil {
+		object["offSeasonEndDate"], err = json.Marshal(a.OffSeasonEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'offSeasonEndDate': %w", err)
+		}
+	}
+
+	if a.OffseasonStartDate != nil {
+		object["offseasonStartDate"], err = json.Marshal(a.OffseasonStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'offseasonStartDate': %w", err)
+		}
+	}
+
+	if a.PostSeasonEndDate != nil {
+		object["postSeasonEndDate"], err = json.Marshal(a.PostSeasonEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'postSeasonEndDate': %w", err)
+		}
+	}
+
+	if a.PostSeasonStartDate != nil {
+		object["postSeasonStartDate"], err = json.Marshal(a.PostSeasonStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'postSeasonStartDate': %w", err)
+		}
+	}
+
+	if a.PreSeasonEndDate != nil {
+		object["preSeasonEndDate"], err = json.Marshal(a.PreSeasonEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'preSeasonEndDate': %w", err)
+		}
+	}
+
+	if a.PreSeasonStartDate != nil {
+		object["preSeasonStartDate"], err = json.Marshal(a.PreSeasonStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'preSeasonStartDate': %w", err)
+		}
+	}
+
+	if a.QualifierOutsPitched != nil {
+		object["qualifierOutsPitched"], err = json.Marshal(a.QualifierOutsPitched)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'qualifierOutsPitched': %w", err)
+		}
+	}
+
+	if a.QualifierPlateAppearances != nil {
+		object["qualifierPlateAppearances"], err = json.Marshal(a.QualifierPlateAppearances)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'qualifierPlateAppearances': %w", err)
+		}
+	}
+
+	if a.RegularSeasonEndDate != nil {
+		object["regularSeasonEndDate"], err = json.Marshal(a.RegularSeasonEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'regularSeasonEndDate': %w", err)
+		}
+	}
+
+	if a.RegularSeasonStartDate != nil {
+		object["regularSeasonStartDate"], err = json.Marshal(a.RegularSeasonStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'regularSeasonStartDate': %w", err)
+		}
+	}
+
+	if a.SeasonEndDate != nil {
+		object["seasonEndDate"], err = json.Marshal(a.SeasonEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonEndDate': %w", err)
+		}
+	}
+
+	if a.SeasonId != nil {
+		object["seasonId"], err = json.Marshal(a.SeasonId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonId': %w", err)
+		}
+	}
+
+	if a.SeasonLevelGamedayType != nil {
+		object["seasonLevelGamedayType"], err = json.Marshal(a.SeasonLevelGamedayType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonLevelGamedayType': %w", err)
+		}
+	}
+
+	if a.SeasonStartDate != nil {
+		object["seasonStartDate"], err = json.Marshal(a.SeasonStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasonStartDate': %w", err)
+		}
+	}
+
+	if a.SpringEndDate != nil {
+		object["springEndDate"], err = json.Marshal(a.SpringEndDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'springEndDate': %w", err)
+		}
+	}
+
+	if a.SpringStartDate != nil {
+		object["springStartDate"], err = json.Marshal(a.SpringStartDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'springStartDate': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for SeasonsResponse. Returns the specified
+// element and whether it was found
+func (a SeasonsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for SeasonsResponse
+func (a *SeasonsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for SeasonsResponse to handle AdditionalProperties
+func (a *SeasonsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["seasons"]; found {
+		err = json.Unmarshal(raw, &a.Seasons)
+		if err != nil {
+			return fmt.Errorf("error reading 'seasons': %w", err)
+		}
+		delete(object, "seasons")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for SeasonsResponse to handle AdditionalProperties
+func (a SeasonsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Seasons != nil {
+		object["seasons"], err = json.Marshal(a.Seasons)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'seasons': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for SideScoreboard. Returns the specified
 // element and whether it was found
 func (a SideScoreboard) Get(fieldName string) (value interface{}, found bool) {
@@ -4753,6 +5273,12 @@ type ClientInterface interface {
 	// GetSchedule request
 	GetSchedule(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetSeasons request
+	GetSeasons(ctx context.Context, params *GetSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAllSeasons request
+	GetAllSeasons(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetStandings request
 	GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -4813,6 +5339,30 @@ func (c *Client) GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...Re
 
 func (c *Client) GetSchedule(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetScheduleRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSeasons(ctx context.Context, params *GetSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSeasonsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAllSeasons(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllSeasonsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -5142,6 +5692,198 @@ func NewGetScheduleRequest(server string, params *GetScheduleParams) (*http.Requ
 		if params.EndDate != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "endDate", *params.EndDate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetSeasonsRequest generates requests for GetSeasons
+func NewGetSeasonsRequest(server string, params *GetSeasonsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/seasons")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.DivisionId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "divisionId", *params.DivisionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAllSeasonsRequest generates requests for GetAllSeasons
+func NewGetAllSeasonsRequest(server string, params *GetAllSeasonsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/seasons/all")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.DivisionId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "divisionId", *params.DivisionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -5503,6 +6245,12 @@ type ClientWithResponsesInterface interface {
 	// GetScheduleWithResponse request
 	GetScheduleWithResponse(ctx context.Context, params *GetScheduleParams, reqEditors ...RequestEditorFn) (*GetScheduleResponse, error)
 
+	// GetSeasonsWithResponse request
+	GetSeasonsWithResponse(ctx context.Context, params *GetSeasonsParams, reqEditors ...RequestEditorFn) (*GetSeasonsResponse, error)
+
+	// GetAllSeasonsWithResponse request
+	GetAllSeasonsWithResponse(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*GetAllSeasonsResponse, error)
+
 	// GetStandingsWithResponse request
 	GetStandingsWithResponse(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*GetStandingsResponse, error)
 
@@ -5663,6 +6411,66 @@ func (r GetScheduleResponse) ContentType() string {
 	return ""
 }
 
+type GetSeasonsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SeasonsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSeasonsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSeasonsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetSeasonsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAllSeasonsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SeasonsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllSeasonsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllSeasonsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAllSeasonsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetStandingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5796,6 +6604,24 @@ func (c *ClientWithResponses) GetScheduleWithResponse(ctx context.Context, param
 		return nil, err
 	}
 	return ParseGetScheduleResponse(rsp)
+}
+
+// GetSeasonsWithResponse request returning *GetSeasonsResponse
+func (c *ClientWithResponses) GetSeasonsWithResponse(ctx context.Context, params *GetSeasonsParams, reqEditors ...RequestEditorFn) (*GetSeasonsResponse, error) {
+	rsp, err := c.GetSeasons(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSeasonsResponse(rsp)
+}
+
+// GetAllSeasonsWithResponse request returning *GetAllSeasonsResponse
+func (c *ClientWithResponses) GetAllSeasonsWithResponse(ctx context.Context, params *GetAllSeasonsParams, reqEditors ...RequestEditorFn) (*GetAllSeasonsResponse, error) {
+	rsp, err := c.GetAllSeasons(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAllSeasonsResponse(rsp)
 }
 
 // GetStandingsWithResponse request returning *GetStandingsResponse
@@ -5945,6 +6771,58 @@ func ParseGetScheduleResponse(rsp *http.Response) (*GetScheduleResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest ScheduleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSeasonsResponse parses an HTTP response from a GetSeasonsWithResponse call
+func ParseGetSeasonsResponse(rsp *http.Response) (*GetSeasonsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSeasonsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SeasonsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAllSeasonsResponse parses an HTTP response from a GetAllSeasonsWithResponse call
+func ParseGetAllSeasonsResponse(rsp *http.Response) (*GetAllSeasonsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAllSeasonsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SeasonsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

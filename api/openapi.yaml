@@ -104,6 +104,49 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/TeamStatsResponse" }
 
+  /api/v1/seasons:
+    get:
+      operationId: getSeasons
+      summary: List seasons (filtered)
+      description: |
+        Returns season metadata. At least one of sportId, divisionId, or
+        leagueId is required (the toddrob99 catalog encodes this as
+        `required_params: [["sportId"], ["divisionId"], ["leagueId"]]`). To
+        query the full history of seasons, use the `/api/v1/seasons/all`
+        path instead (see getAllSeasons).
+      parameters:
+        - { name: season,     in: query, schema: { type: integer } }
+        - { name: sportId,    in: query, schema: { type: integer } }
+        - { name: divisionId, in: query, schema: { type: integer } }
+        - { name: leagueId,   in: query, schema: { type: integer } }
+        - { name: fields,     in: query, schema: { type: string }, description: "comma-separated field projection" }
+      responses:
+        "200":
+          description: Seasons
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SeasonsResponse" }
+
+  /api/v1/seasons/all:
+    get:
+      operationId: getAllSeasons
+      summary: List every season the MLB API tracks
+      description: |
+        Returns every season in the API's history (starts from 1876 for
+        sportId=1). divisionId / leagueId are supported here when the
+        toddrob99 `all` path is used.
+      parameters:
+        - { name: sportId,    in: query, schema: { type: integer } }
+        - { name: divisionId, in: query, schema: { type: integer } }
+        - { name: leagueId,   in: query, schema: { type: integer } }
+        - { name: fields,     in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Seasons
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SeasonsResponse" }
+
   /api/v1/divisions:
     get:
       operationId: getDivisions
@@ -526,3 +569,41 @@ components:
         divisions:
           type: array
           items: { $ref: "#/components/schemas/Division" }
+
+    Season:
+      type: object
+      additionalProperties: true
+      description: |
+        One season's metadata. Many fields are optional in older history
+        rows — pre-divisional eras did not have wildcards, all-star breaks,
+        or post-season windows recorded.
+      properties:
+        seasonId:                  { type: string }
+        hasWildcard:               { type: boolean }
+        preSeasonStartDate:        { type: string, description: "YYYY-MM-DD" }
+        preSeasonEndDate:          { type: string, description: "YYYY-MM-DD" }
+        seasonStartDate:           { type: string, description: "YYYY-MM-DD" }
+        springStartDate:           { type: string, description: "YYYY-MM-DD" }
+        springEndDate:             { type: string, description: "YYYY-MM-DD" }
+        regularSeasonStartDate:    { type: string, description: "YYYY-MM-DD" }
+        lastDate1stHalf:           { type: string, description: "YYYY-MM-DD" }
+        allStarDate:               { type: string, description: "YYYY-MM-DD" }
+        firstDate2ndHalf:          { type: string, description: "YYYY-MM-DD" }
+        regularSeasonEndDate:      { type: string, description: "YYYY-MM-DD" }
+        postSeasonStartDate:       { type: string, description: "YYYY-MM-DD" }
+        postSeasonEndDate:         { type: string, description: "YYYY-MM-DD" }
+        seasonEndDate:             { type: string, description: "YYYY-MM-DD" }
+        offseasonStartDate:        { type: string, description: "YYYY-MM-DD" }
+        offSeasonEndDate:          { type: string, description: "YYYY-MM-DD" }
+        seasonLevelGamedayType:    { type: string, description: "e.g. P, S" }
+        gameLevelGamedayType:      { type: string }
+        qualifierPlateAppearances: { type: number, format: double }
+        qualifierOutsPitched:      { type: number, format: double }
+
+    SeasonsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        seasons:
+          type: array
+          items: { $ref: "#/components/schemas/Season" }
