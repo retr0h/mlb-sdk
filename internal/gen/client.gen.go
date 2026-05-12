@@ -1387,6 +1387,28 @@ type GetHighLowParams struct {
 	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetJobsParams defines parameters for GetJobs.
+type GetJobsParams struct {
+	// JobType e.g. UMPR, SCOR, DCST
+	JobType string  `form:"jobType" json:"jobType"`
+	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Date    *string `form:"date,omitempty" json:"date,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetJobsDatacastersParams defines parameters for GetJobsDatacasters.
+type GetJobsDatacastersParams struct {
+	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Date    *string `form:"date,omitempty" json:"date,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetJobsOfficialScorersParams defines parameters for GetJobsOfficialScorers.
+type GetJobsOfficialScorersParams struct {
+	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetJobsUmpiresParams defines parameters for GetJobsUmpires.
 type GetJobsUmpiresParams struct {
 	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
@@ -1413,6 +1435,12 @@ type GetPeopleParams struct {
 	PersonIds string  `form:"personIds" json:"personIds"`
 	Hydrate   *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetPeopleChangesParams defines parameters for GetPeopleChanges.
+type GetPeopleChangesParams struct {
+	UpdatedSince *string `form:"updatedSince,omitempty" json:"updatedSince,omitempty"`
+	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetFreeAgentsParams defines parameters for GetFreeAgents.
@@ -14373,6 +14401,15 @@ type ClientInterface interface {
 	// GetHighLow request
 	GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetJobs request
+	GetJobs(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetJobsDatacasters request
+	GetJobsDatacasters(ctx context.Context, params *GetJobsDatacastersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetJobsOfficialScorers request
+	GetJobsOfficialScorers(ctx context.Context, params *GetJobsOfficialScorersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetJobsUmpires request
 	GetJobsUmpires(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14381,6 +14418,9 @@ type ClientInterface interface {
 
 	// GetPeople request
 	GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetPeopleChanges request
+	GetPeopleChanges(ctx context.Context, params *GetPeopleChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetFreeAgents request
 	GetFreeAgents(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14623,6 +14663,42 @@ func (c *Client) GetHighLow(ctx context.Context, orgType string, params *GetHigh
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetJobs(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetJobsDatacasters(ctx context.Context, params *GetJobsDatacastersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobsDatacastersRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetJobsOfficialScorers(ctx context.Context, params *GetJobsOfficialScorersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobsOfficialScorersRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetJobsUmpires(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobsUmpiresRequest(c.Server, params)
 	if err != nil {
@@ -14649,6 +14725,18 @@ func (c *Client) GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEd
 
 func (c *Client) GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPeopleRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetPeopleChanges(ctx context.Context, params *GetPeopleChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPeopleChangesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -16128,6 +16216,236 @@ func NewGetHighLowRequest(server string, orgType string, params *GetHighLowParam
 	return req, nil
 }
 
+// NewGetJobsRequest generates requests for GetJobs
+func NewGetJobsRequest(server string, params *GetJobsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/jobs")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "jobType", params.JobType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetJobsDatacastersRequest generates requests for GetJobsDatacasters
+func NewGetJobsDatacastersRequest(server string, params *GetJobsDatacastersParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/jobs/datacasters")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetJobsOfficialScorersRequest generates requests for GetJobsOfficialScorers
+func NewGetJobsOfficialScorersRequest(server string, params *GetJobsOfficialScorersParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/jobs/officialScorers")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Timecode != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "timecode", *params.Timecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetJobsUmpiresRequest generates requests for GetJobsUmpires
 func NewGetJobsUmpiresRequest(server string, params *GetJobsUmpiresParams) (*http.Request, error) {
 	var err error
@@ -16335,6 +16653,72 @@ func NewGetPeopleRequest(server string, params *GetPeopleParams) (*http.Request,
 		if params.Hydrate != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetPeopleChangesRequest generates requests for GetPeopleChanges
+func NewGetPeopleChangesRequest(server string, params *GetPeopleChangesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/people/changes")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updatedSince", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -18410,6 +18794,15 @@ type ClientWithResponsesInterface interface {
 	// GetHighLowWithResponse request
 	GetHighLowWithResponse(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*GetHighLowResponse, error)
 
+	// GetJobsWithResponse request
+	GetJobsWithResponse(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
+
+	// GetJobsDatacastersWithResponse request
+	GetJobsDatacastersWithResponse(ctx context.Context, params *GetJobsDatacastersParams, reqEditors ...RequestEditorFn) (*GetJobsDatacastersResponse, error)
+
+	// GetJobsOfficialScorersWithResponse request
+	GetJobsOfficialScorersWithResponse(ctx context.Context, params *GetJobsOfficialScorersParams, reqEditors ...RequestEditorFn) (*GetJobsOfficialScorersResponse, error)
+
 	// GetJobsUmpiresWithResponse request
 	GetJobsUmpiresWithResponse(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*GetJobsUmpiresResponse, error)
 
@@ -18418,6 +18811,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetPeopleWithResponse request
 	GetPeopleWithResponse(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*GetPeopleResponse, error)
+
+	// GetPeopleChangesWithResponse request
+	GetPeopleChangesWithResponse(ctx context.Context, params *GetPeopleChangesParams, reqEditors ...RequestEditorFn) (*GetPeopleChangesResponse, error)
 
 	// GetFreeAgentsWithResponse request
 	GetFreeAgentsWithResponse(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*GetFreeAgentsResponse, error)
@@ -18930,6 +19326,96 @@ func (r GetHighLowResponse) ContentType() string {
 	return ""
 }
 
+type GetJobsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetJobsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetJobsDatacastersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobsDatacastersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobsDatacastersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetJobsDatacastersResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetJobsOfficialScorersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobsOfficialScorersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobsOfficialScorersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetJobsOfficialScorersResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetJobsUmpiresResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19014,6 +19500,36 @@ func (r GetPeopleResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetPeopleResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetPeopleChangesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PeopleResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPeopleChangesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPeopleChangesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetPeopleChangesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -19755,6 +20271,33 @@ func (c *ClientWithResponses) GetHighLowWithResponse(ctx context.Context, orgTyp
 	return ParseGetHighLowResponse(rsp)
 }
 
+// GetJobsWithResponse request returning *GetJobsResponse
+func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*GetJobsResponse, error) {
+	rsp, err := c.GetJobs(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobsResponse(rsp)
+}
+
+// GetJobsDatacastersWithResponse request returning *GetJobsDatacastersResponse
+func (c *ClientWithResponses) GetJobsDatacastersWithResponse(ctx context.Context, params *GetJobsDatacastersParams, reqEditors ...RequestEditorFn) (*GetJobsDatacastersResponse, error) {
+	rsp, err := c.GetJobsDatacasters(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobsDatacastersResponse(rsp)
+}
+
+// GetJobsOfficialScorersWithResponse request returning *GetJobsOfficialScorersResponse
+func (c *ClientWithResponses) GetJobsOfficialScorersWithResponse(ctx context.Context, params *GetJobsOfficialScorersParams, reqEditors ...RequestEditorFn) (*GetJobsOfficialScorersResponse, error) {
+	rsp, err := c.GetJobsOfficialScorers(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobsOfficialScorersResponse(rsp)
+}
+
 // GetJobsUmpiresWithResponse request returning *GetJobsUmpiresResponse
 func (c *ClientWithResponses) GetJobsUmpiresWithResponse(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*GetJobsUmpiresResponse, error) {
 	rsp, err := c.GetJobsUmpires(ctx, params, reqEditors...)
@@ -19780,6 +20323,15 @@ func (c *ClientWithResponses) GetPeopleWithResponse(ctx context.Context, params 
 		return nil, err
 	}
 	return ParseGetPeopleResponse(rsp)
+}
+
+// GetPeopleChangesWithResponse request returning *GetPeopleChangesResponse
+func (c *ClientWithResponses) GetPeopleChangesWithResponse(ctx context.Context, params *GetPeopleChangesParams, reqEditors ...RequestEditorFn) (*GetPeopleChangesResponse, error) {
+	rsp, err := c.GetPeopleChanges(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetPeopleChangesResponse(rsp)
 }
 
 // GetFreeAgentsWithResponse request returning *GetFreeAgentsResponse
@@ -20352,6 +20904,84 @@ func ParseGetHighLowResponse(rsp *http.Response) (*GetHighLowResponse, error) {
 	return response, nil
 }
 
+// ParseGetJobsResponse parses an HTTP response from a GetJobsWithResponse call
+func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetJobsDatacastersResponse parses an HTTP response from a GetJobsDatacastersWithResponse call
+func ParseGetJobsDatacastersResponse(rsp *http.Response) (*GetJobsDatacastersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobsDatacastersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetJobsOfficialScorersResponse parses an HTTP response from a GetJobsOfficialScorersWithResponse call
+func ParseGetJobsOfficialScorersResponse(rsp *http.Response) (*GetJobsOfficialScorersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobsOfficialScorersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetJobsUmpiresResponse parses an HTTP response from a GetJobsUmpiresWithResponse call
 func ParseGetJobsUmpiresResponse(rsp *http.Response) (*GetJobsUmpiresResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -20413,6 +21043,32 @@ func ParseGetPeopleResponse(rsp *http.Response) (*GetPeopleResponse, error) {
 	}
 
 	response := &GetPeopleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PeopleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetPeopleChangesResponse parses an HTTP response from a GetPeopleChangesWithResponse call
+func ParseGetPeopleChangesResponse(rsp *http.Response) (*GetPeopleChangesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetPeopleChangesResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

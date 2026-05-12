@@ -293,6 +293,65 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/StaffResponse" }
 
+  /api/v1/jobs:
+    get:
+      operationId: getJobs
+      summary: Staff by job type
+      parameters:
+        - { name: jobType, in: query, required: true, schema: { type: string }, description: "e.g. UMPR, SCOR, DCST" }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Jobs
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
+  /api/v1/jobs/datacasters:
+    get:
+      operationId: getJobsDatacasters
+      summary: Datacaster roster
+      parameters:
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Datacasters
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
+  /api/v1/jobs/officialScorers:
+    get:
+      operationId: getJobsOfficialScorers
+      summary: Official scorer roster
+      parameters:
+        - { name: timecode, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Official scorers
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
+  /api/v1/people/changes:
+    get:
+      operationId: getPeopleChanges
+      summary: Recently changed person records
+      parameters:
+        - { name: updatedSince, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: People changes
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
   /api/v1/jobs/umpires:
     get:
       operationId: getJobsUmpires

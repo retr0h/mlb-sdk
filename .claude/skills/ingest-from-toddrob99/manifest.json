@@ -260,6 +260,34 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "008bf85afbc6ddf9c9ccdfdead3602a4ebc6a3ad12b2260f71ebca0b955cbde1",
       "source": "ingest skill"
+    },
+    "jobs": {
+      "method": "Client.Jobs",
+      "operationId": "getJobs",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "db7dc32fb6f26aff53dac0d0f88858dd5331aca5eb6c571e90cc6a0387319191",
+      "source": "ingest skill"
+    },
+    "jobs_datacasters": {
+      "method": "Client.Datacasters",
+      "operationId": "getJobsDatacasters",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "6cf105f48ecdfdd322828b84d39482513d30e3435cdb443255e3ddf6d75a8cfe",
+      "source": "ingest skill"
+    },
+    "jobs_officialScorers": {
+      "method": "Client.OfficialScorers",
+      "operationId": "getJobsOfficialScorers",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "7c55fbe668495926511c68ff9863563e15cb78d3ac23fe055740cea300ffecf7",
+      "source": "ingest skill"
+    },
+    "people_changes": {
+      "method": "Client.PeopleChanges",
+      "operationId": "getPeopleChanges",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "8f90e1b052c2b3a13f04bcfe495e9dc3a55f944248dfa4dd468714938f344392",
+      "source": "ingest skill"
     }
   }
 }
