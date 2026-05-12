@@ -27,6 +27,9 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 
 ## ⚙️ Endpoints
 
+<details>
+<summary>40+ endpoints (click to expand)</summary>
+
 | Endpoint                              | Docs                          | Example                                  |
 | ------------------------------------- | ----------------------------- | ---------------------------------------- |
 | `/api/v1/schedule`                    | [Client.Schedule][d-sched]    | [schedule.go](examples/schedule.go)      |
@@ -69,6 +72,8 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
 endpoints lives in [docs/roadmap.md][].
+
+</details>
 
 ## ✨ Features
 
