@@ -162,6 +162,31 @@ type BoxscoreTeams struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Conference defines model for Conference.
+type Conference struct {
+	Abbreviation *string `json:"abbreviation,omitempty"`
+	HasWildcard  *bool   `json:"hasWildcard,omitempty"`
+	Id           *int    `json:"id,omitempty"`
+
+	// League Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	League    *Ref    `json:"league,omitempty"`
+	Link      *string `json:"link,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	NameShort *string `json:"nameShort,omitempty"`
+
+	// Sport Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Sport                *Ref                   `json:"sport,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// ConferencesResponse defines model for ConferencesResponse.
+type ConferencesResponse struct {
+	Conferences          *[]Conference          `json:"conferences,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // DisplayLabel defines model for DisplayLabel.
 type DisplayLabel struct {
 	DisplayName          *string                `json:"displayName,omitempty"`
@@ -1034,6 +1059,13 @@ type GetAwardRecipientsParams struct {
 	Season   *int    `form:"season,omitempty" json:"season,omitempty"`
 	Hydrate  *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetConferencesParams defines parameters for GetConferences.
+type GetConferencesParams struct {
+	ConferenceId *int    `form:"conferenceId,omitempty" json:"conferenceId,omitempty"`
+	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
+	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetDivisionsParams defines parameters for GetDivisions.
@@ -2681,6 +2713,247 @@ func (a BoxscoreTeams) MarshalJSON() ([]byte, error) {
 		object["home"], err = json.Marshal(a.Home)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'home': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for Conference. Returns the specified
+// element and whether it was found
+func (a Conference) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Conference
+func (a *Conference) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Conference to handle AdditionalProperties
+func (a *Conference) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["hasWildcard"]; found {
+		err = json.Unmarshal(raw, &a.HasWildcard)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasWildcard': %w", err)
+		}
+		delete(object, "hasWildcard")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["league"]; found {
+		err = json.Unmarshal(raw, &a.League)
+		if err != nil {
+			return fmt.Errorf("error reading 'league': %w", err)
+		}
+		delete(object, "league")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["nameShort"]; found {
+		err = json.Unmarshal(raw, &a.NameShort)
+		if err != nil {
+			return fmt.Errorf("error reading 'nameShort': %w", err)
+		}
+		delete(object, "nameShort")
+	}
+
+	if raw, found := object["sport"]; found {
+		err = json.Unmarshal(raw, &a.Sport)
+		if err != nil {
+			return fmt.Errorf("error reading 'sport': %w", err)
+		}
+		delete(object, "sport")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Conference to handle AdditionalProperties
+func (a Conference) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.HasWildcard != nil {
+		object["hasWildcard"], err = json.Marshal(a.HasWildcard)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasWildcard': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.League != nil {
+		object["league"], err = json.Marshal(a.League)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'league': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.NameShort != nil {
+		object["nameShort"], err = json.Marshal(a.NameShort)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nameShort': %w", err)
+		}
+	}
+
+	if a.Sport != nil {
+		object["sport"], err = json.Marshal(a.Sport)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sport': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for ConferencesResponse. Returns the specified
+// element and whether it was found
+func (a ConferencesResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for ConferencesResponse
+func (a *ConferencesResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for ConferencesResponse to handle AdditionalProperties
+func (a *ConferencesResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["conferences"]; found {
+		err = json.Unmarshal(raw, &a.Conferences)
+		if err != nil {
+			return fmt.Errorf("error reading 'conferences': %w", err)
+		}
+		delete(object, "conferences")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for ConferencesResponse to handle AdditionalProperties
+func (a ConferencesResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Conferences != nil {
+		object["conferences"], err = json.Marshal(a.Conferences)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'conferences': %w", err)
 		}
 	}
 
@@ -10944,6 +11217,9 @@ type ClientInterface interface {
 	// GetAwardRecipients request
 	GetAwardRecipients(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetConferences request
+	GetConferences(ctx context.Context, params *GetConferencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDivisions request
 	GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -11031,6 +11307,18 @@ func (c *Client) GetAttendance(ctx context.Context, params *GetAttendanceParams,
 
 func (c *Client) GetAwardRecipients(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAwardRecipientsRequest(c.Server, awardId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetConferences(ctx context.Context, params *GetConferencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetConferencesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -11515,6 +11803,84 @@ func NewGetAwardRecipientsRequest(server string, awardId string, params *GetAwar
 		if params.Hydrate != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetConferencesRequest generates requests for GetConferences
+func NewGetConferencesRequest(server string, params *GetConferencesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/conferences")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.ConferenceId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "conferenceId", *params.ConferenceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -13351,6 +13717,9 @@ type ClientWithResponsesInterface interface {
 	// GetAwardRecipientsWithResponse request
 	GetAwardRecipientsWithResponse(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*GetAwardRecipientsResponse, error)
 
+	// GetConferencesWithResponse request
+	GetConferencesWithResponse(ctx context.Context, params *GetConferencesParams, reqEditors ...RequestEditorFn) (*GetConferencesResponse, error)
+
 	// GetDivisionsWithResponse request
 	GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error)
 
@@ -13496,6 +13865,36 @@ func (r GetAwardRecipientsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetAwardRecipientsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetConferencesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ConferencesResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetConferencesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetConferencesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetConferencesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -14129,6 +14528,15 @@ func (c *ClientWithResponses) GetAwardRecipientsWithResponse(ctx context.Context
 	return ParseGetAwardRecipientsResponse(rsp)
 }
 
+// GetConferencesWithResponse request returning *GetConferencesResponse
+func (c *ClientWithResponses) GetConferencesWithResponse(ctx context.Context, params *GetConferencesParams, reqEditors ...RequestEditorFn) (*GetConferencesResponse, error) {
+	rsp, err := c.GetConferences(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetConferencesResponse(rsp)
+}
+
 // GetDivisionsWithResponse request returning *GetDivisionsResponse
 func (c *ClientWithResponses) GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error) {
 	rsp, err := c.GetDivisions(ctx, params, reqEditors...)
@@ -14377,6 +14785,32 @@ func ParseGetAwardRecipientsResponse(rsp *http.Response) (*GetAwardRecipientsRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AwardsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetConferencesResponse parses an HTTP response from a GetConferencesWithResponse call
+func ParseGetConferencesResponse(rsp *http.Response) (*GetConferencesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetConferencesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ConferencesResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

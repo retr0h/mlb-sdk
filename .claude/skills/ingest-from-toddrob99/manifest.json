@@ -142,6 +142,13 @@
       "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
       "source": "ingest skill"
     },
+    "conferences": {
+      "method": "Client.Conferences",
+      "operationId": "getConferences",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "74427b9a1a2211e6b4d62d39d9b9e788b527278a0aed7f96bbf23e7e6a16b02b",
+      "source": "ingest skill"
+    },
     "team_roster": {
       "method": "Client.Roster",
       "operationId": "getTeamRoster",

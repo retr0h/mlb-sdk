@@ -332,6 +332,21 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/AttendanceResponse" }
 
+  /api/v1/conferences:
+    get:
+      operationId: getConferences
+      summary: List conferences
+      parameters:
+        - { name: conferenceId, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Conferences
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConferencesResponse" }
+
   /api/v1/divisions:
     get:
       operationId: getDivisions
@@ -1156,6 +1171,27 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    Conference:
+      type: object
+      additionalProperties: true
+      properties:
+        id:           { type: integer }
+        name:         { type: string }
+        link:         { type: string }
+        abbreviation: { type: string }
+        nameShort:    { type: string }
+        hasWildcard:  { type: boolean }
+        league:       { $ref: "#/components/schemas/Ref" }
+        sport:        { $ref: "#/components/schemas/Ref" }
+
+    ConferencesResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        conferences:
+          type: array
+          items: { $ref: "#/components/schemas/Conference" }
 
     RosterStatus:
       type: object

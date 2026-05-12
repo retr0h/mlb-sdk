@@ -38,6 +38,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/teams/{teamId}/roster`       | [Client.Roster][d-roster]     | [roster.go](examples/roster.go)          |
 | `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 | `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
+| `/api/v1/conferences`                 | [Client.Conferences][d-conf]  | [conferences.go](examples/conferences.go) |
 | `/api/v1/divisions`                   | [Client.Divisions][d-divs]    | [divisions.go](examples/divisions.go)    |
 | `/api/v1/league`                      | [Client.Leagues][d-leagues]   | [leagues.go](examples/leagues.go)        |
 | `/api/v1/attendance`                  | [Client.Attendance][d-att]    | [attendance.go](examples/attendance.go)  |
@@ -109,6 +110,7 @@ The [MIT][] License.
 [d-roster]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Roster
 [d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats
 [d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
+[d-conf]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Conferences
 [d-divs]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Divisions
 [d-leagues]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Leagues
 [d-att]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Attendance
