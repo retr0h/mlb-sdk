@@ -363,6 +363,16 @@ type FreeAgentsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// GameChangesResponse defines model for GameChangesResponse.
+type GameChangesResponse struct {
+	Dates                *[]ScheduleDate        `json:"dates,omitempty"`
+	TotalEvents          *int                   `json:"totalEvents,omitempty"`
+	TotalGames           *int                   `json:"totalGames,omitempty"`
+	TotalGamesInProgress *int                   `json:"totalGamesInProgress,omitempty"`
+	TotalItems           *int                   `json:"totalItems,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // GamePaceData defines model for GamePaceData.
 type GamePaceData struct {
 	HitsPer9Inn             *float64 `json:"hitsPer9Inn,omitempty"`
@@ -1290,6 +1300,16 @@ type GetDivisionsParams struct {
 type GetDraftParams struct {
 	Round  *string `form:"round,omitempty" json:"round,omitempty"`
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetGameChangesParams defines parameters for GetGameChanges.
+type GetGameChangesParams struct {
+	// UpdatedSince ISO-8601 timestamp
+	UpdatedSince string  `form:"updatedSince" json:"updatedSince"`
+	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	GameType     *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
+	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetContextMetricsParams defines parameters for GetContextMetrics.
@@ -4967,6 +4987,134 @@ func (a FreeAgentsResponse) MarshalJSON() ([]byte, error) {
 		object["freeAgents"], err = json.Marshal(a.FreeAgents)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'freeAgents': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for GameChangesResponse. Returns the specified
+// element and whether it was found
+func (a GameChangesResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for GameChangesResponse
+func (a *GameChangesResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for GameChangesResponse to handle AdditionalProperties
+func (a *GameChangesResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["dates"]; found {
+		err = json.Unmarshal(raw, &a.Dates)
+		if err != nil {
+			return fmt.Errorf("error reading 'dates': %w", err)
+		}
+		delete(object, "dates")
+	}
+
+	if raw, found := object["totalEvents"]; found {
+		err = json.Unmarshal(raw, &a.TotalEvents)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalEvents': %w", err)
+		}
+		delete(object, "totalEvents")
+	}
+
+	if raw, found := object["totalGames"]; found {
+		err = json.Unmarshal(raw, &a.TotalGames)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalGames': %w", err)
+		}
+		delete(object, "totalGames")
+	}
+
+	if raw, found := object["totalGamesInProgress"]; found {
+		err = json.Unmarshal(raw, &a.TotalGamesInProgress)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalGamesInProgress': %w", err)
+		}
+		delete(object, "totalGamesInProgress")
+	}
+
+	if raw, found := object["totalItems"]; found {
+		err = json.Unmarshal(raw, &a.TotalItems)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalItems': %w", err)
+		}
+		delete(object, "totalItems")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for GameChangesResponse to handle AdditionalProperties
+func (a GameChangesResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Dates != nil {
+		object["dates"], err = json.Marshal(a.Dates)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dates': %w", err)
+		}
+	}
+
+	if a.TotalEvents != nil {
+		object["totalEvents"], err = json.Marshal(a.TotalEvents)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'totalEvents': %w", err)
+		}
+	}
+
+	if a.TotalGames != nil {
+		object["totalGames"], err = json.Marshal(a.TotalGames)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'totalGames': %w", err)
+		}
+	}
+
+	if a.TotalGamesInProgress != nil {
+		object["totalGamesInProgress"], err = json.Marshal(a.TotalGamesInProgress)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'totalGamesInProgress': %w", err)
+		}
+	}
+
+	if a.TotalItems != nil {
+		object["totalItems"], err = json.Marshal(a.TotalItems)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'totalItems': %w", err)
 		}
 	}
 
@@ -13810,6 +13958,9 @@ type ClientInterface interface {
 	// GetDraft request
 	GetDraft(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGameChanges request
+	GetGameChanges(ctx context.Context, params *GetGameChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13942,6 +14093,18 @@ func (c *Client) GetDivisions(ctx context.Context, params *GetDivisionsParams, r
 
 func (c *Client) GetDraft(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetDraftRequest(c.Server, year, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameChanges(ctx context.Context, params *GetGameChangesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameChangesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -14703,6 +14866,104 @@ func NewGetDraftRequest(server string, year int, params *GetDraftParams) (*http.
 		if params.Round != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "round", *params.Round, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameChangesRequest generates requests for GetGameChanges
+func NewGetGameChangesRequest(server string, params *GetGameChangesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/changes")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updatedSince", params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -17040,6 +17301,9 @@ type ClientWithResponsesInterface interface {
 	// GetDraftWithResponse request
 	GetDraftWithResponse(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*GetDraftResponse, error)
 
+	// GetGameChangesWithResponse request
+	GetGameChangesWithResponse(ctx context.Context, params *GetGameChangesParams, reqEditors ...RequestEditorFn) (*GetGameChangesResponse, error)
+
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
@@ -17284,6 +17548,36 @@ func (r GetDraftResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetDraftResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameChangesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *GameChangesResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameChangesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameChangesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameChangesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -18034,6 +18328,15 @@ func (c *ClientWithResponses) GetDraftWithResponse(ctx context.Context, year int
 	return ParseGetDraftResponse(rsp)
 }
 
+// GetGameChangesWithResponse request returning *GetGameChangesResponse
+func (c *ClientWithResponses) GetGameChangesWithResponse(ctx context.Context, params *GetGameChangesParams, reqEditors ...RequestEditorFn) (*GetGameChangesResponse, error) {
+	rsp, err := c.GetGameChanges(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameChangesResponse(rsp)
+}
+
 // GetBoxscoreWithResponse request returning *GetBoxscoreResponse
 func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error) {
 	rsp, err := c.GetBoxscore(ctx, gamePk, reqEditors...)
@@ -18387,6 +18690,32 @@ func ParseGetDraftResponse(rsp *http.Response) (*GetDraftResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest DraftResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameChangesResponse parses an HTTP response from a GetGameChangesWithResponse call
+func ParseGetGameChangesResponse(rsp *http.Response) (*GetGameChangesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameChangesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GameChangesResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

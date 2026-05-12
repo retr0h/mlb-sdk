@@ -31,6 +31,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ScheduleResponse" }
 
+  /api/v1/game/changes:
+    get:
+      operationId: getGameChanges
+      summary: Games updated since a timestamp
+      description: |
+        Returns schedule-like data for games modified since a given
+        timestamp. toddrob99 marks updatedSince as required.
+      parameters:
+        - { name: updatedSince, in: query, required: true, schema: { type: string }, description: "ISO-8601 timestamp" }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: GameChanges
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GameChangesResponse" }
+
   /api/v1/game/{gamePk}/boxscore:
     get:
       operationId: getBoxscore
@@ -1552,6 +1572,18 @@ components:
         typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
         typeDesc:       { type: string }
         description:    { type: string }
+
+    GameChangesResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        totalItems:          { type: integer }
+        totalEvents:         { type: integer }
+        totalGames:          { type: integer }
+        totalGamesInProgress: { type: integer }
+        dates:
+          type: array
+          items: { $ref: "#/components/schemas/ScheduleDate" }
 
     SacFlyProbability:
       type: object

@@ -30,6 +30,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | Endpoint                              | Docs                          | Example                                  |
 | ------------------------------------- | ----------------------------- | ---------------------------------------- |
 | `/api/v1/schedule`                    | [Client.Schedule][d-sched]    | [schedule.go](examples/schedule.go)      |
+| `/api/v1/game/changes`                | [Client.GameChanges][d-gc]    | [gamechanges.go](examples/gamechanges.go) |
 | `/api/v1/game/{gamePk}/boxscore`      | [Client.Boxscore][d-box]      | [boxscore.go](examples/boxscore.go)      |
 | `/api/v1/game/{gamePk}/playByPlay`    | [Client.PlayByPlay][d-pbp]    | [playbyplay.go](examples/playbyplay.go)  |
 | `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
@@ -107,6 +108,7 @@ The [MIT][] License.
 [Contributing]: docs/contributing.md
 [MIT]: LICENSE
 [d-sched]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Schedule
+[d-gc]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameChanges
 [d-box]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
 [d-pbp]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
 [d-live]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
