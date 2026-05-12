@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/retr0h/mlb-sdk/internal/gen"
 )
 
 const attendanceHappyBody = `{
@@ -63,15 +65,29 @@ const attendanceHappyBody = `{
 }`
 
 func TestAttendanceFromGen(t *testing.T) {
-	// Cover the defensive nil-response branch — the wrapper guards against
-	// nil in production, but the helper is exposed to the package and
-	// should tolerate it.
-	got := attendanceFromGen(nil)
-	if got == nil {
-		t.Fatal("attendanceFromGen(nil) = nil, want empty *Attendance")
+	cases := []struct {
+		name    string
+		in      *gen.AttendanceResponse
+		wantRec int
+	}{
+		{"nil response yields empty Attendance", nil, 0},
+		{"empty struct yields empty Attendance", &gen.AttendanceResponse{}, 0},
+		{
+			"records-only response is preserved",
+			&gen.AttendanceResponse{Records: &[]gen.AttendanceRecord{{}}},
+			1,
+		},
 	}
-	if len(got.Records) != 0 || got.AggregateTotals != (AttendanceAggregateTotals{}) {
-		t.Errorf("attendanceFromGen(nil) = %+v, want zero", got)
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got := attendanceFromGen(c.in)
+			if got == nil {
+				t.Fatalf("attendanceFromGen(%+v) = nil, want non-nil", c.in)
+			}
+			if len(got.Records) != c.wantRec {
+				t.Errorf("len(Records) = %d, want %d", len(got.Records), c.wantRec)
+			}
+		})
 	}
 }
 

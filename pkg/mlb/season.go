@@ -11,18 +11,6 @@ import (
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
 
-// SeasonQuery refines a single-season lookup. The seasonId path parameter is
-// taken as a method argument; SportID is required by the MLB API and must be
-// non-zero.
-type SeasonQuery struct {
-	// SportID is the sport the season belongs to (1 = MLB, 11 = AAA, …).
-	// Required.
-	SportID int
-
-	// Fields restricts the response to a comma-separated field projection.
-	Fields string
-}
-
 // Season fetches one season's metadata by id. q.SportID is required; the
 // MLB API rejects the call otherwise (toddrob99 encodes this as
 // `required_params: [["sportId"]]`).
