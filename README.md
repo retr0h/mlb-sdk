@@ -45,6 +45,8 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/seasons`                     | [Client.Seasons][d-seas]      | [seasons.go](examples/seasons.go)        |
 | `/api/v1/seasons/{seasonId}`          | [Client.Season][d-season]     | [season.go](examples/season.go)          |
 | `/api/v1/sports`                      | [Client.Sports][d-sports]     | [sports.go](examples/sports.go)          |
+| `/api/v1/people/{personId}`            | [Client.Person][d-person]     | [person.go](examples/person.go)          |
+| `/api/v1/people`                      | [Client.People][d-people]     | —                                        |
 | `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
 | `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
 
@@ -112,5 +114,7 @@ The [MIT][] License.
 [d-seas]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Seasons
 [d-season]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Season
 [d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports
+[d-person]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Person
+[d-people]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.People
 [d-team]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
 [d-teams]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Teams

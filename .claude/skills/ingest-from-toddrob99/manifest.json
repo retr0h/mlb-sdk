@@ -121,6 +121,20 @@
       "upstreamSha": "5ec584446918136a2e06db2b961b24765749bdc0b91f7d0125c8cd6a6049ec12",
       "source": "ingest skill"
     },
+    "person": {
+      "method": "Client.Person",
+      "operationId": "getPerson",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "2388d9737ffda0f6cc6d53a4f76bf9e188684536e2d46adba5027a26e5cad897",
+      "source": "ingest skill"
+    },
+    "people": {
+      "method": "Client.People",
+      "operationId": "getPeople",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "5acf369dcf3fd5c8985d2541e51d6c0a1c7f1447d344733ebfa9a595b29f6909",
+      "source": "ingest skill"
+    },
     "game_linescore": {
       "method": "Client.Linescore",
       "operationId": "getLinescore",

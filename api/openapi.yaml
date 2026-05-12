@@ -182,6 +182,42 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SeasonsResponse" }
 
+  /api/v1/people/{personId}:
+    get:
+      operationId: getPerson
+      summary: Single person by id
+      description: |
+        Returns player / staff metadata. The response is `{"people": [<one
+        entry>]}`; the SDK collapses the wrapper and maps an empty array to
+        ErrNotFound. Hydrate sub-objects via the hydrate query parameter.
+      parameters:
+        - { name: personId, in: path, required: true, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Person
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
+  /api/v1/people:
+    get:
+      operationId: getPeople
+      summary: Fetch multiple people by comma-separated ids
+      description: |
+        Returns metadata for one or more people. personIds is required.
+      parameters:
+        - { name: personIds, in: query, required: true, schema: { type: string }, description: "comma-separated person ids" }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: People
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
   /api/v1/transactions:
     get:
       operationId: getTransactions
@@ -1019,6 +1055,65 @@ components:
         awards:
           type: array
           items: { $ref: "#/components/schemas/AwardRecipient" }
+
+    HandSide:
+      type: object
+      additionalProperties: true
+      properties:
+        code:        { type: string, description: "L | R | S" }
+        description: { type: string, description: "Left | Right | Switch" }
+
+    PersonDetail:
+      type: object
+      additionalProperties: true
+      description: |
+        Rich person record returned by /api/v1/people/{personId} and
+        /api/v1/people. Many fields are absent for non-player persons
+        (coaches, umpires, etc.).
+      properties:
+        id:               { type: integer }
+        fullName:         { type: string }
+        firstName:        { type: string }
+        lastName:         { type: string }
+        link:             { type: string }
+        primaryNumber:    { type: string }
+        birthDate:        { type: string, description: "YYYY-MM-DD" }
+        currentAge:       { type: integer }
+        birthCity:        { type: string }
+        birthCountry:     { type: string }
+        height:           { type: string, description: "e.g. 6' 4\"" }
+        weight:           { type: integer }
+        active:           { type: boolean }
+        primaryPosition:  { $ref: "#/components/schemas/PrimaryPosition" }
+        useName:          { type: string }
+        useLastName:      { type: string }
+        boxscoreName:     { type: string }
+        nickName:         { type: string }
+        gender:           { type: string }
+        isPlayer:         { type: boolean }
+        isVerified:       { type: boolean }
+        pronunciation:    { type: string }
+        mlbDebutDate:     { type: string, description: "YYYY-MM-DD" }
+        batSide:          { $ref: "#/components/schemas/HandSide" }
+        pitchHand:        { $ref: "#/components/schemas/HandSide" }
+        nameFirstLast:    { type: string }
+        nameSlug:         { type: string }
+        firstLastName:    { type: string }
+        lastFirstName:    { type: string }
+        lastInitName:     { type: string }
+        initLastName:     { type: string }
+        fullFMLName:      { type: string }
+        fullLFMName:      { type: string }
+        strikeZoneTop:    { type: number, format: double }
+        strikeZoneBottom: { type: number, format: double }
+
+    PeopleResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        people:
+          type: array
+          items: { $ref: "#/components/schemas/PersonDetail" }
 
     Transaction:
       type: object
