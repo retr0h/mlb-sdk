@@ -168,6 +168,21 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DraftResponse" }
 
+  /api/v1/game/{gamePk}/contextMetrics:
+    get:
+      operationId: getContextMetrics
+      summary: Context metrics (win probability, sac fly probability) for a game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: timecode, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Context metrics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContextMetricsResponse" }
+
   /api/v1/game/{gamePk}/linescore:
     get:
       operationId: getLinescore
@@ -1537,6 +1552,21 @@ components:
         typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
         typeDesc:       { type: string }
         description:    { type: string }
+
+    SacFlyProbability:
+      type: object
+      additionalProperties: true
+
+    ContextMetricsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        game:                          { $ref: "#/components/schemas/Ref" }
+        leftFieldSacFlyProbability:    { $ref: "#/components/schemas/SacFlyProbability" }
+        centerFieldSacFlyProbability:  { $ref: "#/components/schemas/SacFlyProbability" }
+        rightFieldSacFlyProbability:   { $ref: "#/components/schemas/SacFlyProbability" }
+        homeWinProbability:            { type: number, format: double }
+        awayWinProbability:            { type: number, format: double }
 
     LinescoreInningHalf:
       type: object

@@ -187,6 +187,20 @@ type ConferencesResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// ContextMetricsResponse defines model for ContextMetricsResponse.
+type ContextMetricsResponse struct {
+	AwayWinProbability           *float64           `json:"awayWinProbability,omitempty"`
+	CenterFieldSacFlyProbability *SacFlyProbability `json:"centerFieldSacFlyProbability,omitempty"`
+
+	// Game Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Game                        *Ref                   `json:"game,omitempty"`
+	HomeWinProbability          *float64               `json:"homeWinProbability,omitempty"`
+	LeftFieldSacFlyProbability  *SacFlyProbability     `json:"leftFieldSacFlyProbability,omitempty"`
+	RightFieldSacFlyProbability *SacFlyProbability     `json:"rightFieldSacFlyProbability,omitempty"`
+	AdditionalProperties        map[string]interface{} `json:"-"`
+}
+
 // DisplayLabel defines model for DisplayLabel.
 type DisplayLabel struct {
 	DisplayName          *string                `json:"displayName,omitempty"`
@@ -853,6 +867,9 @@ type RosterStatus struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// SacFlyProbability defines model for SacFlyProbability.
+type SacFlyProbability map[string]interface{}
+
 // ScheduleDate defines model for ScheduleDate.
 type ScheduleDate struct {
 	// Date YYYY-MM-DD
@@ -1273,6 +1290,12 @@ type GetDivisionsParams struct {
 type GetDraftParams struct {
 	Round  *string `form:"round,omitempty" json:"round,omitempty"`
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetContextMetricsParams defines parameters for GetContextMetrics.
+type GetContextMetricsParams struct {
+	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetLinescoreParams defines parameters for GetLinescore.
@@ -3197,6 +3220,149 @@ func (a ConferencesResponse) MarshalJSON() ([]byte, error) {
 		object["conferences"], err = json.Marshal(a.Conferences)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'conferences': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for ContextMetricsResponse. Returns the specified
+// element and whether it was found
+func (a ContextMetricsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for ContextMetricsResponse
+func (a *ContextMetricsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for ContextMetricsResponse to handle AdditionalProperties
+func (a *ContextMetricsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["awayWinProbability"]; found {
+		err = json.Unmarshal(raw, &a.AwayWinProbability)
+		if err != nil {
+			return fmt.Errorf("error reading 'awayWinProbability': %w", err)
+		}
+		delete(object, "awayWinProbability")
+	}
+
+	if raw, found := object["centerFieldSacFlyProbability"]; found {
+		err = json.Unmarshal(raw, &a.CenterFieldSacFlyProbability)
+		if err != nil {
+			return fmt.Errorf("error reading 'centerFieldSacFlyProbability': %w", err)
+		}
+		delete(object, "centerFieldSacFlyProbability")
+	}
+
+	if raw, found := object["game"]; found {
+		err = json.Unmarshal(raw, &a.Game)
+		if err != nil {
+			return fmt.Errorf("error reading 'game': %w", err)
+		}
+		delete(object, "game")
+	}
+
+	if raw, found := object["homeWinProbability"]; found {
+		err = json.Unmarshal(raw, &a.HomeWinProbability)
+		if err != nil {
+			return fmt.Errorf("error reading 'homeWinProbability': %w", err)
+		}
+		delete(object, "homeWinProbability")
+	}
+
+	if raw, found := object["leftFieldSacFlyProbability"]; found {
+		err = json.Unmarshal(raw, &a.LeftFieldSacFlyProbability)
+		if err != nil {
+			return fmt.Errorf("error reading 'leftFieldSacFlyProbability': %w", err)
+		}
+		delete(object, "leftFieldSacFlyProbability")
+	}
+
+	if raw, found := object["rightFieldSacFlyProbability"]; found {
+		err = json.Unmarshal(raw, &a.RightFieldSacFlyProbability)
+		if err != nil {
+			return fmt.Errorf("error reading 'rightFieldSacFlyProbability': %w", err)
+		}
+		delete(object, "rightFieldSacFlyProbability")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for ContextMetricsResponse to handle AdditionalProperties
+func (a ContextMetricsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AwayWinProbability != nil {
+		object["awayWinProbability"], err = json.Marshal(a.AwayWinProbability)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'awayWinProbability': %w", err)
+		}
+	}
+
+	if a.CenterFieldSacFlyProbability != nil {
+		object["centerFieldSacFlyProbability"], err = json.Marshal(a.CenterFieldSacFlyProbability)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'centerFieldSacFlyProbability': %w", err)
+		}
+	}
+
+	if a.Game != nil {
+		object["game"], err = json.Marshal(a.Game)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'game': %w", err)
+		}
+	}
+
+	if a.HomeWinProbability != nil {
+		object["homeWinProbability"], err = json.Marshal(a.HomeWinProbability)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'homeWinProbability': %w", err)
+		}
+	}
+
+	if a.LeftFieldSacFlyProbability != nil {
+		object["leftFieldSacFlyProbability"], err = json.Marshal(a.LeftFieldSacFlyProbability)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leftFieldSacFlyProbability': %w", err)
+		}
+	}
+
+	if a.RightFieldSacFlyProbability != nil {
+		object["rightFieldSacFlyProbability"], err = json.Marshal(a.RightFieldSacFlyProbability)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rightFieldSacFlyProbability': %w", err)
 		}
 	}
 
@@ -13647,6 +13813,9 @@ type ClientInterface interface {
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetContextMetrics request
+	GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetLinescore request
 	GetLinescore(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13785,6 +13954,18 @@ func (c *Client) GetDraft(ctx context.Context, year int, params *GetDraftParams,
 
 func (c *Client) GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetBoxscoreRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetContextMetricsRequest(c.Server, gamePk, params)
 	if err != nil {
 		return nil, err
 	}
@@ -14581,6 +14762,79 @@ func NewGetBoxscoreRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetContextMetricsRequest generates requests for GetContextMetrics
+func NewGetContextMetricsRequest(server string, gamePk int, params *GetContextMetricsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/contextMetrics", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Timecode != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "timecode", *params.Timecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -16789,6 +17043,9 @@ type ClientWithResponsesInterface interface {
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
+	// GetContextMetricsWithResponse request
+	GetContextMetricsWithResponse(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*GetContextMetricsResponse, error)
+
 	// GetLinescoreWithResponse request
 	GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error)
 
@@ -17057,6 +17314,36 @@ func (r GetBoxscoreResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetBoxscoreResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetContextMetricsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ContextMetricsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetContextMetricsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetContextMetricsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetContextMetricsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -17756,6 +18043,15 @@ func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gameP
 	return ParseGetBoxscoreResponse(rsp)
 }
 
+// GetContextMetricsWithResponse request returning *GetContextMetricsResponse
+func (c *ClientWithResponses) GetContextMetricsWithResponse(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*GetContextMetricsResponse, error) {
+	rsp, err := c.GetContextMetrics(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetContextMetricsResponse(rsp)
+}
+
 // GetLinescoreWithResponse request returning *GetLinescoreResponse
 func (c *ClientWithResponses) GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error) {
 	rsp, err := c.GetLinescore(ctx, gamePk, params, reqEditors...)
@@ -18117,6 +18413,32 @@ func ParseGetBoxscoreResponse(rsp *http.Response) (*GetBoxscoreResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest BoxscoreResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetContextMetricsResponse parses an HTTP response from a GetContextMetricsWithResponse call
+func ParseGetContextMetricsResponse(rsp *http.Response) (*GetContextMetricsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetContextMetricsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ContextMetricsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

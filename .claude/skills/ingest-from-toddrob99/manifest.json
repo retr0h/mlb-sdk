@@ -142,6 +142,13 @@
       "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
       "source": "ingest skill"
     },
+    "game_contextMetrics": {
+      "method": "Client.ContextMetrics",
+      "operationId": "getContextMetrics",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "8ce7cde304f53ffb0a94d82abb56ef5e35a669c0f8b3acfe8eb73e9b1c76d6b3",
+      "source": "ingest skill"
+    },
     "stats_leaders": {
       "method": "Client.StatsLeaders",
       "operationId": "getStatsLeaders",
