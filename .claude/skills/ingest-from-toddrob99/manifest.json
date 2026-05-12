@@ -142,6 +142,13 @@
       "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
       "source": "ingest skill"
     },
+    "team_roster": {
+      "method": "Client.Roster",
+      "operationId": "getTeamRoster",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "3ef111dbfa51e149746217bced92f326c23e6aa9165751a6ba6d30f1e18e280b",
+      "source": "ingest skill"
+    },
     "game_linescore": {
       "method": "Client.Linescore",
       "operationId": "getLinescore",

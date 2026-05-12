@@ -613,6 +613,36 @@ type Ref struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// RosterEntry defines model for RosterEntry.
+type RosterEntry struct {
+	JerseyNumber *string `json:"jerseyNumber,omitempty"`
+
+	// Person Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Person *Person `json:"person,omitempty"`
+
+	// Position Player position metadata — `{code, name, type, abbreviation}` — as
+	// the MLB API embeds it in person references.
+	Position             *PrimaryPosition       `json:"position,omitempty"`
+	Status               *RosterStatus          `json:"status,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// RosterResponse defines model for RosterResponse.
+type RosterResponse struct {
+	Link                 *string                `json:"link,omitempty"`
+	Roster               *[]RosterEntry         `json:"roster,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// RosterStatus defines model for RosterStatus.
+type RosterStatus struct {
+	// Code A | MIN | RL | …
+	Code                 *string                `json:"code,omitempty"`
+	Description          *string                `json:"description,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // ScheduleDate defines model for ScheduleDate.
 type ScheduleDate struct {
 	// Date YYYY-MM-DD
@@ -1165,6 +1195,18 @@ type GetTeamParams struct {
 
 	// Fields comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetTeamRosterParams defines parameters for GetTeamRoster.
+type GetTeamRosterParams struct {
+	// RosterType active | 40Man | fullSeason | allTime | depthChart | …
+	RosterType *string `form:"rosterType,omitempty" json:"rosterType,omitempty"`
+	Season     *int    `form:"season,omitempty" json:"season,omitempty"`
+
+	// Date YYYY-MM-DD
+	Date    *string `form:"date,omitempty" json:"date,omitempty"`
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamStatsParams defines parameters for GetTeamStats.
@@ -6935,6 +6977,285 @@ func (a Ref) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for RosterEntry. Returns the specified
+// element and whether it was found
+func (a RosterEntry) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for RosterEntry
+func (a *RosterEntry) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for RosterEntry to handle AdditionalProperties
+func (a *RosterEntry) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["jerseyNumber"]; found {
+		err = json.Unmarshal(raw, &a.JerseyNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'jerseyNumber': %w", err)
+		}
+		delete(object, "jerseyNumber")
+	}
+
+	if raw, found := object["person"]; found {
+		err = json.Unmarshal(raw, &a.Person)
+		if err != nil {
+			return fmt.Errorf("error reading 'person': %w", err)
+		}
+		delete(object, "person")
+	}
+
+	if raw, found := object["position"]; found {
+		err = json.Unmarshal(raw, &a.Position)
+		if err != nil {
+			return fmt.Errorf("error reading 'position': %w", err)
+		}
+		delete(object, "position")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for RosterEntry to handle AdditionalProperties
+func (a RosterEntry) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.JerseyNumber != nil {
+		object["jerseyNumber"], err = json.Marshal(a.JerseyNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'jerseyNumber': %w", err)
+		}
+	}
+
+	if a.Person != nil {
+		object["person"], err = json.Marshal(a.Person)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'person': %w", err)
+		}
+	}
+
+	if a.Position != nil {
+		object["position"], err = json.Marshal(a.Position)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'position': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for RosterResponse. Returns the specified
+// element and whether it was found
+func (a RosterResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for RosterResponse
+func (a *RosterResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for RosterResponse to handle AdditionalProperties
+func (a *RosterResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["roster"]; found {
+		err = json.Unmarshal(raw, &a.Roster)
+		if err != nil {
+			return fmt.Errorf("error reading 'roster': %w", err)
+		}
+		delete(object, "roster")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for RosterResponse to handle AdditionalProperties
+func (a RosterResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Roster != nil {
+		object["roster"], err = json.Marshal(a.Roster)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'roster': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for RosterStatus. Returns the specified
+// element and whether it was found
+func (a RosterStatus) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for RosterStatus
+func (a *RosterStatus) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for RosterStatus to handle AdditionalProperties
+func (a *RosterStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["description"]; found {
+		err = json.Unmarshal(raw, &a.Description)
+		if err != nil {
+			return fmt.Errorf("error reading 'description': %w", err)
+		}
+		delete(object, "description")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for RosterStatus to handle AdditionalProperties
+func (a RosterStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Description != nil {
+		object["description"], err = json.Marshal(a.Description)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'description': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for ScheduleDate. Returns the specified
 // element and whether it was found
 func (a ScheduleDate) Get(fieldName string) (value interface{}, found bool) {
@@ -10671,6 +10992,9 @@ type ClientInterface interface {
 	// GetTeam request
 	GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTeamRoster request
+	GetTeamRoster(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTeamStats request
 	GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -10899,6 +11223,18 @@ func (c *Client) GetTeams(ctx context.Context, params *GetTeamsParams, reqEditor
 
 func (c *Client) GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamRoster(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamRosterRequest(c.Server, teamId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -12558,6 +12894,115 @@ func NewGetTeamRequest(server string, teamId int, params *GetTeamParams) (*http.
 	return req, nil
 }
 
+// NewGetTeamRosterRequest generates requests for GetTeamRoster
+func NewGetTeamRosterRequest(server string, teamId int, params *GetTeamRosterParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "teamId", teamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/teams/%s/roster", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.RosterType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "rosterType", *params.RosterType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamStatsRequest generates requests for GetTeamStats
 func NewGetTeamStatsRequest(server string, teamId int, params *GetTeamStatsParams) (*http.Request, error) {
 	var err error
@@ -12953,6 +13398,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetTeamWithResponse request
 	GetTeamWithResponse(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
+
+	// GetTeamRosterWithResponse request
+	GetTeamRosterWithResponse(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*GetTeamRosterResponse, error)
 
 	// GetTeamStatsWithResponse request
 	GetTeamStatsWithResponse(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*GetTeamStatsResponse, error)
@@ -13534,6 +13982,36 @@ func (r GetTeamResponse) ContentType() string {
 	return ""
 }
 
+type GetTeamRosterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *RosterResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamRosterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamRosterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamRosterResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetTeamStatsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -13793,6 +14271,15 @@ func (c *ClientWithResponses) GetTeamWithResponse(ctx context.Context, teamId in
 		return nil, err
 	}
 	return ParseGetTeamResponse(rsp)
+}
+
+// GetTeamRosterWithResponse request returning *GetTeamRosterResponse
+func (c *ClientWithResponses) GetTeamRosterWithResponse(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*GetTeamRosterResponse, error) {
+	rsp, err := c.GetTeamRoster(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamRosterResponse(rsp)
 }
 
 // GetTeamStatsWithResponse request returning *GetTeamStatsResponse
@@ -14306,6 +14793,32 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest TeamsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamRosterResponse parses an HTTP response from a GetTeamRosterWithResponse call
+func ParseGetTeamRosterResponse(rsp *http.Response) (*GetTeamRosterResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamRosterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest RosterResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

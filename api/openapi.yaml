@@ -218,6 +218,28 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/PeopleResponse" }
 
+  /api/v1/teams/{teamId}/roster:
+    get:
+      operationId: getTeamRoster
+      summary: Team roster
+      description: |
+        Returns the roster for a team. Filter by rosterType ("active",
+        "40Man", "fullSeason", "allTime", "depthChart", etc.), season,
+        and date.
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: rosterType, in: query, schema: { type: string }, description: "active | 40Man | fullSeason | allTime | depthChart | …" }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Roster
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RosterResponse" }
+
   /api/v1/people/freeAgents:
     get:
       operationId: getFreeAgents
@@ -1134,6 +1156,31 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    RosterStatus:
+      type: object
+      additionalProperties: true
+      properties:
+        code:        { type: string, description: "A | MIN | RL | …" }
+        description: { type: string }
+
+    RosterEntry:
+      type: object
+      additionalProperties: true
+      properties:
+        person:       { $ref: "#/components/schemas/Person" }
+        jerseyNumber: { type: string }
+        position:     { $ref: "#/components/schemas/PrimaryPosition" }
+        status:       { $ref: "#/components/schemas/RosterStatus" }
+
+    RosterResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        link: { type: string }
+        roster:
+          type: array
+          items: { $ref: "#/components/schemas/RosterEntry" }
 
     FreeAgent:
       type: object
