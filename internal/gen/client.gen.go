@@ -1144,6 +1144,12 @@ type TeamsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// TimestampsResponse defines model for TimestampsResponse.
+type TimestampsResponse struct {
+	Timestamps           *[]string              `json:"timestamps,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // Transaction One roster / assignment transaction — the player, the from/to
 // teams, and the date metadata. fromTeam is omitted on initial
 // assignments; description is free-text the MLB feed populates.
@@ -12768,6 +12774,74 @@ func (a TeamsResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for TimestampsResponse. Returns the specified
+// element and whether it was found
+func (a TimestampsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for TimestampsResponse
+func (a *TimestampsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for TimestampsResponse to handle AdditionalProperties
+func (a *TimestampsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["timestamps"]; found {
+		err = json.Unmarshal(raw, &a.Timestamps)
+		if err != nil {
+			return fmt.Errorf("error reading 'timestamps': %w", err)
+		}
+		delete(object, "timestamps")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for TimestampsResponse to handle AdditionalProperties
+func (a TimestampsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Timestamps != nil {
+		object["timestamps"], err = json.Marshal(a.Timestamps)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'timestamps': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for Transaction. Returns the specified
 // element and whether it was found
 func (a Transaction) Get(fieldName string) (value interface{}, found bool) {
@@ -13967,6 +14041,12 @@ type ClientInterface interface {
 	// GetContextMetrics request
 	GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGameColorTimestamps request
+	GetGameColorTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGameTimestamps request
+	GetGameTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetLinescore request
 	GetLinescore(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14129,6 +14209,30 @@ func (c *Client) GetBoxscore(ctx context.Context, gamePk int, reqEditors ...Requ
 
 func (c *Client) GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetContextMetricsRequest(c.Server, gamePk, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameColorTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameColorTimestampsRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameTimestampsRequest(c.Server, gamePk)
 	if err != nil {
 		return nil, err
 	}
@@ -15096,6 +15200,74 @@ func NewGetContextMetricsRequest(server string, gamePk int, params *GetContextMe
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
 		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameColorTimestampsRequest generates requests for GetGameColorTimestamps
+func NewGetGameColorTimestampsRequest(server string, gamePk int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/feed/color/timestamps", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameTimestampsRequest generates requests for GetGameTimestamps
+func NewGetGameTimestampsRequest(server string, gamePk int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/feed/live/timestamps", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -17310,6 +17482,12 @@ type ClientWithResponsesInterface interface {
 	// GetContextMetricsWithResponse request
 	GetContextMetricsWithResponse(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*GetContextMetricsResponse, error)
 
+	// GetGameColorTimestampsWithResponse request
+	GetGameColorTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameColorTimestampsResponse, error)
+
+	// GetGameTimestampsWithResponse request
+	GetGameTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameTimestampsResponse, error)
+
 	// GetLinescoreWithResponse request
 	GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error)
 
@@ -17638,6 +17816,66 @@ func (r GetContextMetricsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetContextMetricsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameColorTimestampsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimestampsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameColorTimestampsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameColorTimestampsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameColorTimestampsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameTimestampsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimestampsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameTimestampsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameTimestampsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameTimestampsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -18355,6 +18593,24 @@ func (c *ClientWithResponses) GetContextMetricsWithResponse(ctx context.Context,
 	return ParseGetContextMetricsResponse(rsp)
 }
 
+// GetGameColorTimestampsWithResponse request returning *GetGameColorTimestampsResponse
+func (c *ClientWithResponses) GetGameColorTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameColorTimestampsResponse, error) {
+	rsp, err := c.GetGameColorTimestamps(ctx, gamePk, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameColorTimestampsResponse(rsp)
+}
+
+// GetGameTimestampsWithResponse request returning *GetGameTimestampsResponse
+func (c *ClientWithResponses) GetGameTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameTimestampsResponse, error) {
+	rsp, err := c.GetGameTimestamps(ctx, gamePk, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameTimestampsResponse(rsp)
+}
+
 // GetLinescoreWithResponse request returning *GetLinescoreResponse
 func (c *ClientWithResponses) GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error) {
 	rsp, err := c.GetLinescore(ctx, gamePk, params, reqEditors...)
@@ -18768,6 +19024,58 @@ func ParseGetContextMetricsResponse(rsp *http.Response) (*GetContextMetricsRespo
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest ContextMetricsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameColorTimestampsResponse parses an HTTP response from a GetGameColorTimestampsWithResponse call
+func ParseGetGameColorTimestampsResponse(rsp *http.Response) (*GetGameColorTimestampsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameColorTimestampsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TimestampsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameTimestampsResponse parses an HTTP response from a GetGameTimestampsWithResponse call
+func ParseGetGameTimestampsResponse(rsp *http.Response) (*GetGameTimestampsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameTimestampsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TimestampsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

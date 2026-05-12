@@ -188,6 +188,32 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/DraftResponse" }
 
+  /api/v1/game/{gamePk}/feed/live/timestamps:
+    get:
+      operationId: getGameTimestamps
+      summary: Feed timestamps for a live game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Timestamps
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TimestampsResponse" }
+
+  /api/v1/game/{gamePk}/feed/color/timestamps:
+    get:
+      operationId: getGameColorTimestamps
+      summary: Color-feed timestamps for a live game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Timestamps
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TimestampsResponse" }
+
   /api/v1/game/{gamePk}/contextMetrics:
     get:
       operationId: getContextMetrics
@@ -1572,6 +1598,14 @@ components:
         typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
         typeDesc:       { type: string }
         description:    { type: string }
+
+    TimestampsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        timestamps:
+          type: array
+          items: { type: string }
 
     GameChangesResponse:
       type: object

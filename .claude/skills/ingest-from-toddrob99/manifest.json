@@ -42,7 +42,7 @@
       "operationId": "getStandings",
       "ingestedOn": "2026-05-10",
       "upstreamSha": "3b9fa94b3a9d9c7b721d87b0afad47a04c05dbebe304f6825041b45054ac92df",
-      "source": "ingest-from-toddrob99 skill — first endpoint ported via the skill"
+      "source": "ingest-from-toddrob99 skill \u2014 first endpoint ported via the skill"
     },
     "venue": {
       "method": "Client.Venue",
@@ -203,6 +203,20 @@
       "operationId": "getLinescore",
       "ingestedOn": "2026-05-11",
       "upstreamSha": "6276d721569eda1f7b745b781b2b55ab8925e155b0640d6b0d675663c789a694",
+      "source": "ingest skill"
+    },
+    "game_timestamps": {
+      "method": "Client.GameTimestamps",
+      "operationId": "getGameTimestamps",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "48b52cb093b7783d00122175fe936fc19c6e08a52cc9bf157b5e94da87f531f3",
+      "source": "ingest skill"
+    },
+    "game_color_timestamps": {
+      "method": "Client.GameColorTimestamps",
+      "operationId": "getGameColorTimestamps",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "b4e54c62d5f9f4472ef14cd75c6913359d9a41bbd5c4eef2c5fef145262e65c6",
       "source": "ingest skill"
     }
   }
