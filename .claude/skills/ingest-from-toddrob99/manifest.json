@@ -218,6 +218,27 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "b4e54c62d5f9f4472ef14cd75c6913359d9a41bbd5c4eef2c5fef145262e65c6",
       "source": "ingest skill"
+    },
+    "team_coaches": {
+      "method": "Client.Coaches",
+      "operationId": "getTeamCoaches",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "b17933432a9decbb5d592159e2498e61982f5e237f1d684164c1ec1860f614a3",
+      "source": "ingest skill"
+    },
+    "team_personnel": {
+      "method": "Client.Personnel",
+      "operationId": "getTeamPersonnel",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "2b140ab46b2ef5e24be6e9b3326f85b00de2eab3bd55225fb5a88c515025d5c2",
+      "source": "ingest skill"
+    },
+    "jobs_umpires": {
+      "method": "Client.Umpires",
+      "operationId": "getJobsUmpires",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "c5843a198d88a97b876225ab8a32bc775601de3525bcecd923a7a7762a35df49",
+      "source": "ingest skill"
     }
   }
 }

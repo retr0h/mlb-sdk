@@ -1004,6 +1004,32 @@ type SportsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// StaffEntry defines model for StaffEntry.
+type StaffEntry struct {
+	JerseyNumber *string `json:"jerseyNumber,omitempty"`
+
+	// Job e.g. Manager, Umpire
+	Job *string `json:"job,omitempty"`
+
+	// JobId e.g. MNGR, UMPR
+	JobId *string `json:"jobId,omitempty"`
+
+	// Person Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Person               *Person                `json:"person,omitempty"`
+	Title                *string                `json:"title,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// StaffResponse defines model for StaffResponse.
+type StaffResponse struct {
+	Link                 *string                `json:"link,omitempty"`
+	Roster               *[]StaffEntry          `json:"roster,omitempty"`
+	RosterType           *string                `json:"rosterType,omitempty"`
+	TeamId               *int                   `json:"teamId,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // StandingsResponse defines model for StandingsResponse.
 type StandingsResponse struct {
 	Records              *[]DivisionStandings   `json:"records,omitempty"`
@@ -1361,6 +1387,13 @@ type GetHighLowParams struct {
 	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetJobsUmpiresParams defines parameters for GetJobsUmpires.
+type GetJobsUmpiresParams struct {
+	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Date    *string `form:"date,omitempty" json:"date,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetLeaguesParams defines parameters for GetLeagues.
 type GetLeaguesParams struct {
 	// SportId 1 = MLB
@@ -1518,6 +1551,19 @@ type GetTeamParams struct {
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 
 	// Fields comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetTeamCoachesParams defines parameters for GetTeamCoaches.
+type GetTeamCoachesParams struct {
+	Season *int    `form:"season,omitempty" json:"season,omitempty"`
+	Date   *string `form:"date,omitempty" json:"date,omitempty"`
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetTeamPersonnelParams defines parameters for GetTeamPersonnel.
+type GetTeamPersonnelParams struct {
+	Date   *string `form:"date,omitempty" json:"date,omitempty"`
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -11306,6 +11352,247 @@ func (a SportsResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for StaffEntry. Returns the specified
+// element and whether it was found
+func (a StaffEntry) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for StaffEntry
+func (a *StaffEntry) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for StaffEntry to handle AdditionalProperties
+func (a *StaffEntry) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["jerseyNumber"]; found {
+		err = json.Unmarshal(raw, &a.JerseyNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'jerseyNumber': %w", err)
+		}
+		delete(object, "jerseyNumber")
+	}
+
+	if raw, found := object["job"]; found {
+		err = json.Unmarshal(raw, &a.Job)
+		if err != nil {
+			return fmt.Errorf("error reading 'job': %w", err)
+		}
+		delete(object, "job")
+	}
+
+	if raw, found := object["jobId"]; found {
+		err = json.Unmarshal(raw, &a.JobId)
+		if err != nil {
+			return fmt.Errorf("error reading 'jobId': %w", err)
+		}
+		delete(object, "jobId")
+	}
+
+	if raw, found := object["person"]; found {
+		err = json.Unmarshal(raw, &a.Person)
+		if err != nil {
+			return fmt.Errorf("error reading 'person': %w", err)
+		}
+		delete(object, "person")
+	}
+
+	if raw, found := object["title"]; found {
+		err = json.Unmarshal(raw, &a.Title)
+		if err != nil {
+			return fmt.Errorf("error reading 'title': %w", err)
+		}
+		delete(object, "title")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for StaffEntry to handle AdditionalProperties
+func (a StaffEntry) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.JerseyNumber != nil {
+		object["jerseyNumber"], err = json.Marshal(a.JerseyNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'jerseyNumber': %w", err)
+		}
+	}
+
+	if a.Job != nil {
+		object["job"], err = json.Marshal(a.Job)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'job': %w", err)
+		}
+	}
+
+	if a.JobId != nil {
+		object["jobId"], err = json.Marshal(a.JobId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'jobId': %w", err)
+		}
+	}
+
+	if a.Person != nil {
+		object["person"], err = json.Marshal(a.Person)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'person': %w", err)
+		}
+	}
+
+	if a.Title != nil {
+		object["title"], err = json.Marshal(a.Title)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'title': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for StaffResponse. Returns the specified
+// element and whether it was found
+func (a StaffResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for StaffResponse
+func (a *StaffResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for StaffResponse to handle AdditionalProperties
+func (a *StaffResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["roster"]; found {
+		err = json.Unmarshal(raw, &a.Roster)
+		if err != nil {
+			return fmt.Errorf("error reading 'roster': %w", err)
+		}
+		delete(object, "roster")
+	}
+
+	if raw, found := object["rosterType"]; found {
+		err = json.Unmarshal(raw, &a.RosterType)
+		if err != nil {
+			return fmt.Errorf("error reading 'rosterType': %w", err)
+		}
+		delete(object, "rosterType")
+	}
+
+	if raw, found := object["teamId"]; found {
+		err = json.Unmarshal(raw, &a.TeamId)
+		if err != nil {
+			return fmt.Errorf("error reading 'teamId': %w", err)
+		}
+		delete(object, "teamId")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for StaffResponse to handle AdditionalProperties
+func (a StaffResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.Roster != nil {
+		object["roster"], err = json.Marshal(a.Roster)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'roster': %w", err)
+		}
+	}
+
+	if a.RosterType != nil {
+		object["rosterType"], err = json.Marshal(a.RosterType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rosterType': %w", err)
+		}
+	}
+
+	if a.TeamId != nil {
+		object["teamId"], err = json.Marshal(a.TeamId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'teamId': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for StandingsResponse. Returns the specified
 // element and whether it was found
 func (a StandingsResponse) Get(fieldName string) (value interface{}, found bool) {
@@ -14059,6 +14346,9 @@ type ClientInterface interface {
 	// GetHighLow request
 	GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetJobsUmpires request
+	GetJobsUmpires(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetLeagues request
 	GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14097,6 +14387,12 @@ type ClientInterface interface {
 
 	// GetTeam request
 	GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeamCoaches request
+	GetTeamCoaches(ctx context.Context, teamId int, params *GetTeamCoachesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeamPersonnel request
+	GetTeamPersonnel(ctx context.Context, teamId int, params *GetTeamPersonnelParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeamRoster request
 	GetTeamRoster(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14291,6 +14587,18 @@ func (c *Client) GetHighLow(ctx context.Context, orgType string, params *GetHigh
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetJobsUmpires(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobsUmpiresRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLeaguesRequest(c.Server, params)
 	if err != nil {
@@ -14437,6 +14745,30 @@ func (c *Client) GetTeams(ctx context.Context, params *GetTeamsParams, reqEditor
 
 func (c *Client) GetTeam(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamCoaches(ctx context.Context, teamId int, params *GetTeamCoachesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamCoachesRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamPersonnel(ctx context.Context, teamId int, params *GetTeamPersonnelParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamPersonnelRequest(c.Server, teamId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -15689,6 +16021,84 @@ func NewGetHighLowRequest(server string, orgType string, params *GetHighLowParam
 		if params.Limit != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetJobsUmpiresRequest generates requests for GetJobsUmpires
+func NewGetJobsUmpiresRequest(server string, params *GetJobsUmpiresParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/jobs/umpires")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -17007,6 +17417,164 @@ func NewGetTeamRequest(server string, teamId int, params *GetTeamParams) (*http.
 	return req, nil
 }
 
+// NewGetTeamCoachesRequest generates requests for GetTeamCoaches
+func NewGetTeamCoachesRequest(server string, teamId int, params *GetTeamCoachesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "teamId", teamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/teams/%s/coaches", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTeamPersonnelRequest generates requests for GetTeamPersonnel
+func NewGetTeamPersonnelRequest(server string, teamId int, params *GetTeamPersonnelParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "teamId", teamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/teams/%s/personnel", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamRosterRequest generates requests for GetTeamRoster
 func NewGetTeamRosterRequest(server string, teamId int, params *GetTeamRosterParams) (*http.Request, error) {
 	var err error
@@ -17500,6 +18068,9 @@ type ClientWithResponsesInterface interface {
 	// GetHighLowWithResponse request
 	GetHighLowWithResponse(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*GetHighLowResponse, error)
 
+	// GetJobsUmpiresWithResponse request
+	GetJobsUmpiresWithResponse(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*GetJobsUmpiresResponse, error)
+
 	// GetLeaguesWithResponse request
 	GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error)
 
@@ -17538,6 +18109,12 @@ type ClientWithResponsesInterface interface {
 
 	// GetTeamWithResponse request
 	GetTeamWithResponse(ctx context.Context, teamId int, params *GetTeamParams, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
+
+	// GetTeamCoachesWithResponse request
+	GetTeamCoachesWithResponse(ctx context.Context, teamId int, params *GetTeamCoachesParams, reqEditors ...RequestEditorFn) (*GetTeamCoachesResponse, error)
+
+	// GetTeamPersonnelWithResponse request
+	GetTeamPersonnelWithResponse(ctx context.Context, teamId int, params *GetTeamPersonnelParams, reqEditors ...RequestEditorFn) (*GetTeamPersonnelResponse, error)
 
 	// GetTeamRosterWithResponse request
 	GetTeamRosterWithResponse(ctx context.Context, teamId int, params *GetTeamRosterParams, reqEditors ...RequestEditorFn) (*GetTeamRosterResponse, error)
@@ -18002,6 +18579,36 @@ func (r GetHighLowResponse) ContentType() string {
 	return ""
 }
 
+type GetJobsUmpiresResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobsUmpiresResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobsUmpiresResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetJobsUmpiresResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetLeaguesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18392,6 +18999,66 @@ func (r GetTeamResponse) ContentType() string {
 	return ""
 }
 
+type GetTeamCoachesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamCoachesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamCoachesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamCoachesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetTeamPersonnelResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *StaffResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamPersonnelResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamPersonnelResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamPersonnelResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetTeamRosterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18647,6 +19314,15 @@ func (c *ClientWithResponses) GetHighLowWithResponse(ctx context.Context, orgTyp
 	return ParseGetHighLowResponse(rsp)
 }
 
+// GetJobsUmpiresWithResponse request returning *GetJobsUmpiresResponse
+func (c *ClientWithResponses) GetJobsUmpiresWithResponse(ctx context.Context, params *GetJobsUmpiresParams, reqEditors ...RequestEditorFn) (*GetJobsUmpiresResponse, error) {
+	rsp, err := c.GetJobsUmpires(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobsUmpiresResponse(rsp)
+}
+
 // GetLeaguesWithResponse request returning *GetLeaguesResponse
 func (c *ClientWithResponses) GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error) {
 	rsp, err := c.GetLeagues(ctx, params, reqEditors...)
@@ -18762,6 +19438,24 @@ func (c *ClientWithResponses) GetTeamWithResponse(ctx context.Context, teamId in
 		return nil, err
 	}
 	return ParseGetTeamResponse(rsp)
+}
+
+// GetTeamCoachesWithResponse request returning *GetTeamCoachesResponse
+func (c *ClientWithResponses) GetTeamCoachesWithResponse(ctx context.Context, teamId int, params *GetTeamCoachesParams, reqEditors ...RequestEditorFn) (*GetTeamCoachesResponse, error) {
+	rsp, err := c.GetTeamCoaches(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamCoachesResponse(rsp)
+}
+
+// GetTeamPersonnelWithResponse request returning *GetTeamPersonnelResponse
+func (c *ClientWithResponses) GetTeamPersonnelWithResponse(ctx context.Context, teamId int, params *GetTeamPersonnelParams, reqEditors ...RequestEditorFn) (*GetTeamPersonnelResponse, error) {
+	rsp, err := c.GetTeamPersonnel(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamPersonnelResponse(rsp)
 }
 
 // GetTeamRosterWithResponse request returning *GetTeamRosterResponse
@@ -19190,6 +19884,32 @@ func ParseGetHighLowResponse(rsp *http.Response) (*GetHighLowResponse, error) {
 	return response, nil
 }
 
+// ParseGetJobsUmpiresResponse parses an HTTP response from a GetJobsUmpiresWithResponse call
+func ParseGetJobsUmpiresResponse(rsp *http.Response) (*GetJobsUmpiresResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobsUmpiresResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetLeaguesResponse parses an HTTP response from a GetLeaguesWithResponse call
 func ParseGetLeaguesResponse(rsp *http.Response) (*GetLeaguesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -19518,6 +20238,58 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest TeamsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamCoachesResponse parses an HTTP response from a GetTeamCoachesWithResponse call
+func ParseGetTeamCoachesResponse(rsp *http.Response) (*GetTeamCoachesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamCoachesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamPersonnelResponse parses an HTTP response from a GetTeamPersonnelWithResponse call
+func ParseGetTeamPersonnelResponse(rsp *http.Response) (*GetTeamPersonnelResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamPersonnelResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest StaffResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

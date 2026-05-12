@@ -262,6 +262,52 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/StandingsResponse" }
 
+  /api/v1/teams/{teamId}/coaches:
+    get:
+      operationId: getTeamCoaches
+      summary: Coaching staff for a team
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Coaches
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
+  /api/v1/teams/{teamId}/personnel:
+    get:
+      operationId: getTeamPersonnel
+      summary: Front-office personnel for a team
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Personnel
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
+  /api/v1/jobs/umpires:
+    get:
+      operationId: getJobsUmpires
+      summary: Umpire roster
+      parameters:
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Umpires
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffResponse" }
+
   /api/v1/teams/{teamId}/stats:
     get:
       operationId: getTeamStats
@@ -1598,6 +1644,27 @@ components:
         typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
         typeDesc:       { type: string }
         description:    { type: string }
+
+    StaffEntry:
+      type: object
+      additionalProperties: true
+      properties:
+        person:       { $ref: "#/components/schemas/Person" }
+        jerseyNumber: { type: string }
+        job:          { type: string, description: "e.g. Manager, Umpire" }
+        jobId:        { type: string, description: "e.g. MNGR, UMPR" }
+        title:        { type: string }
+
+    StaffResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        link:       { type: string }
+        teamId:     { type: integer }
+        rosterType: { type: string }
+        roster:
+          type: array
+          items: { $ref: "#/components/schemas/StaffEntry" }
 
     TimestampsResponse:
       type: object

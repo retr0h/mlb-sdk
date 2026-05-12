@@ -36,12 +36,15 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
 | `/api/v1/gamePace`                    | [Client.GamePace][d-pace]     | [gamepace.go](examples/gamepace.go)      |
 | `/api/v1/highLow/{orgType}`           | [Client.HighLow][d-hl]        | [highlow.go](examples/highlow.go)        |
+| `/api/v1/jobs/umpires`                | [Client.Umpires][d-umps]      | —                                        |
 | `/api/v1/stats/leaders`               | [Client.StatsLeaders][d-sl]   | [statsleaders.go](examples/statsleaders.go) |
 | `/api/v1/game/{gamePk}/feed/live/timestamps` | [Client.GameTimestamps][d-gts] | — |
 | `/api/v1/game/{gamePk}/feed/color/timestamps` | [Client.GameColorTimestamps][d-gcts] | — |
 | `/api/v1/game/{gamePk}/contextMetrics` | [Client.ContextMetrics][d-cm] | [contextmetrics.go](examples/contextmetrics.go) |
 | `/api/v1/game/{gamePk}/linescore`     | [Client.Linescore][d-line]    | [linescore.go](examples/linescore.go)    |
 | `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
+| `/api/v1/teams/{teamId}/coaches`      | [Client.Coaches][d-coach]     | —                                        |
+| `/api/v1/teams/{teamId}/personnel`    | [Client.Personnel][d-pers]    | —                                        |
 | `/api/v1/teams/{teamId}/roster`       | [Client.Roster][d-roster]     | [roster.go](examples/roster.go)          |
 | `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 | `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
@@ -122,7 +125,10 @@ The [MIT][] License.
 [d-cm]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ContextMetrics
 [d-line]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Linescore
 [d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
+[d-coach]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Coaches
+[d-pers]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Personnel
 [d-roster]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Roster
+[d-umps]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Umpires
 [d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats
 [d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
 [d-conf]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Conferences
