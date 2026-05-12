@@ -16,6 +16,88 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// AttendanceAggregateTotals Per-call rollup totals — sum / average across every record in the
+// response. Present on every attendance response regardless of
+// whether records is empty.
+type AttendanceAggregateTotals struct {
+	AttendanceAverageAway *int                   `json:"attendanceAverageAway,omitempty"`
+	AttendanceAverageHome *int                   `json:"attendanceAverageHome,omitempty"`
+	AttendanceAverageYtd  *int                   `json:"attendanceAverageYtd,omitempty"`
+	AttendanceHigh        *int                   `json:"attendanceHigh,omitempty"`
+	AttendanceHighDate    *time.Time             `json:"attendanceHighDate,omitempty"`
+	AttendanceTotal       *int                   `json:"attendanceTotal,omitempty"`
+	AttendanceTotalAway   *int                   `json:"attendanceTotalAway,omitempty"`
+	AttendanceTotalHome   *int                   `json:"attendanceTotalHome,omitempty"`
+	OpeningsTotalAway     *int                   `json:"openingsTotalAway,omitempty"`
+	OpeningsTotalHome     *int                   `json:"openingsTotalHome,omitempty"`
+	OpeningsTotalLost     *int                   `json:"openingsTotalLost,omitempty"`
+	OpeningsTotalYtd      *int                   `json:"openingsTotalYtd,omitempty"`
+	AdditionalProperties  map[string]interface{} `json:"-"`
+}
+
+// AttendanceGameRef Pointer to one of the games anchoring a high/low attendance record.
+// `content` is a nested link to the game-content endpoint.
+type AttendanceGameRef struct {
+	// Content Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Content *Ref `json:"content,omitempty"`
+
+	// DayNight day | night
+	DayNight             *string                `json:"dayNight,omitempty"`
+	GamePk               *int                   `json:"gamePk,omitempty"`
+	Link                 *string                `json:"link,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// AttendanceRecord One attendance row — typically one row per (team, season, gameType)
+// combination, or aggregated per league when leagueId/leagueListId
+// is used.
+type AttendanceRecord struct {
+	AttendanceAverageAway *int       `json:"attendanceAverageAway,omitempty"`
+	AttendanceAverageHome *int       `json:"attendanceAverageHome,omitempty"`
+	AttendanceAverageYtd  *int       `json:"attendanceAverageYtd,omitempty"`
+	AttendanceHigh        *int       `json:"attendanceHigh,omitempty"`
+	AttendanceHighDate    *time.Time `json:"attendanceHighDate,omitempty"`
+
+	// AttendanceHighGame Pointer to one of the games anchoring a high/low attendance record.
+	// `content` is a nested link to the game-content endpoint.
+	AttendanceHighGame *AttendanceGameRef `json:"attendanceHighGame,omitempty"`
+	AttendanceLow      *int               `json:"attendanceLow,omitempty"`
+	AttendanceLowDate  *time.Time         `json:"attendanceLowDate,omitempty"`
+
+	// AttendanceLowGame Pointer to one of the games anchoring a high/low attendance record.
+	// `content` is a nested link to the game-content endpoint.
+	AttendanceLowGame        *AttendanceGameRef `json:"attendanceLowGame,omitempty"`
+	AttendanceOpeningAverage *int               `json:"attendanceOpeningAverage,omitempty"`
+	AttendanceTotal          *int               `json:"attendanceTotal,omitempty"`
+	AttendanceTotalAway      *int               `json:"attendanceTotalAway,omitempty"`
+	AttendanceTotalHome      *int               `json:"attendanceTotalHome,omitempty"`
+
+	// GameType Short reference for an MLB game-type — `{id, description}` — used by
+	// attendance records to label the game-type bucket.
+	GameType             *GameTypeRef           `json:"gameType,omitempty"`
+	GamesAwayTotal       *int                   `json:"gamesAwayTotal,omitempty"`
+	GamesHomeTotal       *int                   `json:"gamesHomeTotal,omitempty"`
+	GamesTotal           *int                   `json:"gamesTotal,omitempty"`
+	OpeningsTotal        *int                   `json:"openingsTotal,omitempty"`
+	OpeningsTotalAway    *int                   `json:"openingsTotalAway,omitempty"`
+	OpeningsTotalHome    *int                   `json:"openingsTotalHome,omitempty"`
+	OpeningsTotalLost    *int                   `json:"openingsTotalLost,omitempty"`
+	Team                 *Team                  `json:"team,omitempty"`
+	Year                 *string                `json:"year,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// AttendanceResponse defines model for AttendanceResponse.
+type AttendanceResponse struct {
+	// AggregateTotals Per-call rollup totals — sum / average across every record in the
+	// response. Present on every attendance response regardless of
+	// whether records is empty.
+	AggregateTotals      *AttendanceAggregateTotals `json:"aggregateTotals,omitempty"`
+	Records              *[]AttendanceRecord        `json:"records,omitempty"`
+	AdditionalProperties map[string]interface{}     `json:"-"`
+}
+
 // BattingStats defines model for BattingStats.
 type BattingStats struct {
 	GroundIntoDoublePlay *int                   `json:"groundIntoDoublePlay,omitempty"`
@@ -111,6 +193,16 @@ type GameStatus struct {
 	// AbstractGameState Final, Live, Preview
 	AbstractGameState    *string                `json:"abstractGameState,omitempty"`
 	DetailedState        *string                `json:"detailedState,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// GameTypeRef Short reference for an MLB game-type — `{id, description}` — used by
+// attendance records to label the game-type bucket.
+type GameTypeRef struct {
+	Description *string `json:"description,omitempty"`
+
+	// Id e.g. R, S, E
+	Id                   *string                `json:"id,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -579,6 +671,23 @@ type VenueTimeZone struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// GetAttendanceParams defines parameters for GetAttendance.
+type GetAttendanceParams struct {
+	TeamId   *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+	Season   *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Date YYYY-MM-DD
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// LeagueListId e.g. milb_all
+	LeagueListId *string `form:"leagueListId,omitempty" json:"leagueListId,omitempty"`
+
+	// GameType R | S | E | A | D | F | L | W
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetDivisionsParams defines parameters for GetDivisions.
 type GetDivisionsParams struct {
 	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
@@ -729,6 +838,833 @@ type GetVenueParams struct {
 
 	// Fields comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// Getter for additional properties for AttendanceAggregateTotals. Returns the specified
+// element and whether it was found
+func (a AttendanceAggregateTotals) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AttendanceAggregateTotals
+func (a *AttendanceAggregateTotals) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AttendanceAggregateTotals to handle AdditionalProperties
+func (a *AttendanceAggregateTotals) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["attendanceAverageAway"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageAway': %w", err)
+		}
+		delete(object, "attendanceAverageAway")
+	}
+
+	if raw, found := object["attendanceAverageHome"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageHome': %w", err)
+		}
+		delete(object, "attendanceAverageHome")
+	}
+
+	if raw, found := object["attendanceAverageYtd"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageYtd)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageYtd': %w", err)
+		}
+		delete(object, "attendanceAverageYtd")
+	}
+
+	if raw, found := object["attendanceHigh"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceHigh)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceHigh': %w", err)
+		}
+		delete(object, "attendanceHigh")
+	}
+
+	if raw, found := object["attendanceHighDate"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceHighDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceHighDate': %w", err)
+		}
+		delete(object, "attendanceHighDate")
+	}
+
+	if raw, found := object["attendanceTotal"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotal': %w", err)
+		}
+		delete(object, "attendanceTotal")
+	}
+
+	if raw, found := object["attendanceTotalAway"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotalAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotalAway': %w", err)
+		}
+		delete(object, "attendanceTotalAway")
+	}
+
+	if raw, found := object["attendanceTotalHome"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotalHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotalHome': %w", err)
+		}
+		delete(object, "attendanceTotalHome")
+	}
+
+	if raw, found := object["openingsTotalAway"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalAway': %w", err)
+		}
+		delete(object, "openingsTotalAway")
+	}
+
+	if raw, found := object["openingsTotalHome"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalHome': %w", err)
+		}
+		delete(object, "openingsTotalHome")
+	}
+
+	if raw, found := object["openingsTotalLost"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalLost)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalLost': %w", err)
+		}
+		delete(object, "openingsTotalLost")
+	}
+
+	if raw, found := object["openingsTotalYtd"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalYtd)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalYtd': %w", err)
+		}
+		delete(object, "openingsTotalYtd")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AttendanceAggregateTotals to handle AdditionalProperties
+func (a AttendanceAggregateTotals) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AttendanceAverageAway != nil {
+		object["attendanceAverageAway"], err = json.Marshal(a.AttendanceAverageAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageAway': %w", err)
+		}
+	}
+
+	if a.AttendanceAverageHome != nil {
+		object["attendanceAverageHome"], err = json.Marshal(a.AttendanceAverageHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageHome': %w", err)
+		}
+	}
+
+	if a.AttendanceAverageYtd != nil {
+		object["attendanceAverageYtd"], err = json.Marshal(a.AttendanceAverageYtd)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageYtd': %w", err)
+		}
+	}
+
+	if a.AttendanceHigh != nil {
+		object["attendanceHigh"], err = json.Marshal(a.AttendanceHigh)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceHigh': %w", err)
+		}
+	}
+
+	if a.AttendanceHighDate != nil {
+		object["attendanceHighDate"], err = json.Marshal(a.AttendanceHighDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceHighDate': %w", err)
+		}
+	}
+
+	if a.AttendanceTotal != nil {
+		object["attendanceTotal"], err = json.Marshal(a.AttendanceTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotal': %w", err)
+		}
+	}
+
+	if a.AttendanceTotalAway != nil {
+		object["attendanceTotalAway"], err = json.Marshal(a.AttendanceTotalAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotalAway': %w", err)
+		}
+	}
+
+	if a.AttendanceTotalHome != nil {
+		object["attendanceTotalHome"], err = json.Marshal(a.AttendanceTotalHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotalHome': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalAway != nil {
+		object["openingsTotalAway"], err = json.Marshal(a.OpeningsTotalAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalAway': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalHome != nil {
+		object["openingsTotalHome"], err = json.Marshal(a.OpeningsTotalHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalHome': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalLost != nil {
+		object["openingsTotalLost"], err = json.Marshal(a.OpeningsTotalLost)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalLost': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalYtd != nil {
+		object["openingsTotalYtd"], err = json.Marshal(a.OpeningsTotalYtd)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalYtd': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AttendanceGameRef. Returns the specified
+// element and whether it was found
+func (a AttendanceGameRef) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AttendanceGameRef
+func (a *AttendanceGameRef) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AttendanceGameRef to handle AdditionalProperties
+func (a *AttendanceGameRef) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["content"]; found {
+		err = json.Unmarshal(raw, &a.Content)
+		if err != nil {
+			return fmt.Errorf("error reading 'content': %w", err)
+		}
+		delete(object, "content")
+	}
+
+	if raw, found := object["dayNight"]; found {
+		err = json.Unmarshal(raw, &a.DayNight)
+		if err != nil {
+			return fmt.Errorf("error reading 'dayNight': %w", err)
+		}
+		delete(object, "dayNight")
+	}
+
+	if raw, found := object["gamePk"]; found {
+		err = json.Unmarshal(raw, &a.GamePk)
+		if err != nil {
+			return fmt.Errorf("error reading 'gamePk': %w", err)
+		}
+		delete(object, "gamePk")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AttendanceGameRef to handle AdditionalProperties
+func (a AttendanceGameRef) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Content != nil {
+		object["content"], err = json.Marshal(a.Content)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'content': %w", err)
+		}
+	}
+
+	if a.DayNight != nil {
+		object["dayNight"], err = json.Marshal(a.DayNight)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dayNight': %w", err)
+		}
+	}
+
+	if a.GamePk != nil {
+		object["gamePk"], err = json.Marshal(a.GamePk)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gamePk': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AttendanceRecord. Returns the specified
+// element and whether it was found
+func (a AttendanceRecord) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AttendanceRecord
+func (a *AttendanceRecord) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AttendanceRecord to handle AdditionalProperties
+func (a *AttendanceRecord) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["attendanceAverageAway"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageAway': %w", err)
+		}
+		delete(object, "attendanceAverageAway")
+	}
+
+	if raw, found := object["attendanceAverageHome"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageHome': %w", err)
+		}
+		delete(object, "attendanceAverageHome")
+	}
+
+	if raw, found := object["attendanceAverageYtd"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceAverageYtd)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceAverageYtd': %w", err)
+		}
+		delete(object, "attendanceAverageYtd")
+	}
+
+	if raw, found := object["attendanceHigh"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceHigh)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceHigh': %w", err)
+		}
+		delete(object, "attendanceHigh")
+	}
+
+	if raw, found := object["attendanceHighDate"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceHighDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceHighDate': %w", err)
+		}
+		delete(object, "attendanceHighDate")
+	}
+
+	if raw, found := object["attendanceHighGame"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceHighGame)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceHighGame': %w", err)
+		}
+		delete(object, "attendanceHighGame")
+	}
+
+	if raw, found := object["attendanceLow"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceLow)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceLow': %w", err)
+		}
+		delete(object, "attendanceLow")
+	}
+
+	if raw, found := object["attendanceLowDate"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceLowDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceLowDate': %w", err)
+		}
+		delete(object, "attendanceLowDate")
+	}
+
+	if raw, found := object["attendanceLowGame"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceLowGame)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceLowGame': %w", err)
+		}
+		delete(object, "attendanceLowGame")
+	}
+
+	if raw, found := object["attendanceOpeningAverage"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceOpeningAverage)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceOpeningAverage': %w", err)
+		}
+		delete(object, "attendanceOpeningAverage")
+	}
+
+	if raw, found := object["attendanceTotal"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotal': %w", err)
+		}
+		delete(object, "attendanceTotal")
+	}
+
+	if raw, found := object["attendanceTotalAway"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotalAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotalAway': %w", err)
+		}
+		delete(object, "attendanceTotalAway")
+	}
+
+	if raw, found := object["attendanceTotalHome"]; found {
+		err = json.Unmarshal(raw, &a.AttendanceTotalHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'attendanceTotalHome': %w", err)
+		}
+		delete(object, "attendanceTotalHome")
+	}
+
+	if raw, found := object["gameType"]; found {
+		err = json.Unmarshal(raw, &a.GameType)
+		if err != nil {
+			return fmt.Errorf("error reading 'gameType': %w", err)
+		}
+		delete(object, "gameType")
+	}
+
+	if raw, found := object["gamesAwayTotal"]; found {
+		err = json.Unmarshal(raw, &a.GamesAwayTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'gamesAwayTotal': %w", err)
+		}
+		delete(object, "gamesAwayTotal")
+	}
+
+	if raw, found := object["gamesHomeTotal"]; found {
+		err = json.Unmarshal(raw, &a.GamesHomeTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'gamesHomeTotal': %w", err)
+		}
+		delete(object, "gamesHomeTotal")
+	}
+
+	if raw, found := object["gamesTotal"]; found {
+		err = json.Unmarshal(raw, &a.GamesTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'gamesTotal': %w", err)
+		}
+		delete(object, "gamesTotal")
+	}
+
+	if raw, found := object["openingsTotal"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotal)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotal': %w", err)
+		}
+		delete(object, "openingsTotal")
+	}
+
+	if raw, found := object["openingsTotalAway"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalAway)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalAway': %w", err)
+		}
+		delete(object, "openingsTotalAway")
+	}
+
+	if raw, found := object["openingsTotalHome"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalHome)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalHome': %w", err)
+		}
+		delete(object, "openingsTotalHome")
+	}
+
+	if raw, found := object["openingsTotalLost"]; found {
+		err = json.Unmarshal(raw, &a.OpeningsTotalLost)
+		if err != nil {
+			return fmt.Errorf("error reading 'openingsTotalLost': %w", err)
+		}
+		delete(object, "openingsTotalLost")
+	}
+
+	if raw, found := object["team"]; found {
+		err = json.Unmarshal(raw, &a.Team)
+		if err != nil {
+			return fmt.Errorf("error reading 'team': %w", err)
+		}
+		delete(object, "team")
+	}
+
+	if raw, found := object["year"]; found {
+		err = json.Unmarshal(raw, &a.Year)
+		if err != nil {
+			return fmt.Errorf("error reading 'year': %w", err)
+		}
+		delete(object, "year")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AttendanceRecord to handle AdditionalProperties
+func (a AttendanceRecord) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AttendanceAverageAway != nil {
+		object["attendanceAverageAway"], err = json.Marshal(a.AttendanceAverageAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageAway': %w", err)
+		}
+	}
+
+	if a.AttendanceAverageHome != nil {
+		object["attendanceAverageHome"], err = json.Marshal(a.AttendanceAverageHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageHome': %w", err)
+		}
+	}
+
+	if a.AttendanceAverageYtd != nil {
+		object["attendanceAverageYtd"], err = json.Marshal(a.AttendanceAverageYtd)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceAverageYtd': %w", err)
+		}
+	}
+
+	if a.AttendanceHigh != nil {
+		object["attendanceHigh"], err = json.Marshal(a.AttendanceHigh)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceHigh': %w", err)
+		}
+	}
+
+	if a.AttendanceHighDate != nil {
+		object["attendanceHighDate"], err = json.Marshal(a.AttendanceHighDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceHighDate': %w", err)
+		}
+	}
+
+	if a.AttendanceHighGame != nil {
+		object["attendanceHighGame"], err = json.Marshal(a.AttendanceHighGame)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceHighGame': %w", err)
+		}
+	}
+
+	if a.AttendanceLow != nil {
+		object["attendanceLow"], err = json.Marshal(a.AttendanceLow)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceLow': %w", err)
+		}
+	}
+
+	if a.AttendanceLowDate != nil {
+		object["attendanceLowDate"], err = json.Marshal(a.AttendanceLowDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceLowDate': %w", err)
+		}
+	}
+
+	if a.AttendanceLowGame != nil {
+		object["attendanceLowGame"], err = json.Marshal(a.AttendanceLowGame)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceLowGame': %w", err)
+		}
+	}
+
+	if a.AttendanceOpeningAverage != nil {
+		object["attendanceOpeningAverage"], err = json.Marshal(a.AttendanceOpeningAverage)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceOpeningAverage': %w", err)
+		}
+	}
+
+	if a.AttendanceTotal != nil {
+		object["attendanceTotal"], err = json.Marshal(a.AttendanceTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotal': %w", err)
+		}
+	}
+
+	if a.AttendanceTotalAway != nil {
+		object["attendanceTotalAway"], err = json.Marshal(a.AttendanceTotalAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotalAway': %w", err)
+		}
+	}
+
+	if a.AttendanceTotalHome != nil {
+		object["attendanceTotalHome"], err = json.Marshal(a.AttendanceTotalHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'attendanceTotalHome': %w", err)
+		}
+	}
+
+	if a.GameType != nil {
+		object["gameType"], err = json.Marshal(a.GameType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gameType': %w", err)
+		}
+	}
+
+	if a.GamesAwayTotal != nil {
+		object["gamesAwayTotal"], err = json.Marshal(a.GamesAwayTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gamesAwayTotal': %w", err)
+		}
+	}
+
+	if a.GamesHomeTotal != nil {
+		object["gamesHomeTotal"], err = json.Marshal(a.GamesHomeTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gamesHomeTotal': %w", err)
+		}
+	}
+
+	if a.GamesTotal != nil {
+		object["gamesTotal"], err = json.Marshal(a.GamesTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'gamesTotal': %w", err)
+		}
+	}
+
+	if a.OpeningsTotal != nil {
+		object["openingsTotal"], err = json.Marshal(a.OpeningsTotal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotal': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalAway != nil {
+		object["openingsTotalAway"], err = json.Marshal(a.OpeningsTotalAway)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalAway': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalHome != nil {
+		object["openingsTotalHome"], err = json.Marshal(a.OpeningsTotalHome)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalHome': %w", err)
+		}
+	}
+
+	if a.OpeningsTotalLost != nil {
+		object["openingsTotalLost"], err = json.Marshal(a.OpeningsTotalLost)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'openingsTotalLost': %w", err)
+		}
+	}
+
+	if a.Team != nil {
+		object["team"], err = json.Marshal(a.Team)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'team': %w", err)
+		}
+	}
+
+	if a.Year != nil {
+		object["year"], err = json.Marshal(a.Year)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'year': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AttendanceResponse. Returns the specified
+// element and whether it was found
+func (a AttendanceResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AttendanceResponse
+func (a *AttendanceResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AttendanceResponse to handle AdditionalProperties
+func (a *AttendanceResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["aggregateTotals"]; found {
+		err = json.Unmarshal(raw, &a.AggregateTotals)
+		if err != nil {
+			return fmt.Errorf("error reading 'aggregateTotals': %w", err)
+		}
+		delete(object, "aggregateTotals")
+	}
+
+	if raw, found := object["records"]; found {
+		err = json.Unmarshal(raw, &a.Records)
+		if err != nil {
+			return fmt.Errorf("error reading 'records': %w", err)
+		}
+		delete(object, "records")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AttendanceResponse to handle AdditionalProperties
+func (a AttendanceResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AggregateTotals != nil {
+		object["aggregateTotals"], err = json.Marshal(a.AggregateTotals)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'aggregateTotals': %w", err)
+		}
+	}
+
+	if a.Records != nil {
+		object["records"], err = json.Marshal(a.Records)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'records': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
 }
 
 // Getter for additional properties for BattingStats. Returns the specified
@@ -1706,6 +2642,89 @@ func (a GameStatus) MarshalJSON() ([]byte, error) {
 		object["detailedState"], err = json.Marshal(a.DetailedState)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'detailedState': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for GameTypeRef. Returns the specified
+// element and whether it was found
+func (a GameTypeRef) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for GameTypeRef
+func (a *GameTypeRef) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for GameTypeRef to handle AdditionalProperties
+func (a *GameTypeRef) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["description"]; found {
+		err = json.Unmarshal(raw, &a.Description)
+		if err != nil {
+			return fmt.Errorf("error reading 'description': %w", err)
+		}
+		delete(object, "description")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for GameTypeRef to handle AdditionalProperties
+func (a GameTypeRef) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Description != nil {
+		object["description"], err = json.Marshal(a.Description)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'description': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
 		}
 	}
 
@@ -6523,6 +7542,9 @@ type ClientInterface interface {
 	// GetLiveFeed request
 	GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetAttendance request
+	GetAttendance(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDivisions request
 	GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -6568,6 +7590,18 @@ type ClientInterface interface {
 
 func (c *Client) GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLiveFeedRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAttendance(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAttendanceRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -6770,6 +7804,132 @@ func NewGetLiveFeedRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAttendanceRequest generates requests for GetAttendance
+func NewGetAttendanceRequest(server string, params *GetAttendanceParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/attendance")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.TeamId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamId", *params.TeamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueListId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueListId", *params.LeagueListId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -8030,6 +9190,9 @@ type ClientWithResponsesInterface interface {
 	// GetLiveFeedWithResponse request
 	GetLiveFeedWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetLiveFeedResponse, error)
 
+	// GetAttendanceWithResponse request
+	GetAttendanceWithResponse(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*GetAttendanceResponse, error)
+
 	// GetDivisionsWithResponse request
 	GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error)
 
@@ -8097,6 +9260,36 @@ func (r GetLiveFeedResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetLiveFeedResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAttendanceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AttendanceResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAttendanceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAttendanceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAttendanceResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -8532,6 +9725,15 @@ func (c *ClientWithResponses) GetLiveFeedWithResponse(ctx context.Context, gameP
 	return ParseGetLiveFeedResponse(rsp)
 }
 
+// GetAttendanceWithResponse request returning *GetAttendanceResponse
+func (c *ClientWithResponses) GetAttendanceWithResponse(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*GetAttendanceResponse, error) {
+	rsp, err := c.GetAttendance(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAttendanceResponse(rsp)
+}
+
 // GetDivisionsWithResponse request returning *GetDivisionsResponse
 func (c *ClientWithResponses) GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error) {
 	rsp, err := c.GetDivisions(ctx, params, reqEditors...)
@@ -8674,6 +9876,32 @@ func ParseGetLiveFeedResponse(rsp *http.Response) (*GetLiveFeedResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest LiveFeedResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAttendanceResponse parses an HTTP response from a GetAttendanceWithResponse call
+func ParseGetAttendanceResponse(rsp *http.Response) (*GetAttendanceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAttendanceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AttendanceResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

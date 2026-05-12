@@ -167,6 +167,30 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SeasonsResponse" }
 
+  /api/v1/attendance:
+    get:
+      operationId: getAttendance
+      summary: Attendance records for a team / league / league-list
+      description: |
+        Returns per-season attendance records. toddrob99 marks
+        required_params=[["teamId"], ["leagueId"], ["leagueListId"]] —
+        one of TeamID, LeagueID, or LeagueListID must be set. The SDK
+        enforces this with an ErrInvalidQuery runtime check.
+      parameters:
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: leagueId, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: leagueListId, in: query, schema: { type: string }, description: "e.g. milb_all" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R | S | E | A | D | F | L | W" }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Attendance
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AttendanceResponse" }
+
   /api/v1/divisions:
     get:
       operationId: getDivisions
@@ -809,3 +833,87 @@ components:
         leagues:
           type: array
           items: { $ref: "#/components/schemas/LeagueInfo" }
+
+    AttendanceGameRef:
+      type: object
+      additionalProperties: true
+      description: |
+        Pointer to one of the games anchoring a high/low attendance record.
+        `content` is a nested link to the game-content endpoint.
+      properties:
+        gamePk:   { type: integer }
+        link:     { type: string }
+        content:  { $ref: "#/components/schemas/Ref" }
+        dayNight: { type: string, description: "day | night" }
+
+    GameTypeRef:
+      type: object
+      additionalProperties: true
+      description: |
+        Short reference for an MLB game-type — `{id, description}` — used by
+        attendance records to label the game-type bucket.
+      properties:
+        id:          { type: string, description: "e.g. R, S, E" }
+        description: { type: string }
+
+    AttendanceRecord:
+      type: object
+      additionalProperties: true
+      description: |
+        One attendance row — typically one row per (team, season, gameType)
+        combination, or aggregated per league when leagueId/leagueListId
+        is used.
+      properties:
+        openingsTotal:           { type: integer }
+        openingsTotalAway:       { type: integer }
+        openingsTotalHome:       { type: integer }
+        openingsTotalLost:       { type: integer }
+        gamesTotal:              { type: integer }
+        gamesAwayTotal:          { type: integer }
+        gamesHomeTotal:          { type: integer }
+        year:                    { type: string }
+        attendanceAverageAway:   { type: integer }
+        attendanceAverageHome:   { type: integer }
+        attendanceAverageYtd:    { type: integer }
+        attendanceHigh:          { type: integer }
+        attendanceHighDate:      { type: string, format: date-time }
+        attendanceHighGame:      { $ref: "#/components/schemas/AttendanceGameRef" }
+        attendanceLow:           { type: integer }
+        attendanceLowDate:       { type: string, format: date-time }
+        attendanceLowGame:       { $ref: "#/components/schemas/AttendanceGameRef" }
+        attendanceOpeningAverage: { type: integer }
+        attendanceTotal:         { type: integer }
+        attendanceTotalAway:     { type: integer }
+        attendanceTotalHome:     { type: integer }
+        gameType:                { $ref: "#/components/schemas/GameTypeRef" }
+        team:                    { $ref: "#/components/schemas/Team" }
+
+    AttendanceAggregateTotals:
+      type: object
+      additionalProperties: true
+      description: |
+        Per-call rollup totals — sum / average across every record in the
+        response. Present on every attendance response regardless of
+        whether records is empty.
+      properties:
+        openingsTotalAway:     { type: integer }
+        openingsTotalHome:     { type: integer }
+        openingsTotalLost:     { type: integer }
+        openingsTotalYtd:      { type: integer }
+        attendanceAverageAway: { type: integer }
+        attendanceAverageHome: { type: integer }
+        attendanceAverageYtd:  { type: integer }
+        attendanceHigh:        { type: integer }
+        attendanceHighDate:    { type: string, format: date-time }
+        attendanceTotal:       { type: integer }
+        attendanceTotalAway:   { type: integer }
+        attendanceTotalHome:   { type: integer }
+
+    AttendanceResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        records:
+          type: array
+          items: { $ref: "#/components/schemas/AttendanceRecord" }
+        aggregateTotals: { $ref: "#/components/schemas/AttendanceAggregateTotals" }
