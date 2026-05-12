@@ -36,15 +36,15 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
 | `/api/v1/gamePace`                    | [Client.GamePace][d-pace]     | [gamepace.go](examples/gamepace.go)      |
 | `/api/v1/highLow/{orgType}`           | [Client.HighLow][d-hl]        | [highlow.go](examples/highlow.go)        |
-| `/api/v1/jobs/umpires`                | [Client.Umpires][d-umps]      | —                                        |
+| `/api/v1/jobs/umpires`                | [Client.Umpires][d-umps]      | [umpires.go](examples/umpires.go)        |
 | `/api/v1/stats/leaders`               | [Client.StatsLeaders][d-sl]   | [statsleaders.go](examples/statsleaders.go) |
-| `/api/v1/game/{gamePk}/feed/live/timestamps` | [Client.GameTimestamps][d-gts] | — |
-| `/api/v1/game/{gamePk}/feed/color/timestamps` | [Client.GameColorTimestamps][d-gcts] | — |
+| `/api/v1/game/{gamePk}/feed/live/timestamps` | [Client.GameTimestamps][d-gts] | [gametimestamps.go](examples/gametimestamps.go) |
+| `/api/v1/game/{gamePk}/feed/color/timestamps` | [Client.GameColorTimestamps][d-gcts] | [gamecolortimestamps.go](examples/gamecolortimestamps.go) |
 | `/api/v1/game/{gamePk}/contextMetrics` | [Client.ContextMetrics][d-cm] | [contextmetrics.go](examples/contextmetrics.go) |
 | `/api/v1/game/{gamePk}/linescore`     | [Client.Linescore][d-line]    | [linescore.go](examples/linescore.go)    |
 | `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
-| `/api/v1/teams/{teamId}/coaches`      | [Client.Coaches][d-coach]     | —                                        |
-| `/api/v1/teams/{teamId}/personnel`    | [Client.Personnel][d-pers]    | —                                        |
+| `/api/v1/teams/{teamId}/coaches`      | [Client.Coaches][d-coach]     | [coaches.go](examples/coaches.go)        |
+| `/api/v1/teams/{teamId}/personnel`    | [Client.Personnel][d-pers]    | [personnel.go](examples/personnel.go)    |
 | `/api/v1/teams/{teamId}/roster`       | [Client.Roster][d-roster]     | [roster.go](examples/roster.go)          |
 | `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
 | `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
@@ -63,9 +63,9 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/people/freeAgents`           | [Client.FreeAgents][d-fa]     | [freeagents.go](examples/freeagents.go)  |
 | `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
 | `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
-| `/api/v1/teams/affiliates`            | [Client.TeamsAffiliates][d-aff] | —                                      |
-| `/api/v1/teams/history`               | [Client.TeamsHistory][d-hist] | —                                        |
-| `/api/v1/schedule/games/tied`         | [Client.ScheduleTied][d-tied] | —                                        |
+| `/api/v1/teams/affiliates`            | [Client.TeamsAffiliates][d-aff] | [teamsaffiliates.go](examples/teamsaffiliates.go) |
+| `/api/v1/teams/history`               | [Client.TeamsHistory][d-hist] | [teamshistory.go](examples/teamshistory.go) |
+| `/api/v1/schedule/games/tied`         | [Client.ScheduleTied][d-tied] | [scheduletied.go](examples/scheduletied.go) |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
 endpoints lives in [docs/roadmap.md][].
