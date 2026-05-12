@@ -1441,6 +1441,24 @@ type GetLeaguesParams struct {
 	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetAllStarBallotParams defines parameters for GetAllStarBallot.
+type GetAllStarBallotParams struct {
+	Season int     `form:"season" json:"season"`
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetAllStarFinalVoteParams defines parameters for GetAllStarFinalVote.
+type GetAllStarFinalVoteParams struct {
+	Season int     `form:"season" json:"season"`
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetAllStarWriteInsParams defines parameters for GetAllStarWriteIns.
+type GetAllStarWriteInsParams struct {
+	Season int     `form:"season" json:"season"`
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetPeopleParams defines parameters for GetPeople.
 type GetPeopleParams struct {
 	// PersonIds comma-separated person ids
@@ -1509,6 +1527,16 @@ type GetSchedulePostseasonParams struct {
 	TeamId       *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
 	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
 	Hydrate      *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetSchedulePostseasonSeriesParams defines parameters for GetSchedulePostseasonSeries.
+type GetSchedulePostseasonSeriesParams struct {
+	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
+	GameTypes    *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
+	SeriesNumber *int    `form:"seriesNumber,omitempty" json:"seriesNumber,omitempty"`
+	TeamId       *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
+	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
 	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -1582,6 +1610,29 @@ type GetStandingsParams struct {
 
 	// Fields comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetStatsParams defines parameters for GetStats.
+type GetStatsParams struct {
+	Stats      string  `form:"stats" json:"stats"`
+	Group      string  `form:"group" json:"group"`
+	Season     *int    `form:"season,omitempty" json:"season,omitempty"`
+	SportIds   *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+	GameType   *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	PlayerPool *string `form:"playerPool,omitempty" json:"playerPool,omitempty"`
+	Position   *string `form:"position,omitempty" json:"position,omitempty"`
+	TeamId     *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
+	LeagueId   *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+	PersonId   *int    `form:"personId,omitempty" json:"personId,omitempty"`
+	Limit      *int    `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset     *int    `form:"offset,omitempty" json:"offset,omitempty"`
+	SortStat   *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+	Order      *string `form:"order,omitempty" json:"order,omitempty"`
+	Metrics    *string `form:"metrics,omitempty" json:"metrics,omitempty"`
+	StartDate  *string `form:"startDate,omitempty" json:"startDate,omitempty"`
+	EndDate    *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+	Hydrate    *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStatsLeadersParams defines parameters for GetStatsLeaders.
@@ -14565,6 +14616,15 @@ type ClientInterface interface {
 	// GetLeagues request
 	GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetAllStarBallot request
+	GetAllStarBallot(ctx context.Context, leagueId int, params *GetAllStarBallotParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAllStarFinalVote request
+	GetAllStarFinalVote(ctx context.Context, leagueId int, params *GetAllStarFinalVoteParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAllStarWriteIns request
+	GetAllStarWriteIns(ctx context.Context, leagueId int, params *GetAllStarWriteInsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetPeople request
 	GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14589,6 +14649,9 @@ type ClientInterface interface {
 	// GetSchedulePostseason request
 	GetSchedulePostseason(ctx context.Context, params *GetSchedulePostseasonParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetSchedulePostseasonSeries request
+	GetSchedulePostseasonSeries(ctx context.Context, params *GetSchedulePostseasonSeriesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetSchedulePostseasonTuneIn request
 	GetSchedulePostseasonTuneIn(ctx context.Context, params *GetSchedulePostseasonTuneInParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14609,6 +14672,9 @@ type ClientInterface interface {
 
 	// GetStandings request
 	GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetStats request
+	GetStats(ctx context.Context, params *GetStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetStatsLeaders request
 	GetStatsLeaders(ctx context.Context, params *GetStatsLeadersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14905,6 +14971,42 @@ func (c *Client) GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEd
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetAllStarBallot(ctx context.Context, leagueId int, params *GetAllStarBallotParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllStarBallotRequest(c.Server, leagueId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAllStarFinalVote(ctx context.Context, leagueId int, params *GetAllStarFinalVoteParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllStarFinalVoteRequest(c.Server, leagueId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAllStarWriteIns(ctx context.Context, leagueId int, params *GetAllStarWriteInsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllStarWriteInsRequest(c.Server, leagueId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPeopleRequest(c.Server, params)
 	if err != nil {
@@ -15001,6 +15103,18 @@ func (c *Client) GetSchedulePostseason(ctx context.Context, params *GetScheduleP
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetSchedulePostseasonSeries(ctx context.Context, params *GetSchedulePostseasonSeriesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSchedulePostseasonSeriesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetSchedulePostseasonTuneIn(ctx context.Context, params *GetSchedulePostseasonTuneInParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSchedulePostseasonTuneInRequest(c.Server, params)
 	if err != nil {
@@ -15075,6 +15189,18 @@ func (c *Client) GetSportsPlayers(ctx context.Context, sportId int, params *GetS
 
 func (c *Client) GetStandings(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStandingsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetStats(ctx context.Context, params *GetStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetStatsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -16949,6 +17075,213 @@ func NewGetLeaguesRequest(server string, params *GetLeaguesParams) (*http.Reques
 	return req, nil
 }
 
+// NewGetAllStarBallotRequest generates requests for GetAllStarBallot
+func NewGetAllStarBallotRequest(server string, leagueId int, params *GetAllStarBallotParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "leagueId", leagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/league/%s/allStarBallot", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAllStarFinalVoteRequest generates requests for GetAllStarFinalVote
+func NewGetAllStarFinalVoteRequest(server string, leagueId int, params *GetAllStarFinalVoteParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "leagueId", leagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/league/%s/allStarFinalVote", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAllStarWriteInsRequest generates requests for GetAllStarWriteIns
+func NewGetAllStarWriteInsRequest(server string, leagueId int, params *GetAllStarWriteInsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "leagueId", leagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/league/%s/allStarWriteIns", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetPeopleRequest generates requests for GetPeople
 func NewGetPeopleRequest(server string, params *GetPeopleParams) (*http.Request, error) {
 	var err error
@@ -17646,6 +17979,120 @@ func NewGetSchedulePostseasonRequest(server string, params *GetSchedulePostseaso
 	return req, nil
 }
 
+// NewGetSchedulePostseasonSeriesRequest generates requests for GetSchedulePostseasonSeries
+func NewGetSchedulePostseasonSeriesRequest(server string, params *GetSchedulePostseasonSeriesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/schedule/postseason/series")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameTypes != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameTypes", *params.GameTypes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SeriesNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "seriesNumber", *params.SeriesNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.TeamId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamId", *params.TeamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetSchedulePostseasonTuneInRequest generates requests for GetSchedulePostseasonTuneIn
 func NewGetSchedulePostseasonTuneInRequest(server string, params *GetSchedulePostseasonTuneInParams) (*http.Request, error) {
 	var err error
@@ -18219,6 +18666,268 @@ func NewGetStandingsRequest(server string, params *GetStandingsParams) (*http.Re
 		if params.Date != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetStatsRequest generates requests for GetStats
+func NewGetStatsRequest(server string, params *GetStatsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/stats")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "stats", params.Stats, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "group", params.Group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportIds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportIds", *params.SportIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PlayerPool != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "playerPool", *params.PlayerPool, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Position != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "position", *params.Position, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.TeamId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamId", *params.TeamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PersonId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "personId", *params.PersonId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "offset", *params.Offset, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SortStat != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sortStat", *params.SortStat, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Order != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "order", *params.Order, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Metrics != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "metrics", *params.Metrics, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.StartDate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "startDate", *params.StartDate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.EndDate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "endDate", *params.EndDate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -19876,6 +20585,15 @@ type ClientWithResponsesInterface interface {
 	// GetLeaguesWithResponse request
 	GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error)
 
+	// GetAllStarBallotWithResponse request
+	GetAllStarBallotWithResponse(ctx context.Context, leagueId int, params *GetAllStarBallotParams, reqEditors ...RequestEditorFn) (*GetAllStarBallotResponse, error)
+
+	// GetAllStarFinalVoteWithResponse request
+	GetAllStarFinalVoteWithResponse(ctx context.Context, leagueId int, params *GetAllStarFinalVoteParams, reqEditors ...RequestEditorFn) (*GetAllStarFinalVoteResponse, error)
+
+	// GetAllStarWriteInsWithResponse request
+	GetAllStarWriteInsWithResponse(ctx context.Context, leagueId int, params *GetAllStarWriteInsParams, reqEditors ...RequestEditorFn) (*GetAllStarWriteInsResponse, error)
+
 	// GetPeopleWithResponse request
 	GetPeopleWithResponse(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*GetPeopleResponse, error)
 
@@ -19900,6 +20618,9 @@ type ClientWithResponsesInterface interface {
 	// GetSchedulePostseasonWithResponse request
 	GetSchedulePostseasonWithResponse(ctx context.Context, params *GetSchedulePostseasonParams, reqEditors ...RequestEditorFn) (*GetSchedulePostseasonResponse, error)
 
+	// GetSchedulePostseasonSeriesWithResponse request
+	GetSchedulePostseasonSeriesWithResponse(ctx context.Context, params *GetSchedulePostseasonSeriesParams, reqEditors ...RequestEditorFn) (*GetSchedulePostseasonSeriesResponse, error)
+
 	// GetSchedulePostseasonTuneInWithResponse request
 	GetSchedulePostseasonTuneInWithResponse(ctx context.Context, params *GetSchedulePostseasonTuneInParams, reqEditors ...RequestEditorFn) (*GetSchedulePostseasonTuneInResponse, error)
 
@@ -19920,6 +20641,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetStandingsWithResponse request
 	GetStandingsWithResponse(ctx context.Context, params *GetStandingsParams, reqEditors ...RequestEditorFn) (*GetStandingsResponse, error)
+
+	// GetStatsWithResponse request
+	GetStatsWithResponse(ctx context.Context, params *GetStatsParams, reqEditors ...RequestEditorFn) (*GetStatsResponse, error)
 
 	// GetStatsLeadersWithResponse request
 	GetStatsLeadersWithResponse(ctx context.Context, params *GetStatsLeadersParams, reqEditors ...RequestEditorFn) (*GetStatsLeadersResponse, error)
@@ -20594,6 +21318,96 @@ func (r GetLeaguesResponse) ContentType() string {
 	return ""
 }
 
+type GetAllStarBallotResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PeopleResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllStarBallotResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllStarBallotResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAllStarBallotResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAllStarFinalVoteResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PeopleResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllStarFinalVoteResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllStarFinalVoteResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAllStarFinalVoteResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAllStarWriteInsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PeopleResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllStarWriteInsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllStarWriteInsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAllStarWriteInsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetPeopleResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20834,6 +21648,36 @@ func (r GetSchedulePostseasonResponse) ContentType() string {
 	return ""
 }
 
+type GetSchedulePostseasonSeriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ScheduleResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSchedulePostseasonSeriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSchedulePostseasonSeriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetSchedulePostseasonSeriesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetSchedulePostseasonTuneInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21038,6 +21882,36 @@ func (r GetStandingsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetStandingsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetStatsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TeamStatsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetStatsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetStatsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetStatsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -21653,6 +22527,33 @@ func (c *ClientWithResponses) GetLeaguesWithResponse(ctx context.Context, params
 	return ParseGetLeaguesResponse(rsp)
 }
 
+// GetAllStarBallotWithResponse request returning *GetAllStarBallotResponse
+func (c *ClientWithResponses) GetAllStarBallotWithResponse(ctx context.Context, leagueId int, params *GetAllStarBallotParams, reqEditors ...RequestEditorFn) (*GetAllStarBallotResponse, error) {
+	rsp, err := c.GetAllStarBallot(ctx, leagueId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAllStarBallotResponse(rsp)
+}
+
+// GetAllStarFinalVoteWithResponse request returning *GetAllStarFinalVoteResponse
+func (c *ClientWithResponses) GetAllStarFinalVoteWithResponse(ctx context.Context, leagueId int, params *GetAllStarFinalVoteParams, reqEditors ...RequestEditorFn) (*GetAllStarFinalVoteResponse, error) {
+	rsp, err := c.GetAllStarFinalVote(ctx, leagueId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAllStarFinalVoteResponse(rsp)
+}
+
+// GetAllStarWriteInsWithResponse request returning *GetAllStarWriteInsResponse
+func (c *ClientWithResponses) GetAllStarWriteInsWithResponse(ctx context.Context, leagueId int, params *GetAllStarWriteInsParams, reqEditors ...RequestEditorFn) (*GetAllStarWriteInsResponse, error) {
+	rsp, err := c.GetAllStarWriteIns(ctx, leagueId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAllStarWriteInsResponse(rsp)
+}
+
 // GetPeopleWithResponse request returning *GetPeopleResponse
 func (c *ClientWithResponses) GetPeopleWithResponse(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*GetPeopleResponse, error) {
 	rsp, err := c.GetPeople(ctx, params, reqEditors...)
@@ -21725,6 +22626,15 @@ func (c *ClientWithResponses) GetSchedulePostseasonWithResponse(ctx context.Cont
 	return ParseGetSchedulePostseasonResponse(rsp)
 }
 
+// GetSchedulePostseasonSeriesWithResponse request returning *GetSchedulePostseasonSeriesResponse
+func (c *ClientWithResponses) GetSchedulePostseasonSeriesWithResponse(ctx context.Context, params *GetSchedulePostseasonSeriesParams, reqEditors ...RequestEditorFn) (*GetSchedulePostseasonSeriesResponse, error) {
+	rsp, err := c.GetSchedulePostseasonSeries(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSchedulePostseasonSeriesResponse(rsp)
+}
+
 // GetSchedulePostseasonTuneInWithResponse request returning *GetSchedulePostseasonTuneInResponse
 func (c *ClientWithResponses) GetSchedulePostseasonTuneInWithResponse(ctx context.Context, params *GetSchedulePostseasonTuneInParams, reqEditors ...RequestEditorFn) (*GetSchedulePostseasonTuneInResponse, error) {
 	rsp, err := c.GetSchedulePostseasonTuneIn(ctx, params, reqEditors...)
@@ -21786,6 +22696,15 @@ func (c *ClientWithResponses) GetStandingsWithResponse(ctx context.Context, para
 		return nil, err
 	}
 	return ParseGetStandingsResponse(rsp)
+}
+
+// GetStatsWithResponse request returning *GetStatsResponse
+func (c *ClientWithResponses) GetStatsWithResponse(ctx context.Context, params *GetStatsParams, reqEditors ...RequestEditorFn) (*GetStatsResponse, error) {
+	rsp, err := c.GetStats(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetStatsResponse(rsp)
 }
 
 // GetStatsLeadersWithResponse request returning *GetStatsLeadersResponse
@@ -22460,6 +23379,84 @@ func ParseGetLeaguesResponse(rsp *http.Response) (*GetLeaguesResponse, error) {
 	return response, nil
 }
 
+// ParseGetAllStarBallotResponse parses an HTTP response from a GetAllStarBallotWithResponse call
+func ParseGetAllStarBallotResponse(rsp *http.Response) (*GetAllStarBallotResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAllStarBallotResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PeopleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAllStarFinalVoteResponse parses an HTTP response from a GetAllStarFinalVoteWithResponse call
+func ParseGetAllStarFinalVoteResponse(rsp *http.Response) (*GetAllStarFinalVoteResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAllStarFinalVoteResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PeopleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAllStarWriteInsResponse parses an HTTP response from a GetAllStarWriteInsWithResponse call
+func ParseGetAllStarWriteInsResponse(rsp *http.Response) (*GetAllStarWriteInsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAllStarWriteInsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PeopleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetPeopleResponse parses an HTTP response from a GetPeopleWithResponse call
 func ParseGetPeopleResponse(rsp *http.Response) (*GetPeopleResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -22668,6 +23665,32 @@ func ParseGetSchedulePostseasonResponse(rsp *http.Response) (*GetSchedulePostsea
 	return response, nil
 }
 
+// ParseGetSchedulePostseasonSeriesResponse parses an HTTP response from a GetSchedulePostseasonSeriesWithResponse call
+func ParseGetSchedulePostseasonSeriesResponse(rsp *http.Response) (*GetSchedulePostseasonSeriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSchedulePostseasonSeriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ScheduleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetSchedulePostseasonTuneInResponse parses an HTTP response from a GetSchedulePostseasonTuneInWithResponse call
 func ParseGetSchedulePostseasonTuneInResponse(rsp *http.Response) (*GetSchedulePostseasonTuneInResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -22840,6 +23863,32 @@ func ParseGetStandingsResponse(rsp *http.Response) (*GetStandingsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest StandingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetStatsResponse parses an HTTP response from a GetStatsWithResponse call
+func ParseGetStatsResponse(rsp *http.Response) (*GetStatsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetStatsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TeamStatsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

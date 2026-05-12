@@ -344,6 +344,41 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "b1add159a54c573b983e4debf1a098923f34151e043c0006669208bbb765d337",
       "source": "ingest skill"
+    },
+    "stats": {
+      "method": "Client.Stats",
+      "operationId": "getStats",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "3b492037e5e49fe6aaaee04cb11b7c3fd34a55f8c6520cebf575cdb9084bf72b",
+      "source": "ingest skill"
+    },
+    "schedule_postseason_series": {
+      "method": "Client.SchedulePostseasonSeries",
+      "operationId": "getSchedulePostseasonSeries",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "f451b60003d832e37e845ae5fde151bcfbcfd45b7db20c3b4dff1170f6457703",
+      "source": "ingest skill"
+    },
+    "league_allStarBallot": {
+      "method": "Client.AllStarBallot",
+      "operationId": "getAllStarBallot",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "628e20c2ccbd22b08fd25bef2dbcf9e886755a50d1b3899d878782630af1f3be",
+      "source": "ingest skill"
+    },
+    "league_allStarFinalVote": {
+      "method": "Client.AllStarFinalVote",
+      "operationId": "getAllStarFinalVote",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "3b4ca649e1b4ec07aaf36ecc57b9d804a9ffdf57e86dcd806b369bebcad4c596",
+      "source": "ingest skill"
+    },
+    "league_allStarWriteIns": {
+      "method": "Client.AllStarWriteIns",
+      "operationId": "getAllStarWriteIns",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "62c7643d53595bcabededcb0db36566ff34e9f2b86b54d351da5c30f6e19076a",
+      "source": "ingest skill"
     }
   }
 }

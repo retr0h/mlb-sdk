@@ -808,6 +808,100 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ScheduleResponse" }
 
+  /api/v1/schedule/postseason/series:
+    get:
+      operationId: getSchedulePostseasonSeries
+      summary: Postseason series
+      parameters:
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: gameTypes, in: query, schema: { type: string } }
+        - { name: seriesNumber, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Postseason series
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
+  /api/v1/stats:
+    get:
+      operationId: getStats
+      summary: League-wide individual stats
+      parameters:
+        - { name: stats, in: query, required: true, schema: { type: string } }
+        - { name: group, in: query, required: true, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: sportIds, in: query, schema: { type: string } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: playerPool, in: query, schema: { type: string } }
+        - { name: position, in: query, schema: { type: string } }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: leagueId, in: query, schema: { type: integer } }
+        - { name: personId, in: query, schema: { type: integer } }
+        - { name: limit, in: query, schema: { type: integer } }
+        - { name: offset, in: query, schema: { type: integer } }
+        - { name: sortStat, in: query, schema: { type: string } }
+        - { name: order, in: query, schema: { type: string } }
+        - { name: metrics, in: query, schema: { type: string } }
+        - { name: startDate, in: query, schema: { type: string } }
+        - { name: endDate, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamStatsResponse" }
+
+  /api/v1/league/{leagueId}/allStarBallot:
+    get:
+      operationId: getAllStarBallot
+      summary: All-Star ballot
+      parameters:
+        - { name: leagueId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Ballot
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
+  /api/v1/league/{leagueId}/allStarFinalVote:
+    get:
+      operationId: getAllStarFinalVote
+      summary: All-Star final vote
+      parameters:
+        - { name: leagueId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Final vote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
+  /api/v1/league/{leagueId}/allStarWriteIns:
+    get:
+      operationId: getAllStarWriteIns
+      summary: All-Star write-ins
+      parameters:
+        - { name: leagueId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Write-ins
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
   /api/v1/schedule/postseason/tuneIn:
     get:
       operationId: getSchedulePostseasonTuneIn
