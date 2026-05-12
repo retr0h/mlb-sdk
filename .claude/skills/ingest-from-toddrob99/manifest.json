@@ -106,6 +106,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "0b0266ad99053adf1562562366c56d7567a062eb792133a8f97e2452579f415a",
       "source": "ingest skill"
+    },
+    "awards": {
+      "method": "Client.AwardRecipients",
+      "operationId": "getAwardRecipients",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "78dd05cf75a105b164ac64749ac9d6835d843816584b35b8860927a5354e24a4",
+      "source": "ingest skill"
     }
   }
 }

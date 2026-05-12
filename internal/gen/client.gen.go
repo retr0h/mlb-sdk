@@ -98,6 +98,36 @@ type AttendanceResponse struct {
 	AdditionalProperties map[string]interface{}     `json:"-"`
 }
 
+// AwardRecipient One award-recipient row — the award metadata plus the team and
+// player it was awarded to.
+type AwardRecipient struct {
+	// Date YYYY-MM-DD
+	Date *string `json:"date,omitempty"`
+
+	// Id award id, e.g. MLBHOF
+	Id *string `json:"id,omitempty"`
+
+	// Name award display name
+	Name  *string `json:"name,omitempty"`
+	Notes *string `json:"notes,omitempty"`
+
+	// Player Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Player *Person `json:"player,omitempty"`
+	Season *string `json:"season,omitempty"`
+
+	// Team Lightweight reference object — `{id, link}` — that the MLB API uses
+	// for league/division/sport pointers in responses (no name field).
+	Team                 *Ref                   `json:"team,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// AwardsResponse defines model for AwardsResponse.
+type AwardsResponse struct {
+	Awards               *[]AwardRecipient      `json:"awards,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // BattingStats defines model for BattingStats.
 type BattingStats struct {
 	GroundIntoDoublePlay *int                   `json:"groundIntoDoublePlay,omitempty"`
@@ -277,6 +307,20 @@ type LiveFeedResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Person Lightweight person reference returned by awards / transactions /
+// roster endpoints. PrimaryPosition is only present when hydrated.
+type Person struct {
+	FullName      *string `json:"fullName,omitempty"`
+	Id            *int    `json:"id,omitempty"`
+	Link          *string `json:"link,omitempty"`
+	NameFirstLast *string `json:"nameFirstLast,omitempty"`
+
+	// PrimaryPosition Player position metadata — `{code, name, type, abbreviation}` — as
+	// the MLB API embeds it in person references.
+	PrimaryPosition      *PrimaryPosition       `json:"primaryPosition,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // PitchingStats defines model for PitchingStats.
 type PitchingStats struct {
 	BaseOnBalls          *int                   `json:"baseOnBalls,omitempty"`
@@ -326,6 +370,23 @@ type PlayResult struct {
 
 	// EventType e.g. grounded_into_double_play
 	EventType            *string                `json:"eventType,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// PrimaryPosition Player position metadata — `{code, name, type, abbreviation}` — as
+// the MLB API embeds it in person references.
+type PrimaryPosition struct {
+	// Abbreviation e.g. P, C, 1B
+	Abbreviation *string `json:"abbreviation,omitempty"`
+
+	// Code e.g. 1, 2, 3, …
+	Code *string `json:"code,omitempty"`
+
+	// Name e.g. Pitcher, Catcher
+	Name *string `json:"name,omitempty"`
+
+	// Type e.g. Pitcher, Infielder
+	Type                 *string                `json:"type,omitempty"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -685,6 +746,15 @@ type GetAttendanceParams struct {
 
 	// GameType R | S | E | A | D | F | L | W
 	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetAwardRecipientsParams defines parameters for GetAwardRecipients.
+type GetAwardRecipientsParams struct {
+	SportId  *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	LeagueId *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+	Season   *int    `form:"season,omitempty" json:"season,omitempty"`
+	Hydrate  *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -1655,6 +1725,232 @@ func (a AttendanceResponse) MarshalJSON() ([]byte, error) {
 		object["records"], err = json.Marshal(a.Records)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'records': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AwardRecipient. Returns the specified
+// element and whether it was found
+func (a AwardRecipient) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AwardRecipient
+func (a *AwardRecipient) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AwardRecipient to handle AdditionalProperties
+func (a *AwardRecipient) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["date"]; found {
+		err = json.Unmarshal(raw, &a.Date)
+		if err != nil {
+			return fmt.Errorf("error reading 'date': %w", err)
+		}
+		delete(object, "date")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["notes"]; found {
+		err = json.Unmarshal(raw, &a.Notes)
+		if err != nil {
+			return fmt.Errorf("error reading 'notes': %w", err)
+		}
+		delete(object, "notes")
+	}
+
+	if raw, found := object["player"]; found {
+		err = json.Unmarshal(raw, &a.Player)
+		if err != nil {
+			return fmt.Errorf("error reading 'player': %w", err)
+		}
+		delete(object, "player")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["team"]; found {
+		err = json.Unmarshal(raw, &a.Team)
+		if err != nil {
+			return fmt.Errorf("error reading 'team': %w", err)
+		}
+		delete(object, "team")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AwardRecipient to handle AdditionalProperties
+func (a AwardRecipient) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Date != nil {
+		object["date"], err = json.Marshal(a.Date)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'date': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.Notes != nil {
+		object["notes"], err = json.Marshal(a.Notes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'notes': %w", err)
+		}
+	}
+
+	if a.Player != nil {
+		object["player"], err = json.Marshal(a.Player)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'player': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.Team != nil {
+		object["team"], err = json.Marshal(a.Team)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'team': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AwardsResponse. Returns the specified
+// element and whether it was found
+func (a AwardsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AwardsResponse
+func (a *AwardsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AwardsResponse to handle AdditionalProperties
+func (a *AwardsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["awards"]; found {
+		err = json.Unmarshal(raw, &a.Awards)
+		if err != nil {
+			return fmt.Errorf("error reading 'awards': %w", err)
+		}
+		delete(object, "awards")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AwardsResponse to handle AdditionalProperties
+func (a AwardsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Awards != nil {
+		object["awards"], err = json.Marshal(a.Awards)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'awards': %w", err)
 		}
 	}
 
@@ -3460,6 +3756,134 @@ func (a LiveFeedResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Person. Returns the specified
+// element and whether it was found
+func (a Person) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Person
+func (a *Person) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Person to handle AdditionalProperties
+func (a *Person) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["fullName"]; found {
+		err = json.Unmarshal(raw, &a.FullName)
+		if err != nil {
+			return fmt.Errorf("error reading 'fullName': %w", err)
+		}
+		delete(object, "fullName")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["link"]; found {
+		err = json.Unmarshal(raw, &a.Link)
+		if err != nil {
+			return fmt.Errorf("error reading 'link': %w", err)
+		}
+		delete(object, "link")
+	}
+
+	if raw, found := object["nameFirstLast"]; found {
+		err = json.Unmarshal(raw, &a.NameFirstLast)
+		if err != nil {
+			return fmt.Errorf("error reading 'nameFirstLast': %w", err)
+		}
+		delete(object, "nameFirstLast")
+	}
+
+	if raw, found := object["primaryPosition"]; found {
+		err = json.Unmarshal(raw, &a.PrimaryPosition)
+		if err != nil {
+			return fmt.Errorf("error reading 'primaryPosition': %w", err)
+		}
+		delete(object, "primaryPosition")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Person to handle AdditionalProperties
+func (a Person) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.FullName != nil {
+		object["fullName"], err = json.Marshal(a.FullName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fullName': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Link != nil {
+		object["link"], err = json.Marshal(a.Link)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'link': %w", err)
+		}
+	}
+
+	if a.NameFirstLast != nil {
+		object["nameFirstLast"], err = json.Marshal(a.NameFirstLast)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nameFirstLast': %w", err)
+		}
+	}
+
+	if a.PrimaryPosition != nil {
+		object["primaryPosition"], err = json.Marshal(a.PrimaryPosition)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'primaryPosition': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for PitchingStats. Returns the specified
 // element and whether it was found
 func (a PitchingStats) Get(fieldName string) (value interface{}, found bool) {
@@ -4036,6 +4460,119 @@ func (a PlayResult) MarshalJSON() ([]byte, error) {
 		object["eventType"], err = json.Marshal(a.EventType)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'eventType': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PrimaryPosition. Returns the specified
+// element and whether it was found
+func (a PrimaryPosition) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PrimaryPosition
+func (a *PrimaryPosition) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PrimaryPosition to handle AdditionalProperties
+func (a *PrimaryPosition) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["abbreviation"]; found {
+		err = json.Unmarshal(raw, &a.Abbreviation)
+		if err != nil {
+			return fmt.Errorf("error reading 'abbreviation': %w", err)
+		}
+		delete(object, "abbreviation")
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["type"]; found {
+		err = json.Unmarshal(raw, &a.Type)
+		if err != nil {
+			return fmt.Errorf("error reading 'type': %w", err)
+		}
+		delete(object, "type")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PrimaryPosition to handle AdditionalProperties
+func (a PrimaryPosition) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Abbreviation != nil {
+		object["abbreviation"], err = json.Marshal(a.Abbreviation)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'abbreviation': %w", err)
+		}
+	}
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.Type != nil {
+		object["type"], err = json.Marshal(a.Type)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'type': %w", err)
 		}
 	}
 
@@ -7545,6 +8082,9 @@ type ClientInterface interface {
 	// GetAttendance request
 	GetAttendance(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetAwardRecipients request
+	GetAwardRecipients(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDivisions request
 	GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -7602,6 +8142,18 @@ func (c *Client) GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...Requ
 
 func (c *Client) GetAttendance(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAttendanceRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAwardRecipients(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAwardRecipientsRequest(c.Server, awardId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -7905,6 +8457,115 @@ func NewGetAttendanceRequest(server string, params *GetAttendanceParams) (*http.
 		if params.GameType != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAwardRecipientsRequest generates requests for GetAwardRecipients
+func NewGetAwardRecipientsRequest(server string, awardId string, params *GetAwardRecipientsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "awardId", awardId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/awards/%s/recipients", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -9193,6 +9854,9 @@ type ClientWithResponsesInterface interface {
 	// GetAttendanceWithResponse request
 	GetAttendanceWithResponse(ctx context.Context, params *GetAttendanceParams, reqEditors ...RequestEditorFn) (*GetAttendanceResponse, error)
 
+	// GetAwardRecipientsWithResponse request
+	GetAwardRecipientsWithResponse(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*GetAwardRecipientsResponse, error)
+
 	// GetDivisionsWithResponse request
 	GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error)
 
@@ -9290,6 +9954,36 @@ func (r GetAttendanceResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetAttendanceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAwardRecipientsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AwardsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAwardRecipientsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAwardRecipientsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAwardRecipientsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -9734,6 +10428,15 @@ func (c *ClientWithResponses) GetAttendanceWithResponse(ctx context.Context, par
 	return ParseGetAttendanceResponse(rsp)
 }
 
+// GetAwardRecipientsWithResponse request returning *GetAwardRecipientsResponse
+func (c *ClientWithResponses) GetAwardRecipientsWithResponse(ctx context.Context, awardId string, params *GetAwardRecipientsParams, reqEditors ...RequestEditorFn) (*GetAwardRecipientsResponse, error) {
+	rsp, err := c.GetAwardRecipients(ctx, awardId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAwardRecipientsResponse(rsp)
+}
+
 // GetDivisionsWithResponse request returning *GetDivisionsResponse
 func (c *ClientWithResponses) GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error) {
 	rsp, err := c.GetDivisions(ctx, params, reqEditors...)
@@ -9902,6 +10605,32 @@ func ParseGetAttendanceResponse(rsp *http.Response) (*GetAttendanceResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AttendanceResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAwardRecipientsResponse parses an HTTP response from a GetAwardRecipientsWithResponse call
+func ParseGetAwardRecipientsResponse(rsp *http.Response) (*GetAwardRecipientsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAwardRecipientsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AwardsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

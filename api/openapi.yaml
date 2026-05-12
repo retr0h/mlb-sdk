@@ -167,6 +167,29 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SeasonsResponse" }
 
+  /api/v1/awards/{awardId}/recipients:
+    get:
+      operationId: getAwardRecipients
+      summary: Recipients of a single award by id
+      description: |
+        Returns every recipient of the given award (e.g. MLBHOF, MVP).
+        toddrob99 models awardId as an optional path-param — the SDK
+        requires it (the no-path-arg form, which lists every award id,
+        is exposed separately).
+      parameters:
+        - { name: awardId, in: path, required: true, schema: { type: string }, description: "e.g. MLBHOF, ALMVP" }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: leagueId, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Award recipients
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AwardsResponse" }
+
   /api/v1/attendance:
     get:
       operationId: getAttendance
@@ -908,6 +931,54 @@ components:
         attendanceTotal:       { type: integer }
         attendanceTotalAway:   { type: integer }
         attendanceTotalHome:   { type: integer }
+
+    PrimaryPosition:
+      type: object
+      additionalProperties: true
+      description: |
+        Player position metadata — `{code, name, type, abbreviation}` — as
+        the MLB API embeds it in person references.
+      properties:
+        code:         { type: string, description: "e.g. 1, 2, 3, …" }
+        name:         { type: string, description: "e.g. Pitcher, Catcher" }
+        type:         { type: string, description: "e.g. Pitcher, Infielder" }
+        abbreviation: { type: string, description: "e.g. P, C, 1B" }
+
+    Person:
+      type: object
+      additionalProperties: true
+      description: |
+        Lightweight person reference returned by awards / transactions /
+        roster endpoints. PrimaryPosition is only present when hydrated.
+      properties:
+        id:              { type: integer }
+        fullName:        { type: string }
+        nameFirstLast:   { type: string }
+        link:            { type: string }
+        primaryPosition: { $ref: "#/components/schemas/PrimaryPosition" }
+
+    AwardRecipient:
+      type: object
+      additionalProperties: true
+      description: |
+        One award-recipient row — the award metadata plus the team and
+        player it was awarded to.
+      properties:
+        id:     { type: string, description: "award id, e.g. MLBHOF" }
+        name:   { type: string, description: "award display name" }
+        date:   { type: string, description: "YYYY-MM-DD" }
+        season: { type: string }
+        team:   { $ref: "#/components/schemas/Ref" }
+        player: { $ref: "#/components/schemas/Person" }
+        notes:  { type: string }
+
+    AwardsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        awards:
+          type: array
+          items: { $ref: "#/components/schemas/AwardRecipient" }
 
     AttendanceResponse:
       type: object
