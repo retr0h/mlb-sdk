@@ -379,6 +379,62 @@
       "ingestedOn": "2026-05-12",
       "upstreamSha": "62c7643d53595bcabededcb0db36566ff34e9f2b86b54d351da5c30f6e19076a",
       "source": "ingest skill"
+    },
+    "game_uniforms": {
+      "method": "Client.GameUniforms",
+      "operationId": "getGameUniforms",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "aff2bf928702c3e75cf13e191424366d7fe3592274e32f63ec59287127bdf927",
+      "source": "ingest skill"
+    },
+    "team_uniforms": {
+      "method": "Client.TeamUniforms",
+      "operationId": "getTeamUniforms",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "e5db232bfb16ba5fa144ccae496e880e96917534c905d42c62ada6dc5cc2edbf",
+      "source": "ingest skill"
+    },
+    "meta": {
+      "method": "Client.Meta",
+      "operationId": "getMeta",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "e1436952a3558474313e23fb97d99801faa085009ffe697c3d64c12ff83fcc55",
+      "source": "ingest skill"
+    },
+    "game_color": {
+      "method": "Client.GameColor",
+      "operationId": "getGameColor",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "1741f4a5f863f0f3e863cb243ff66daf3749594b87a2fae87b65294e77c7dd33",
+      "source": "ingest skill"
+    },
+    "game_color_diff": {
+      "method": "Client.GameColorDiff",
+      "operationId": "getGameColorDiff",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "99aee6a9ae3b61b5f30c34dc42de39c84dc96e3575cdf324b6629340b09ceacb",
+      "source": "ingest skill"
+    },
+    "game_diff": {
+      "method": "Client.GameDiff",
+      "operationId": "getGameDiff",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "c5ed53af711bdcac59e4a9c65f9b8b02adabbe0ab6af95c30a2eca916628cdf5",
+      "source": "ingest skill"
+    },
+    "game_content": {
+      "method": "Client.GameContent",
+      "operationId": "getGameContent",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "53d4069290bd83f22fcdcb3a1080cedc2c247505901d4e5fb9d2b592e38081c5",
+      "source": "ingest skill"
+    },
+    "game_winProbability": {
+      "method": "Client.GameWinProbability",
+      "operationId": "getGameWinProbability",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "9550948439ed08db5dfdd20c28bdffba8c489dbaba9f36e1ddaf8b7263a34d5f",
+      "source": "ingest skill"
     }
   }
 }

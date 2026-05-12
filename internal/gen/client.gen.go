@@ -1215,6 +1215,12 @@ type TransactionsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// UniformsResponse defines model for UniformsResponse.
+type UniformsResponse struct {
+	Uniforms             *[]map[string]interface{} `json:"uniforms,omitempty"`
+	AdditionalProperties map[string]interface{}    `json:"-"`
+}
+
 // Venue defines model for Venue.
 type Venue struct {
 	Active *bool `json:"active,omitempty"`
@@ -1350,15 +1356,44 @@ type GetGameChangesParams struct {
 	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetGameContentParams defines parameters for GetGameContent.
+type GetGameContentParams struct {
+	HighlightLimit *int `form:"highlightLimit,omitempty" json:"highlightLimit,omitempty"`
+}
+
 // GetContextMetricsParams defines parameters for GetContextMetrics.
 type GetContextMetricsParams struct {
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
 	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetGameColorParams defines parameters for GetGameColor.
+type GetGameColorParams struct {
+	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetGameColorDiffParams defines parameters for GetGameColorDiff.
+type GetGameColorDiffParams struct {
+	StartTimecode string `form:"startTimecode" json:"startTimecode"`
+	EndTimecode   string `form:"endTimecode" json:"endTimecode"`
+}
+
+// GetGameDiffParams defines parameters for GetGameDiff.
+type GetGameDiffParams struct {
+	StartTimecode string `form:"startTimecode" json:"startTimecode"`
+	EndTimecode   string `form:"endTimecode" json:"endTimecode"`
+}
+
 // GetLinescoreParams defines parameters for GetLinescore.
 type GetLinescoreParams struct {
 	// Timecode YYYYMMDD_HHmmss for point-in-time
+	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetGameWinProbabilityParams defines parameters for GetGameWinProbability.
+type GetGameWinProbabilityParams struct {
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
 	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
@@ -1788,6 +1823,21 @@ type GetTransactionsParams struct {
 	// EndDate YYYY-MM-DD
 	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
 	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetGameUniformsParams defines parameters for GetGameUniforms.
+type GetGameUniformsParams struct {
+	// GamePks comma-separated game pks
+	GamePks string  `form:"gamePks" json:"gamePks"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetTeamUniformsParams defines parameters for GetTeamUniforms.
+type GetTeamUniformsParams struct {
+	// TeamIds comma-separated team ids
+	TeamIds string  `form:"teamIds" json:"teamIds"`
+	Season  *int    `form:"season,omitempty" json:"season,omitempty"`
 	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -13652,6 +13702,74 @@ func (a TransactionsResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for UniformsResponse. Returns the specified
+// element and whether it was found
+func (a UniformsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for UniformsResponse
+func (a *UniformsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for UniformsResponse to handle AdditionalProperties
+func (a *UniformsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["uniforms"]; found {
+		err = json.Unmarshal(raw, &a.Uniforms)
+		if err != nil {
+			return fmt.Errorf("error reading 'uniforms': %w", err)
+		}
+		delete(object, "uniforms")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for UniformsResponse to handle AdditionalProperties
+func (a UniformsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Uniforms != nil {
+		object["uniforms"], err = json.Marshal(a.Uniforms)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'uniforms': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for Venue. Returns the specified
 // element and whether it was found
 func (a Venue) Get(fieldName string) (value interface{}, found bool) {
@@ -14577,11 +14695,23 @@ type ClientInterface interface {
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGameContent request
+	GetGameContent(ctx context.Context, gamePk int, params *GetGameContentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetContextMetrics request
 	GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGameColor request
+	GetGameColor(ctx context.Context, gamePk int, params *GetGameColorParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGameColorDiff request
+	GetGameColorDiff(ctx context.Context, gamePk int, params *GetGameColorDiffParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetGameColorTimestamps request
 	GetGameColorTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGameDiff request
+	GetGameDiff(ctx context.Context, gamePk int, params *GetGameDiffParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetGameTimestamps request
 	GetGameTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14591,6 +14721,9 @@ type ClientInterface interface {
 
 	// GetPlayByPlay request
 	GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGameWinProbability request
+	GetGameWinProbability(ctx context.Context, gamePk int, params *GetGameWinProbabilityParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetGamePace request
 	GetGamePace(ctx context.Context, params *GetGamePaceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -14715,8 +14848,17 @@ type ClientInterface interface {
 	// GetTransactions request
 	GetTransactions(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGameUniforms request
+	GetGameUniforms(ctx context.Context, params *GetGameUniformsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeamUniforms request
+	GetTeamUniforms(ctx context.Context, params *GetTeamUniformsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetVenue request
 	GetVenue(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMeta request
+	GetMeta(ctx context.Context, metaType string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetLiveFeed(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -14815,6 +14957,18 @@ func (c *Client) GetBoxscore(ctx context.Context, gamePk int, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetGameContent(ctx context.Context, gamePk int, params *GetGameContentParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameContentRequest(c.Server, gamePk, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetContextMetrics(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetContextMetricsRequest(c.Server, gamePk, params)
 	if err != nil {
@@ -14827,8 +14981,44 @@ func (c *Client) GetContextMetrics(ctx context.Context, gamePk int, params *GetC
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetGameColor(ctx context.Context, gamePk int, params *GetGameColorParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameColorRequest(c.Server, gamePk, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameColorDiff(ctx context.Context, gamePk int, params *GetGameColorDiffParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameColorDiffRequest(c.Server, gamePk, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetGameColorTimestamps(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetGameColorTimestampsRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameDiff(ctx context.Context, gamePk int, params *GetGameDiffParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameDiffRequest(c.Server, gamePk, params)
 	if err != nil {
 		return nil, err
 	}
@@ -14865,6 +15055,18 @@ func (c *Client) GetLinescore(ctx context.Context, gamePk int, params *GetLinesc
 
 func (c *Client) GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPlayByPlayRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGameWinProbability(ctx context.Context, gamePk int, params *GetGameWinProbabilityParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameWinProbabilityRequest(c.Server, gamePk, params)
 	if err != nil {
 		return nil, err
 	}
@@ -15367,8 +15569,44 @@ func (c *Client) GetTransactions(ctx context.Context, params *GetTransactionsPar
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetGameUniforms(ctx context.Context, params *GetGameUniformsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGameUniformsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamUniforms(ctx context.Context, params *GetTeamUniformsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamUniformsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetVenue(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetVenueRequest(c.Server, venueId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMeta(ctx context.Context, metaType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMetaRequest(c.Server, metaType)
 	if err != nil {
 		return nil, err
 	}
@@ -16021,6 +16259,67 @@ func NewGetBoxscoreRequest(server string, gamePk int) (*http.Request, error) {
 	return req, nil
 }
 
+// NewGetGameContentRequest generates requests for GetGameContent
+func NewGetGameContentRequest(server string, gamePk int, params *GetGameContentParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/content", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.HighlightLimit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "highlightLimit", *params.HighlightLimit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetContextMetricsRequest generates requests for GetContextMetrics
 func NewGetContextMetricsRequest(server string, gamePk int, params *GetContextMetricsParams) (*http.Request, error) {
 	var err error
@@ -16094,6 +16393,144 @@ func NewGetContextMetricsRequest(server string, gamePk int, params *GetContextMe
 	return req, nil
 }
 
+// NewGetGameColorRequest generates requests for GetGameColor
+func NewGetGameColorRequest(server string, gamePk int, params *GetGameColorParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/feed/color", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Timecode != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "timecode", *params.Timecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameColorDiffRequest generates requests for GetGameColorDiff
+func NewGetGameColorDiffRequest(server string, gamePk int, params *GetGameColorDiffParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/feed/color/diffPatch", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "startTimecode", params.StartTimecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "endTimecode", params.EndTimecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetGameColorTimestampsRequest generates requests for GetGameColorTimestamps
 func NewGetGameColorTimestampsRequest(server string, gamePk int) (*http.Request, error) {
 	var err error
@@ -16118,6 +16555,71 @@ func NewGetGameColorTimestampsRequest(server string, gamePk int) (*http.Request,
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameDiffRequest generates requests for GetGameDiff
+func NewGetGameDiffRequest(server string, gamePk int, params *GetGameDiffParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/feed/live/diffPatch", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "startTimecode", params.StartTimecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "endTimecode", params.EndTimecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -16259,6 +16761,79 @@ func NewGetPlayByPlayRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGameWinProbabilityRequest generates requests for GetGameWinProbability
+func NewGetGameWinProbabilityRequest(server string, gamePk int, params *GetGameWinProbabilityParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/winProbability", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Timecode != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "timecode", *params.Timecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -20394,6 +20969,142 @@ func NewGetTransactionsRequest(server string, params *GetTransactionsParams) (*h
 	return req, nil
 }
 
+// NewGetGameUniformsRequest generates requests for GetGameUniforms
+func NewGetGameUniformsRequest(server string, params *GetGameUniformsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/uniforms/game")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gamePks", params.GamePks, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTeamUniformsRequest generates requests for GetTeamUniforms
+func NewGetTeamUniformsRequest(server string, params *GetTeamUniformsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/uniforms/team")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamIds", params.TeamIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetVenueRequest generates requests for GetVenue
 func NewGetVenueRequest(server string, venueId int, params *GetVenueParams) (*http.Request, error) {
 	var err error
@@ -20479,6 +21190,40 @@ func NewGetVenueRequest(server string, venueId int, params *GetVenueParams) (*ht
 	return req, nil
 }
 
+// NewGetMetaRequest generates requests for GetMeta
+func NewGetMetaRequest(server string, metaType string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "metaType", metaType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -20546,11 +21291,23 @@ type ClientWithResponsesInterface interface {
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
+	// GetGameContentWithResponse request
+	GetGameContentWithResponse(ctx context.Context, gamePk int, params *GetGameContentParams, reqEditors ...RequestEditorFn) (*GetGameContentResponse, error)
+
 	// GetContextMetricsWithResponse request
 	GetContextMetricsWithResponse(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*GetContextMetricsResponse, error)
 
+	// GetGameColorWithResponse request
+	GetGameColorWithResponse(ctx context.Context, gamePk int, params *GetGameColorParams, reqEditors ...RequestEditorFn) (*GetGameColorResponse, error)
+
+	// GetGameColorDiffWithResponse request
+	GetGameColorDiffWithResponse(ctx context.Context, gamePk int, params *GetGameColorDiffParams, reqEditors ...RequestEditorFn) (*GetGameColorDiffResponse, error)
+
 	// GetGameColorTimestampsWithResponse request
 	GetGameColorTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameColorTimestampsResponse, error)
+
+	// GetGameDiffWithResponse request
+	GetGameDiffWithResponse(ctx context.Context, gamePk int, params *GetGameDiffParams, reqEditors ...RequestEditorFn) (*GetGameDiffResponse, error)
 
 	// GetGameTimestampsWithResponse request
 	GetGameTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameTimestampsResponse, error)
@@ -20560,6 +21317,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetPlayByPlayWithResponse request
 	GetPlayByPlayWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetPlayByPlayResponse, error)
+
+	// GetGameWinProbabilityWithResponse request
+	GetGameWinProbabilityWithResponse(ctx context.Context, gamePk int, params *GetGameWinProbabilityParams, reqEditors ...RequestEditorFn) (*GetGameWinProbabilityResponse, error)
 
 	// GetGamePaceWithResponse request
 	GetGamePaceWithResponse(ctx context.Context, params *GetGamePaceParams, reqEditors ...RequestEditorFn) (*GetGamePaceResponse, error)
@@ -20684,8 +21444,17 @@ type ClientWithResponsesInterface interface {
 	// GetTransactionsWithResponse request
 	GetTransactionsWithResponse(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*GetTransactionsResponse, error)
 
+	// GetGameUniformsWithResponse request
+	GetGameUniformsWithResponse(ctx context.Context, params *GetGameUniformsParams, reqEditors ...RequestEditorFn) (*GetGameUniformsResponse, error)
+
+	// GetTeamUniformsWithResponse request
+	GetTeamUniformsWithResponse(ctx context.Context, params *GetTeamUniformsParams, reqEditors ...RequestEditorFn) (*GetTeamUniformsResponse, error)
+
 	// GetVenueWithResponse request
 	GetVenueWithResponse(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*GetVenueResponse, error)
+
+	// GetMetaWithResponse request
+	GetMetaWithResponse(ctx context.Context, metaType string, reqEditors ...RequestEditorFn) (*GetMetaResponse, error)
 }
 
 type GetLiveFeedResponse struct {
@@ -20928,6 +21697,36 @@ func (r GetBoxscoreResponse) ContentType() string {
 	return ""
 }
 
+type GetGameContentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameContentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameContentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameContentResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetContextMetricsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20958,6 +21757,66 @@ func (r GetContextMetricsResponse) ContentType() string {
 	return ""
 }
 
+type GetGameColorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameColorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameColorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameColorResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameColorDiffResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameColorDiffResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameColorDiffResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameColorDiffResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetGameColorTimestampsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20982,6 +21841,36 @@ func (r GetGameColorTimestampsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetGameColorTimestampsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameDiffResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameDiffResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameDiffResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameDiffResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -21072,6 +21961,36 @@ func (r GetPlayByPlayResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetPlayByPlayResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetGameWinProbabilityResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameWinProbabilityResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameWinProbabilityResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameWinProbabilityResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -22308,6 +23227,66 @@ func (r GetTransactionsResponse) ContentType() string {
 	return ""
 }
 
+type GetGameUniformsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UniformsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGameUniformsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGameUniformsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGameUniformsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetTeamUniformsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UniformsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamUniformsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamUniformsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTeamUniformsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetVenueResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22332,6 +23311,36 @@ func (r GetVenueResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetVenueResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetMetaResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMetaResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMetaResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetMetaResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -22410,6 +23419,15 @@ func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gameP
 	return ParseGetBoxscoreResponse(rsp)
 }
 
+// GetGameContentWithResponse request returning *GetGameContentResponse
+func (c *ClientWithResponses) GetGameContentWithResponse(ctx context.Context, gamePk int, params *GetGameContentParams, reqEditors ...RequestEditorFn) (*GetGameContentResponse, error) {
+	rsp, err := c.GetGameContent(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameContentResponse(rsp)
+}
+
 // GetContextMetricsWithResponse request returning *GetContextMetricsResponse
 func (c *ClientWithResponses) GetContextMetricsWithResponse(ctx context.Context, gamePk int, params *GetContextMetricsParams, reqEditors ...RequestEditorFn) (*GetContextMetricsResponse, error) {
 	rsp, err := c.GetContextMetrics(ctx, gamePk, params, reqEditors...)
@@ -22419,6 +23437,24 @@ func (c *ClientWithResponses) GetContextMetricsWithResponse(ctx context.Context,
 	return ParseGetContextMetricsResponse(rsp)
 }
 
+// GetGameColorWithResponse request returning *GetGameColorResponse
+func (c *ClientWithResponses) GetGameColorWithResponse(ctx context.Context, gamePk int, params *GetGameColorParams, reqEditors ...RequestEditorFn) (*GetGameColorResponse, error) {
+	rsp, err := c.GetGameColor(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameColorResponse(rsp)
+}
+
+// GetGameColorDiffWithResponse request returning *GetGameColorDiffResponse
+func (c *ClientWithResponses) GetGameColorDiffWithResponse(ctx context.Context, gamePk int, params *GetGameColorDiffParams, reqEditors ...RequestEditorFn) (*GetGameColorDiffResponse, error) {
+	rsp, err := c.GetGameColorDiff(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameColorDiffResponse(rsp)
+}
+
 // GetGameColorTimestampsWithResponse request returning *GetGameColorTimestampsResponse
 func (c *ClientWithResponses) GetGameColorTimestampsWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetGameColorTimestampsResponse, error) {
 	rsp, err := c.GetGameColorTimestamps(ctx, gamePk, reqEditors...)
@@ -22426,6 +23462,15 @@ func (c *ClientWithResponses) GetGameColorTimestampsWithResponse(ctx context.Con
 		return nil, err
 	}
 	return ParseGetGameColorTimestampsResponse(rsp)
+}
+
+// GetGameDiffWithResponse request returning *GetGameDiffResponse
+func (c *ClientWithResponses) GetGameDiffWithResponse(ctx context.Context, gamePk int, params *GetGameDiffParams, reqEditors ...RequestEditorFn) (*GetGameDiffResponse, error) {
+	rsp, err := c.GetGameDiff(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameDiffResponse(rsp)
 }
 
 // GetGameTimestampsWithResponse request returning *GetGameTimestampsResponse
@@ -22453,6 +23498,15 @@ func (c *ClientWithResponses) GetPlayByPlayWithResponse(ctx context.Context, gam
 		return nil, err
 	}
 	return ParseGetPlayByPlayResponse(rsp)
+}
+
+// GetGameWinProbabilityWithResponse request returning *GetGameWinProbabilityResponse
+func (c *ClientWithResponses) GetGameWinProbabilityWithResponse(ctx context.Context, gamePk int, params *GetGameWinProbabilityParams, reqEditors ...RequestEditorFn) (*GetGameWinProbabilityResponse, error) {
+	rsp, err := c.GetGameWinProbability(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameWinProbabilityResponse(rsp)
 }
 
 // GetGamePaceWithResponse request returning *GetGamePaceResponse
@@ -22824,6 +23878,24 @@ func (c *ClientWithResponses) GetTransactionsWithResponse(ctx context.Context, p
 	return ParseGetTransactionsResponse(rsp)
 }
 
+// GetGameUniformsWithResponse request returning *GetGameUniformsResponse
+func (c *ClientWithResponses) GetGameUniformsWithResponse(ctx context.Context, params *GetGameUniformsParams, reqEditors ...RequestEditorFn) (*GetGameUniformsResponse, error) {
+	rsp, err := c.GetGameUniforms(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGameUniformsResponse(rsp)
+}
+
+// GetTeamUniformsWithResponse request returning *GetTeamUniformsResponse
+func (c *ClientWithResponses) GetTeamUniformsWithResponse(ctx context.Context, params *GetTeamUniformsParams, reqEditors ...RequestEditorFn) (*GetTeamUniformsResponse, error) {
+	rsp, err := c.GetTeamUniforms(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamUniformsResponse(rsp)
+}
+
 // GetVenueWithResponse request returning *GetVenueResponse
 func (c *ClientWithResponses) GetVenueWithResponse(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*GetVenueResponse, error) {
 	rsp, err := c.GetVenue(ctx, venueId, params, reqEditors...)
@@ -22831,6 +23903,15 @@ func (c *ClientWithResponses) GetVenueWithResponse(ctx context.Context, venueId 
 		return nil, err
 	}
 	return ParseGetVenueResponse(rsp)
+}
+
+// GetMetaWithResponse request returning *GetMetaResponse
+func (c *ClientWithResponses) GetMetaWithResponse(ctx context.Context, metaType string, reqEditors ...RequestEditorFn) (*GetMetaResponse, error) {
+	rsp, err := c.GetMeta(ctx, metaType, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMetaResponse(rsp)
 }
 
 // ParseGetLiveFeedResponse parses an HTTP response from a GetLiveFeedWithResponse call
@@ -23041,6 +24122,32 @@ func ParseGetBoxscoreResponse(rsp *http.Response) (*GetBoxscoreResponse, error) 
 	return response, nil
 }
 
+// ParseGetGameContentResponse parses an HTTP response from a GetGameContentWithResponse call
+func ParseGetGameContentResponse(rsp *http.Response) (*GetGameContentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameContentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetContextMetricsResponse parses an HTTP response from a GetContextMetricsWithResponse call
 func ParseGetContextMetricsResponse(rsp *http.Response) (*GetContextMetricsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -23067,6 +24174,58 @@ func ParseGetContextMetricsResponse(rsp *http.Response) (*GetContextMetricsRespo
 	return response, nil
 }
 
+// ParseGetGameColorResponse parses an HTTP response from a GetGameColorWithResponse call
+func ParseGetGameColorResponse(rsp *http.Response) (*GetGameColorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameColorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameColorDiffResponse parses an HTTP response from a GetGameColorDiffWithResponse call
+func ParseGetGameColorDiffResponse(rsp *http.Response) (*GetGameColorDiffResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameColorDiffResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetGameColorTimestampsResponse parses an HTTP response from a GetGameColorTimestampsWithResponse call
 func ParseGetGameColorTimestampsResponse(rsp *http.Response) (*GetGameColorTimestampsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -23083,6 +24242,32 @@ func ParseGetGameColorTimestampsResponse(rsp *http.Response) (*GetGameColorTimes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest TimestampsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameDiffResponse parses an HTTP response from a GetGameDiffWithResponse call
+func ParseGetGameDiffResponse(rsp *http.Response) (*GetGameDiffResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameDiffResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -23161,6 +24346,32 @@ func ParseGetPlayByPlayResponse(rsp *http.Response) (*GetPlayByPlayResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest PlayByPlayResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGameWinProbabilityResponse parses an HTTP response from a GetGameWinProbabilityWithResponse call
+func ParseGetGameWinProbabilityResponse(rsp *http.Response) (*GetGameWinProbabilityResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameWinProbabilityResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -24237,6 +25448,58 @@ func ParseGetTransactionsResponse(rsp *http.Response) (*GetTransactionsResponse,
 	return response, nil
 }
 
+// ParseGetGameUniformsResponse parses an HTTP response from a GetGameUniformsWithResponse call
+func ParseGetGameUniformsResponse(rsp *http.Response) (*GetGameUniformsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGameUniformsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UniformsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamUniformsResponse parses an HTTP response from a GetTeamUniformsWithResponse call
+func ParseGetTeamUniformsResponse(rsp *http.Response) (*GetTeamUniformsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamUniformsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UniformsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetVenueResponse parses an HTTP response from a GetVenueWithResponse call
 func ParseGetVenueResponse(rsp *http.Response) (*GetVenueResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -24253,6 +25516,32 @@ func ParseGetVenueResponse(rsp *http.Response) (*GetVenueResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest VenueResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetMetaResponse parses an HTTP response from a GetMetaWithResponse call
+func ParseGetMetaResponse(rsp *http.Response) (*GetMetaResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMetaResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

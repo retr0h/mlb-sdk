@@ -934,6 +934,142 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ScheduleResponse" }
 
+  /api/v1/uniforms/game:
+    get:
+      operationId: getGameUniforms
+      summary: Uniform data for games
+      parameters:
+        - { name: gamePks, in: query, required: true, schema: { type: string }, description: "comma-separated game pks" }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Game uniforms
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UniformsResponse" }
+
+  /api/v1/uniforms/team:
+    get:
+      operationId: getTeamUniforms
+      summary: Team uniform catalog
+      parameters:
+        - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Team uniforms
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UniformsResponse" }
+
+  /api/v1/{metaType}:
+    get:
+      operationId: getMeta
+      summary: API metadata (gameTypes, statGroups, etc.)
+      parameters:
+        - { name: metaType, in: path, required: true, schema: { type: string }, description: "e.g. gameTypes, statGroups, eventTypes" }
+      responses:
+        "200":
+          description: Metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
+  /api/v1/game/{gamePk}/feed/color:
+    get:
+      operationId: getGameColor
+      summary: Color commentary feed for a game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: timecode, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Color feed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /api/v1/game/{gamePk}/feed/color/diffPatch:
+    get:
+      operationId: getGameColorDiff
+      summary: Color feed diff patch
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: startTimecode, in: query, required: true, schema: { type: string } }
+        - { name: endTimecode, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Color diff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
+  /api/v1/game/{gamePk}/feed/live/diffPatch:
+    get:
+      operationId: getGameDiff
+      summary: Live feed diff patch
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: startTimecode, in: query, required: true, schema: { type: string } }
+        - { name: endTimecode, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Live diff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
+  /api/v1/game/{gamePk}/content:
+    get:
+      operationId: getGameContent
+      summary: Game content (highlights, editorial)
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: highlightLimit, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Game content
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /api/v1/game/{gamePk}/winProbability:
+    get:
+      operationId: getGameWinProbability
+      summary: Win probability per at-bat
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: timecode, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Win probability
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
   /api/v1/teams:
     get:
       operationId: getTeams
@@ -1718,6 +1854,16 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    UniformsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        uniforms:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
 
     TeamLeadersResponse:
       type: object
