@@ -656,6 +656,39 @@ type TeamsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Transaction One roster / assignment transaction — the player, the from/to
+// teams, and the date metadata. fromTeam is omitted on initial
+// assignments; description is free-text the MLB feed populates.
+type Transaction struct {
+	// Date YYYY-MM-DD
+	Date        *string `json:"date,omitempty"`
+	Description *string `json:"description,omitempty"`
+
+	// EffectiveDate YYYY-MM-DD
+	EffectiveDate *string `json:"effectiveDate,omitempty"`
+	FromTeam      *Team   `json:"fromTeam,omitempty"`
+	Id            *int    `json:"id,omitempty"`
+
+	// Person Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Person *Person `json:"person,omitempty"`
+
+	// ResolutionDate YYYY-MM-DD
+	ResolutionDate *string `json:"resolutionDate,omitempty"`
+	ToTeam         *Team   `json:"toTeam,omitempty"`
+
+	// TypeCode e.g. ASG, SE, TR
+	TypeCode             *string                `json:"typeCode,omitempty"`
+	TypeDesc             *string                `json:"typeDesc,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// TransactionsResponse defines model for TransactionsResponse.
+type TransactionsResponse struct {
+	Transactions         *[]Transaction         `json:"transactions,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // Venue defines model for Venue.
 type Venue struct {
 	Active *bool `json:"active,omitempty"`
@@ -897,6 +930,23 @@ type GetTeamStatsParams struct {
 
 	// Group hitting | pitching | fielding
 	Group *string `form:"group,omitempty" json:"group,omitempty"`
+}
+
+// GetTransactionsParams defines parameters for GetTransactions.
+type GetTransactionsParams struct {
+	TeamId   *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+	PlayerId *int `form:"playerId,omitempty" json:"playerId,omitempty"`
+
+	// Date YYYY-MM-DD
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// StartDate YYYY-MM-DD
+	StartDate *string `form:"startDate,omitempty" json:"startDate,omitempty"`
+
+	// EndDate YYYY-MM-DD
+	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetVenueParams defines parameters for GetVenue.
@@ -7175,6 +7225,277 @@ func (a TeamsResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for Transaction. Returns the specified
+// element and whether it was found
+func (a Transaction) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Transaction
+func (a *Transaction) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Transaction to handle AdditionalProperties
+func (a *Transaction) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["date"]; found {
+		err = json.Unmarshal(raw, &a.Date)
+		if err != nil {
+			return fmt.Errorf("error reading 'date': %w", err)
+		}
+		delete(object, "date")
+	}
+
+	if raw, found := object["description"]; found {
+		err = json.Unmarshal(raw, &a.Description)
+		if err != nil {
+			return fmt.Errorf("error reading 'description': %w", err)
+		}
+		delete(object, "description")
+	}
+
+	if raw, found := object["effectiveDate"]; found {
+		err = json.Unmarshal(raw, &a.EffectiveDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'effectiveDate': %w", err)
+		}
+		delete(object, "effectiveDate")
+	}
+
+	if raw, found := object["fromTeam"]; found {
+		err = json.Unmarshal(raw, &a.FromTeam)
+		if err != nil {
+			return fmt.Errorf("error reading 'fromTeam': %w", err)
+		}
+		delete(object, "fromTeam")
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["person"]; found {
+		err = json.Unmarshal(raw, &a.Person)
+		if err != nil {
+			return fmt.Errorf("error reading 'person': %w", err)
+		}
+		delete(object, "person")
+	}
+
+	if raw, found := object["resolutionDate"]; found {
+		err = json.Unmarshal(raw, &a.ResolutionDate)
+		if err != nil {
+			return fmt.Errorf("error reading 'resolutionDate': %w", err)
+		}
+		delete(object, "resolutionDate")
+	}
+
+	if raw, found := object["toTeam"]; found {
+		err = json.Unmarshal(raw, &a.ToTeam)
+		if err != nil {
+			return fmt.Errorf("error reading 'toTeam': %w", err)
+		}
+		delete(object, "toTeam")
+	}
+
+	if raw, found := object["typeCode"]; found {
+		err = json.Unmarshal(raw, &a.TypeCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'typeCode': %w", err)
+		}
+		delete(object, "typeCode")
+	}
+
+	if raw, found := object["typeDesc"]; found {
+		err = json.Unmarshal(raw, &a.TypeDesc)
+		if err != nil {
+			return fmt.Errorf("error reading 'typeDesc': %w", err)
+		}
+		delete(object, "typeDesc")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Transaction to handle AdditionalProperties
+func (a Transaction) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Date != nil {
+		object["date"], err = json.Marshal(a.Date)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'date': %w", err)
+		}
+	}
+
+	if a.Description != nil {
+		object["description"], err = json.Marshal(a.Description)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'description': %w", err)
+		}
+	}
+
+	if a.EffectiveDate != nil {
+		object["effectiveDate"], err = json.Marshal(a.EffectiveDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'effectiveDate': %w", err)
+		}
+	}
+
+	if a.FromTeam != nil {
+		object["fromTeam"], err = json.Marshal(a.FromTeam)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fromTeam': %w", err)
+		}
+	}
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.Person != nil {
+		object["person"], err = json.Marshal(a.Person)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'person': %w", err)
+		}
+	}
+
+	if a.ResolutionDate != nil {
+		object["resolutionDate"], err = json.Marshal(a.ResolutionDate)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'resolutionDate': %w", err)
+		}
+	}
+
+	if a.ToTeam != nil {
+		object["toTeam"], err = json.Marshal(a.ToTeam)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'toTeam': %w", err)
+		}
+	}
+
+	if a.TypeCode != nil {
+		object["typeCode"], err = json.Marshal(a.TypeCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'typeCode': %w", err)
+		}
+	}
+
+	if a.TypeDesc != nil {
+		object["typeDesc"], err = json.Marshal(a.TypeDesc)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'typeDesc': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for TransactionsResponse. Returns the specified
+// element and whether it was found
+func (a TransactionsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for TransactionsResponse
+func (a *TransactionsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for TransactionsResponse to handle AdditionalProperties
+func (a *TransactionsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["transactions"]; found {
+		err = json.Unmarshal(raw, &a.Transactions)
+		if err != nil {
+			return fmt.Errorf("error reading 'transactions': %w", err)
+		}
+		delete(object, "transactions")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for TransactionsResponse to handle AdditionalProperties
+func (a TransactionsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Transactions != nil {
+		object["transactions"], err = json.Marshal(a.Transactions)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'transactions': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for Venue. Returns the specified
 // element and whether it was found
 func (a Venue) Get(fieldName string) (value interface{}, found bool) {
@@ -8124,6 +8445,9 @@ type ClientInterface interface {
 	// GetTeamStats request
 	GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTransactions request
+	GetTransactions(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetVenue request
 	GetVenue(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
@@ -8310,6 +8634,18 @@ func (c *Client) GetTeam(ctx context.Context, teamId int, params *GetTeamParams,
 
 func (c *Client) GetTeamStats(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamStatsRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTransactions(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTransactionsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -9720,6 +10056,132 @@ func NewGetTeamStatsRequest(server string, teamId int, params *GetTeamStatsParam
 	return req, nil
 }
 
+// NewGetTransactionsRequest generates requests for GetTransactions
+func NewGetTransactionsRequest(server string, params *GetTransactionsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/transactions")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.TeamId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamId", *params.TeamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PlayerId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "playerId", *params.PlayerId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Date != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "date", *params.Date, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.StartDate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "startDate", *params.StartDate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.EndDate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "endDate", *params.EndDate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", *params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetVenueRequest generates requests for GetVenue
 func NewGetVenueRequest(server string, venueId int, params *GetVenueParams) (*http.Request, error) {
 	var err error
@@ -9895,6 +10357,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetTeamStatsWithResponse request
 	GetTeamStatsWithResponse(ctx context.Context, teamId int, params *GetTeamStatsParams, reqEditors ...RequestEditorFn) (*GetTeamStatsResponse, error)
+
+	// GetTransactionsWithResponse request
+	GetTransactionsWithResponse(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*GetTransactionsResponse, error)
 
 	// GetVenueWithResponse request
 	GetVenueWithResponse(ctx context.Context, venueId int, params *GetVenueParams, reqEditors ...RequestEditorFn) (*GetVenueResponse, error)
@@ -10380,6 +10845,36 @@ func (r GetTeamStatsResponse) ContentType() string {
 	return ""
 }
 
+type GetTransactionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TransactionsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTransactionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTransactionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTransactionsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetVenueResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -10552,6 +11047,15 @@ func (c *ClientWithResponses) GetTeamStatsWithResponse(ctx context.Context, team
 		return nil, err
 	}
 	return ParseGetTeamStatsResponse(rsp)
+}
+
+// GetTransactionsWithResponse request returning *GetTransactionsResponse
+func (c *ClientWithResponses) GetTransactionsWithResponse(ctx context.Context, params *GetTransactionsParams, reqEditors ...RequestEditorFn) (*GetTransactionsResponse, error) {
+	rsp, err := c.GetTransactions(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTransactionsResponse(rsp)
 }
 
 // GetVenueWithResponse request returning *GetVenueResponse
@@ -10969,6 +11473,32 @@ func ParseGetTeamStatsResponse(rsp *http.Response) (*GetTeamStatsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest TeamStatsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTransactionsResponse parses an HTTP response from a GetTransactionsWithResponse call
+func ParseGetTransactionsResponse(rsp *http.Response) (*GetTransactionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTransactionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TransactionsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

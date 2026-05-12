@@ -40,6 +40,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/league`                      | [Client.Leagues][d-leagues]   | [leagues.go](examples/leagues.go)        |
 | `/api/v1/attendance`                  | [Client.Attendance][d-att]    | [attendance.go](examples/attendance.go)  |
 | `/api/v1/awards/{awardId}/recipients` | [Client.AwardRecipients][d-aw] | [awards.go](examples/awards.go)        |
+| `/api/v1/transactions`                | [Client.Transactions][d-tx]   | [transactions.go](examples/transactions.go) |
 | `/api/v1/seasons`                     | [Client.Seasons][d-seas]      | [seasons.go](examples/seasons.go)        |
 | `/api/v1/seasons/{seasonId}`          | [Client.Season][d-season]     | [season.go](examples/season.go)          |
 | `/api/v1/sports`                      | [Client.Sports][d-sports]     | [sports.go](examples/sports.go)          |
@@ -105,6 +106,7 @@ The [MIT][] License.
 [d-leagues]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Leagues
 [d-att]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Attendance
 [d-aw]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.AwardRecipients
+[d-tx]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Transactions
 [d-seas]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Seasons
 [d-season]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Season
 [d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports

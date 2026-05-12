@@ -113,6 +113,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "78dd05cf75a105b164ac64749ac9d6835d843816584b35b8860927a5354e24a4",
       "source": "ingest skill"
+    },
+    "transactions": {
+      "method": "Client.Transactions",
+      "operationId": "getTransactions",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "5ec584446918136a2e06db2b961b24765749bdc0b91f7d0125c8cd6a6049ec12",
+      "source": "ingest skill"
     }
   }
 }

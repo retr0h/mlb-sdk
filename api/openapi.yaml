@@ -167,6 +167,31 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SeasonsResponse" }
 
+  /api/v1/transactions:
+    get:
+      operationId: getTransactions
+      summary: Roster / assignment transactions
+      description: |
+        Returns MLB transactions across teams and sports. toddrob99 marks
+        required_params=[["teamId"], ["playerId"], ["date"], ["startDate",
+        "endDate"]] — one of: TeamID alone, PlayerID alone, Date alone, or
+        StartDate+EndDate together. The SDK enforces this via an
+        ErrInvalidQuery runtime check.
+      parameters:
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: playerId, in: query, schema: { type: integer } }
+        - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: startDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: endDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Transactions
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TransactionsResponse" }
+
   /api/v1/awards/{awardId}/recipients:
     get:
       operationId: getAwardRecipients
@@ -979,6 +1004,33 @@ components:
         awards:
           type: array
           items: { $ref: "#/components/schemas/AwardRecipient" }
+
+    Transaction:
+      type: object
+      additionalProperties: true
+      description: |
+        One roster / assignment transaction — the player, the from/to
+        teams, and the date metadata. fromTeam is omitted on initial
+        assignments; description is free-text the MLB feed populates.
+      properties:
+        id:             { type: integer }
+        person:         { $ref: "#/components/schemas/Person" }
+        fromTeam:       { $ref: "#/components/schemas/Team" }
+        toTeam:         { $ref: "#/components/schemas/Team" }
+        date:           { type: string, description: "YYYY-MM-DD" }
+        effectiveDate:  { type: string, description: "YYYY-MM-DD" }
+        resolutionDate: { type: string, description: "YYYY-MM-DD" }
+        typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
+        typeDesc:       { type: string }
+        description:    { type: string }
+
+    TransactionsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        transactions:
+          type: array
+          items: { $ref: "#/components/schemas/Transaction" }
 
     AttendanceResponse:
       type: object
