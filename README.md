@@ -97,6 +97,12 @@ See the [package documentation][] on pkg.go.dev for API details.
 See the [Development][] guide for prerequisites, setup, and conventions.
 See the [Contributing][] guide before submitting a PR.
 
+## 🔗 Related projects
+
+| Project | Description |
+| ------- | ----------- |
+| [mlb-mcp][] | MCP server that exposes this SDK as tools for LLMs |
+
 ## ⚖️ Copyright notice
 
 This package and its author are not affiliated with MLB or any MLB team. This
@@ -115,6 +121,7 @@ The [MIT][] License.
 [Development]: docs/development.md
 [Contributing]: docs/contributing.md
 [MIT]: LICENSE
+[mlb-mcp]: https://github.com/retr0h/mlb-mcp
 [d-sched]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Schedule
 [d-gc]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameChanges
 [d-box]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
