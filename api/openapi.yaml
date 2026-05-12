@@ -70,6 +70,24 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/draft/{year}:
+    get:
+      operationId: getDraft
+      summary: Draft picks for a year
+      description: |
+        Returns draft data for a given year. The response wraps rounds and
+        picks with rich person/team/school sub-objects.
+      parameters:
+        - { name: year, in: path, required: true, schema: { type: integer } }
+        - { name: round, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Draft
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DraftResponse" }
+
   /api/v1/game/{gamePk}/linescore:
     get:
       operationId: getLinescore
@@ -1171,6 +1189,78 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    DraftHome:
+      type: object
+      additionalProperties: true
+      properties:
+        city:    { type: string }
+        country: { type: string }
+
+    DraftSchool:
+      type: object
+      additionalProperties: true
+      properties:
+        name:        { type: string }
+        schoolClass: { type: string, description: "e.g. 4YR JR, HS" }
+        city:        { type: string }
+        country:     { type: string }
+        state:       { type: string }
+
+    DraftTypeRef:
+      type: object
+      additionalProperties: true
+      properties:
+        code:        { type: string, description: "e.g. JR" }
+        description: { type: string }
+
+    DraftPick:
+      type: object
+      additionalProperties: true
+      properties:
+        bisPlayerId:      { type: integer }
+        pickRound:        { type: string }
+        pickNumber:       { type: integer }
+        displayPickNumber: { type: integer }
+        roundPickNumber:  { type: integer }
+        rank:             { type: integer }
+        pickValue:        { type: string }
+        signingBonus:     { type: string }
+        home:             { $ref: "#/components/schemas/DraftHome" }
+        scoutingReport:   { type: string }
+        school:           { $ref: "#/components/schemas/DraftSchool" }
+        blurb:            { type: string }
+        headshotLink:     { type: string }
+        person:           { $ref: "#/components/schemas/PersonDetail" }
+        team:             { $ref: "#/components/schemas/TeamInfo" }
+        draftType:        { $ref: "#/components/schemas/DraftTypeRef" }
+        isDrafted:        { type: boolean }
+        isPass:           { type: boolean }
+        year:             { type: string }
+
+    DraftRound:
+      type: object
+      additionalProperties: true
+      properties:
+        round: { type: string }
+        picks:
+          type: array
+          items: { $ref: "#/components/schemas/DraftPick" }
+
+    Draft:
+      type: object
+      additionalProperties: true
+      properties:
+        draftYear: { type: integer }
+        rounds:
+          type: array
+          items: { $ref: "#/components/schemas/DraftRound" }
+
+    DraftResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        drafts: { $ref: "#/components/schemas/Draft" }
 
     Conference:
       type: object

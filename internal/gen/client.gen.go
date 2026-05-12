@@ -243,6 +243,85 @@ type DivisionsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// Draft defines model for Draft.
+type Draft struct {
+	DraftYear            *int                   `json:"draftYear,omitempty"`
+	Rounds               *[]DraftRound          `json:"rounds,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftHome defines model for DraftHome.
+type DraftHome struct {
+	City                 *string                `json:"city,omitempty"`
+	Country              *string                `json:"country,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftPick defines model for DraftPick.
+type DraftPick struct {
+	BisPlayerId       *int          `json:"bisPlayerId,omitempty"`
+	Blurb             *string       `json:"blurb,omitempty"`
+	DisplayPickNumber *int          `json:"displayPickNumber,omitempty"`
+	DraftType         *DraftTypeRef `json:"draftType,omitempty"`
+	HeadshotLink      *string       `json:"headshotLink,omitempty"`
+	Home              *DraftHome    `json:"home,omitempty"`
+	IsDrafted         *bool         `json:"isDrafted,omitempty"`
+	IsPass            *bool         `json:"isPass,omitempty"`
+
+	// Person Rich person record returned by /api/v1/people/{personId} and
+	// /api/v1/people. Many fields are absent for non-player persons
+	// (coaches, umpires, etc.).
+	Person          *PersonDetail `json:"person,omitempty"`
+	PickNumber      *int          `json:"pickNumber,omitempty"`
+	PickRound       *string       `json:"pickRound,omitempty"`
+	PickValue       *string       `json:"pickValue,omitempty"`
+	Rank            *int          `json:"rank,omitempty"`
+	RoundPickNumber *int          `json:"roundPickNumber,omitempty"`
+	School          *DraftSchool  `json:"school,omitempty"`
+	ScoutingReport  *string       `json:"scoutingReport,omitempty"`
+	SigningBonus    *string       `json:"signingBonus,omitempty"`
+
+	// Team Rich team record as returned by /api/v1/teams and /api/v1/teams/{teamId}.
+	// Sub-objects (league, division, sport, springLeague, venue) carry
+	// only id/name/link until the request hydrates the corresponding key.
+	Team                 *TeamInfo              `json:"team,omitempty"`
+	Year                 *string                `json:"year,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftResponse defines model for DraftResponse.
+type DraftResponse struct {
+	Drafts               *Draft                 `json:"drafts,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftRound defines model for DraftRound.
+type DraftRound struct {
+	Picks                *[]DraftPick           `json:"picks,omitempty"`
+	Round                *string                `json:"round,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftSchool defines model for DraftSchool.
+type DraftSchool struct {
+	City    *string `json:"city,omitempty"`
+	Country *string `json:"country,omitempty"`
+	Name    *string `json:"name,omitempty"`
+
+	// SchoolClass e.g. 4YR JR, HS
+	SchoolClass          *string                `json:"schoolClass,omitempty"`
+	State                *string                `json:"state,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// DraftTypeRef defines model for DraftTypeRef.
+type DraftTypeRef struct {
+	// Code e.g. JR
+	Code                 *string                `json:"code,omitempty"`
+	Description          *string                `json:"description,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // FreeAgent defines model for FreeAgent.
 type FreeAgent struct {
 	// DateDeclared YYYY-MM-DD
@@ -1076,6 +1155,12 @@ type GetDivisionsParams struct {
 	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
 	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+}
+
+// GetDraftParams defines parameters for GetDraft.
+type GetDraftParams struct {
+	Round  *string `form:"round,omitempty" json:"round,omitempty"`
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetLinescoreParams defines parameters for GetLinescore.
@@ -3466,6 +3551,872 @@ func (a DivisionsResponse) MarshalJSON() ([]byte, error) {
 		object["divisions"], err = json.Marshal(a.Divisions)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'divisions': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for Draft. Returns the specified
+// element and whether it was found
+func (a Draft) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for Draft
+func (a *Draft) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for Draft to handle AdditionalProperties
+func (a *Draft) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["draftYear"]; found {
+		err = json.Unmarshal(raw, &a.DraftYear)
+		if err != nil {
+			return fmt.Errorf("error reading 'draftYear': %w", err)
+		}
+		delete(object, "draftYear")
+	}
+
+	if raw, found := object["rounds"]; found {
+		err = json.Unmarshal(raw, &a.Rounds)
+		if err != nil {
+			return fmt.Errorf("error reading 'rounds': %w", err)
+		}
+		delete(object, "rounds")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for Draft to handle AdditionalProperties
+func (a Draft) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DraftYear != nil {
+		object["draftYear"], err = json.Marshal(a.DraftYear)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'draftYear': %w", err)
+		}
+	}
+
+	if a.Rounds != nil {
+		object["rounds"], err = json.Marshal(a.Rounds)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rounds': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftHome. Returns the specified
+// element and whether it was found
+func (a DraftHome) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftHome
+func (a *DraftHome) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftHome to handle AdditionalProperties
+func (a *DraftHome) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["city"]; found {
+		err = json.Unmarshal(raw, &a.City)
+		if err != nil {
+			return fmt.Errorf("error reading 'city': %w", err)
+		}
+		delete(object, "city")
+	}
+
+	if raw, found := object["country"]; found {
+		err = json.Unmarshal(raw, &a.Country)
+		if err != nil {
+			return fmt.Errorf("error reading 'country': %w", err)
+		}
+		delete(object, "country")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftHome to handle AdditionalProperties
+func (a DraftHome) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.City != nil {
+		object["city"], err = json.Marshal(a.City)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'city': %w", err)
+		}
+	}
+
+	if a.Country != nil {
+		object["country"], err = json.Marshal(a.Country)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'country': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftPick. Returns the specified
+// element and whether it was found
+func (a DraftPick) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftPick
+func (a *DraftPick) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftPick to handle AdditionalProperties
+func (a *DraftPick) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["bisPlayerId"]; found {
+		err = json.Unmarshal(raw, &a.BisPlayerId)
+		if err != nil {
+			return fmt.Errorf("error reading 'bisPlayerId': %w", err)
+		}
+		delete(object, "bisPlayerId")
+	}
+
+	if raw, found := object["blurb"]; found {
+		err = json.Unmarshal(raw, &a.Blurb)
+		if err != nil {
+			return fmt.Errorf("error reading 'blurb': %w", err)
+		}
+		delete(object, "blurb")
+	}
+
+	if raw, found := object["displayPickNumber"]; found {
+		err = json.Unmarshal(raw, &a.DisplayPickNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'displayPickNumber': %w", err)
+		}
+		delete(object, "displayPickNumber")
+	}
+
+	if raw, found := object["draftType"]; found {
+		err = json.Unmarshal(raw, &a.DraftType)
+		if err != nil {
+			return fmt.Errorf("error reading 'draftType': %w", err)
+		}
+		delete(object, "draftType")
+	}
+
+	if raw, found := object["headshotLink"]; found {
+		err = json.Unmarshal(raw, &a.HeadshotLink)
+		if err != nil {
+			return fmt.Errorf("error reading 'headshotLink': %w", err)
+		}
+		delete(object, "headshotLink")
+	}
+
+	if raw, found := object["home"]; found {
+		err = json.Unmarshal(raw, &a.Home)
+		if err != nil {
+			return fmt.Errorf("error reading 'home': %w", err)
+		}
+		delete(object, "home")
+	}
+
+	if raw, found := object["isDrafted"]; found {
+		err = json.Unmarshal(raw, &a.IsDrafted)
+		if err != nil {
+			return fmt.Errorf("error reading 'isDrafted': %w", err)
+		}
+		delete(object, "isDrafted")
+	}
+
+	if raw, found := object["isPass"]; found {
+		err = json.Unmarshal(raw, &a.IsPass)
+		if err != nil {
+			return fmt.Errorf("error reading 'isPass': %w", err)
+		}
+		delete(object, "isPass")
+	}
+
+	if raw, found := object["person"]; found {
+		err = json.Unmarshal(raw, &a.Person)
+		if err != nil {
+			return fmt.Errorf("error reading 'person': %w", err)
+		}
+		delete(object, "person")
+	}
+
+	if raw, found := object["pickNumber"]; found {
+		err = json.Unmarshal(raw, &a.PickNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'pickNumber': %w", err)
+		}
+		delete(object, "pickNumber")
+	}
+
+	if raw, found := object["pickRound"]; found {
+		err = json.Unmarshal(raw, &a.PickRound)
+		if err != nil {
+			return fmt.Errorf("error reading 'pickRound': %w", err)
+		}
+		delete(object, "pickRound")
+	}
+
+	if raw, found := object["pickValue"]; found {
+		err = json.Unmarshal(raw, &a.PickValue)
+		if err != nil {
+			return fmt.Errorf("error reading 'pickValue': %w", err)
+		}
+		delete(object, "pickValue")
+	}
+
+	if raw, found := object["rank"]; found {
+		err = json.Unmarshal(raw, &a.Rank)
+		if err != nil {
+			return fmt.Errorf("error reading 'rank': %w", err)
+		}
+		delete(object, "rank")
+	}
+
+	if raw, found := object["roundPickNumber"]; found {
+		err = json.Unmarshal(raw, &a.RoundPickNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'roundPickNumber': %w", err)
+		}
+		delete(object, "roundPickNumber")
+	}
+
+	if raw, found := object["school"]; found {
+		err = json.Unmarshal(raw, &a.School)
+		if err != nil {
+			return fmt.Errorf("error reading 'school': %w", err)
+		}
+		delete(object, "school")
+	}
+
+	if raw, found := object["scoutingReport"]; found {
+		err = json.Unmarshal(raw, &a.ScoutingReport)
+		if err != nil {
+			return fmt.Errorf("error reading 'scoutingReport': %w", err)
+		}
+		delete(object, "scoutingReport")
+	}
+
+	if raw, found := object["signingBonus"]; found {
+		err = json.Unmarshal(raw, &a.SigningBonus)
+		if err != nil {
+			return fmt.Errorf("error reading 'signingBonus': %w", err)
+		}
+		delete(object, "signingBonus")
+	}
+
+	if raw, found := object["team"]; found {
+		err = json.Unmarshal(raw, &a.Team)
+		if err != nil {
+			return fmt.Errorf("error reading 'team': %w", err)
+		}
+		delete(object, "team")
+	}
+
+	if raw, found := object["year"]; found {
+		err = json.Unmarshal(raw, &a.Year)
+		if err != nil {
+			return fmt.Errorf("error reading 'year': %w", err)
+		}
+		delete(object, "year")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftPick to handle AdditionalProperties
+func (a DraftPick) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.BisPlayerId != nil {
+		object["bisPlayerId"], err = json.Marshal(a.BisPlayerId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'bisPlayerId': %w", err)
+		}
+	}
+
+	if a.Blurb != nil {
+		object["blurb"], err = json.Marshal(a.Blurb)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'blurb': %w", err)
+		}
+	}
+
+	if a.DisplayPickNumber != nil {
+		object["displayPickNumber"], err = json.Marshal(a.DisplayPickNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'displayPickNumber': %w", err)
+		}
+	}
+
+	if a.DraftType != nil {
+		object["draftType"], err = json.Marshal(a.DraftType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'draftType': %w", err)
+		}
+	}
+
+	if a.HeadshotLink != nil {
+		object["headshotLink"], err = json.Marshal(a.HeadshotLink)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'headshotLink': %w", err)
+		}
+	}
+
+	if a.Home != nil {
+		object["home"], err = json.Marshal(a.Home)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'home': %w", err)
+		}
+	}
+
+	if a.IsDrafted != nil {
+		object["isDrafted"], err = json.Marshal(a.IsDrafted)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isDrafted': %w", err)
+		}
+	}
+
+	if a.IsPass != nil {
+		object["isPass"], err = json.Marshal(a.IsPass)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isPass': %w", err)
+		}
+	}
+
+	if a.Person != nil {
+		object["person"], err = json.Marshal(a.Person)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'person': %w", err)
+		}
+	}
+
+	if a.PickNumber != nil {
+		object["pickNumber"], err = json.Marshal(a.PickNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pickNumber': %w", err)
+		}
+	}
+
+	if a.PickRound != nil {
+		object["pickRound"], err = json.Marshal(a.PickRound)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pickRound': %w", err)
+		}
+	}
+
+	if a.PickValue != nil {
+		object["pickValue"], err = json.Marshal(a.PickValue)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pickValue': %w", err)
+		}
+	}
+
+	if a.Rank != nil {
+		object["rank"], err = json.Marshal(a.Rank)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rank': %w", err)
+		}
+	}
+
+	if a.RoundPickNumber != nil {
+		object["roundPickNumber"], err = json.Marshal(a.RoundPickNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'roundPickNumber': %w", err)
+		}
+	}
+
+	if a.School != nil {
+		object["school"], err = json.Marshal(a.School)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'school': %w", err)
+		}
+	}
+
+	if a.ScoutingReport != nil {
+		object["scoutingReport"], err = json.Marshal(a.ScoutingReport)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'scoutingReport': %w", err)
+		}
+	}
+
+	if a.SigningBonus != nil {
+		object["signingBonus"], err = json.Marshal(a.SigningBonus)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'signingBonus': %w", err)
+		}
+	}
+
+	if a.Team != nil {
+		object["team"], err = json.Marshal(a.Team)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'team': %w", err)
+		}
+	}
+
+	if a.Year != nil {
+		object["year"], err = json.Marshal(a.Year)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'year': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftResponse. Returns the specified
+// element and whether it was found
+func (a DraftResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftResponse
+func (a *DraftResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftResponse to handle AdditionalProperties
+func (a *DraftResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["drafts"]; found {
+		err = json.Unmarshal(raw, &a.Drafts)
+		if err != nil {
+			return fmt.Errorf("error reading 'drafts': %w", err)
+		}
+		delete(object, "drafts")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftResponse to handle AdditionalProperties
+func (a DraftResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Drafts != nil {
+		object["drafts"], err = json.Marshal(a.Drafts)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'drafts': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftRound. Returns the specified
+// element and whether it was found
+func (a DraftRound) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftRound
+func (a *DraftRound) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftRound to handle AdditionalProperties
+func (a *DraftRound) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["picks"]; found {
+		err = json.Unmarshal(raw, &a.Picks)
+		if err != nil {
+			return fmt.Errorf("error reading 'picks': %w", err)
+		}
+		delete(object, "picks")
+	}
+
+	if raw, found := object["round"]; found {
+		err = json.Unmarshal(raw, &a.Round)
+		if err != nil {
+			return fmt.Errorf("error reading 'round': %w", err)
+		}
+		delete(object, "round")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftRound to handle AdditionalProperties
+func (a DraftRound) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Picks != nil {
+		object["picks"], err = json.Marshal(a.Picks)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'picks': %w", err)
+		}
+	}
+
+	if a.Round != nil {
+		object["round"], err = json.Marshal(a.Round)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'round': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftSchool. Returns the specified
+// element and whether it was found
+func (a DraftSchool) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftSchool
+func (a *DraftSchool) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftSchool to handle AdditionalProperties
+func (a *DraftSchool) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["city"]; found {
+		err = json.Unmarshal(raw, &a.City)
+		if err != nil {
+			return fmt.Errorf("error reading 'city': %w", err)
+		}
+		delete(object, "city")
+	}
+
+	if raw, found := object["country"]; found {
+		err = json.Unmarshal(raw, &a.Country)
+		if err != nil {
+			return fmt.Errorf("error reading 'country': %w", err)
+		}
+		delete(object, "country")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["schoolClass"]; found {
+		err = json.Unmarshal(raw, &a.SchoolClass)
+		if err != nil {
+			return fmt.Errorf("error reading 'schoolClass': %w", err)
+		}
+		delete(object, "schoolClass")
+	}
+
+	if raw, found := object["state"]; found {
+		err = json.Unmarshal(raw, &a.State)
+		if err != nil {
+			return fmt.Errorf("error reading 'state': %w", err)
+		}
+		delete(object, "state")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftSchool to handle AdditionalProperties
+func (a DraftSchool) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.City != nil {
+		object["city"], err = json.Marshal(a.City)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'city': %w", err)
+		}
+	}
+
+	if a.Country != nil {
+		object["country"], err = json.Marshal(a.Country)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'country': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.SchoolClass != nil {
+		object["schoolClass"], err = json.Marshal(a.SchoolClass)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'schoolClass': %w", err)
+		}
+	}
+
+	if a.State != nil {
+		object["state"], err = json.Marshal(a.State)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'state': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DraftTypeRef. Returns the specified
+// element and whether it was found
+func (a DraftTypeRef) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DraftTypeRef
+func (a *DraftTypeRef) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DraftTypeRef to handle AdditionalProperties
+func (a *DraftTypeRef) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["description"]; found {
+		err = json.Unmarshal(raw, &a.Description)
+		if err != nil {
+			return fmt.Errorf("error reading 'description': %w", err)
+		}
+		delete(object, "description")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DraftTypeRef to handle AdditionalProperties
+func (a DraftTypeRef) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Description != nil {
+		object["description"], err = json.Marshal(a.Description)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'description': %w", err)
 		}
 	}
 
@@ -11223,6 +12174,9 @@ type ClientInterface interface {
 	// GetDivisions request
 	GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetDraft request
+	GetDraft(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -11331,6 +12285,18 @@ func (c *Client) GetConferences(ctx context.Context, params *GetConferencesParam
 
 func (c *Client) GetDivisions(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetDivisionsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetDraft(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDraftRequest(c.Server, year, params)
 	if err != nil {
 		return nil, err
 	}
@@ -11983,6 +12949,79 @@ func NewGetDivisionsRequest(server string, params *GetDivisionsParams) (*http.Re
 		if params.Season != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetDraftRequest generates requests for GetDraft
+func NewGetDraftRequest(server string, year int, params *GetDraftParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "year", year, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/draft/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Round != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "round", *params.Round, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -13723,6 +14762,9 @@ type ClientWithResponsesInterface interface {
 	// GetDivisionsWithResponse request
 	GetDivisionsWithResponse(ctx context.Context, params *GetDivisionsParams, reqEditors ...RequestEditorFn) (*GetDivisionsResponse, error)
 
+	// GetDraftWithResponse request
+	GetDraftWithResponse(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*GetDraftResponse, error)
+
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
@@ -13925,6 +14967,36 @@ func (r GetDivisionsResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetDivisionsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetDraftResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DraftResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDraftResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDraftResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDraftResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -14546,6 +15618,15 @@ func (c *ClientWithResponses) GetDivisionsWithResponse(ctx context.Context, para
 	return ParseGetDivisionsResponse(rsp)
 }
 
+// GetDraftWithResponse request returning *GetDraftResponse
+func (c *ClientWithResponses) GetDraftWithResponse(ctx context.Context, year int, params *GetDraftParams, reqEditors ...RequestEditorFn) (*GetDraftResponse, error) {
+	rsp, err := c.GetDraft(ctx, year, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDraftResponse(rsp)
+}
+
 // GetBoxscoreWithResponse request returning *GetBoxscoreResponse
 func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error) {
 	rsp, err := c.GetBoxscore(ctx, gamePk, reqEditors...)
@@ -14837,6 +15918,32 @@ func ParseGetDivisionsResponse(rsp *http.Response) (*GetDivisionsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest DivisionsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetDraftResponse parses an HTTP response from a GetDraftWithResponse call
+func ParseGetDraftResponse(rsp *http.Response) (*GetDraftResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDraftResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DraftResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

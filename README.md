@@ -40,6 +40,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
 | `/api/v1/conferences`                 | [Client.Conferences][d-conf]  | [conferences.go](examples/conferences.go) |
 | `/api/v1/divisions`                   | [Client.Divisions][d-divs]    | [divisions.go](examples/divisions.go)    |
+| `/api/v1/draft/{year}`                | [Client.Draft][d-draft]       | [draft.go](examples/draft.go)            |
 | `/api/v1/league`                      | [Client.Leagues][d-leagues]   | [leagues.go](examples/leagues.go)        |
 | `/api/v1/attendance`                  | [Client.Attendance][d-att]    | [attendance.go](examples/attendance.go)  |
 | `/api/v1/awards/{awardId}/recipients` | [Client.AwardRecipients][d-aw] | [awards.go](examples/awards.go)        |
@@ -112,6 +113,7 @@ The [MIT][] License.
 [d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
 [d-conf]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Conferences
 [d-divs]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Divisions
+[d-draft]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Draft
 [d-leagues]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Leagues
 [d-att]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Attendance
 [d-aw]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.AwardRecipients
