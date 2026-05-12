@@ -218,6 +218,33 @@ type DivisionsResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// FreeAgent defines model for FreeAgent.
+type FreeAgent struct {
+	// DateDeclared YYYY-MM-DD
+	DateDeclared *string `json:"dateDeclared,omitempty"`
+
+	// DateSigned YYYY-MM-DD
+	DateSigned   *string `json:"dateSigned,omitempty"`
+	NewTeam      *Team   `json:"newTeam,omitempty"`
+	Notes        *string `json:"notes,omitempty"`
+	OriginalTeam *Team   `json:"originalTeam,omitempty"`
+
+	// Player Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Player *Person `json:"player,omitempty"`
+
+	// Position Player position metadata — `{code, name, type, abbreviation}` — as
+	// the MLB API embeds it in person references.
+	Position             *PrimaryPosition       `json:"position,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// FreeAgentsResponse defines model for FreeAgentsResponse.
+type FreeAgentsResponse struct {
+	FreeAgents           *[]FreeAgent           `json:"freeAgents,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // GameStatus defines model for GameStatus.
 type GameStatus struct {
 	// AbstractGameState Final, Live, Preview
@@ -1015,6 +1042,16 @@ type GetPeopleParams struct {
 	PersonIds string  `form:"personIds" json:"personIds"`
 	Hydrate   *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetFreeAgentsParams defines parameters for GetFreeAgents.
+type GetFreeAgentsParams struct {
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Order sort order
+	Order   *string `form:"order,omitempty" json:"order,omitempty"`
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetPersonParams defines parameters for GetPerson.
@@ -3114,6 +3151,232 @@ func (a DivisionsResponse) MarshalJSON() ([]byte, error) {
 		object["divisions"], err = json.Marshal(a.Divisions)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'divisions': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for FreeAgent. Returns the specified
+// element and whether it was found
+func (a FreeAgent) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for FreeAgent
+func (a *FreeAgent) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for FreeAgent to handle AdditionalProperties
+func (a *FreeAgent) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["dateDeclared"]; found {
+		err = json.Unmarshal(raw, &a.DateDeclared)
+		if err != nil {
+			return fmt.Errorf("error reading 'dateDeclared': %w", err)
+		}
+		delete(object, "dateDeclared")
+	}
+
+	if raw, found := object["dateSigned"]; found {
+		err = json.Unmarshal(raw, &a.DateSigned)
+		if err != nil {
+			return fmt.Errorf("error reading 'dateSigned': %w", err)
+		}
+		delete(object, "dateSigned")
+	}
+
+	if raw, found := object["newTeam"]; found {
+		err = json.Unmarshal(raw, &a.NewTeam)
+		if err != nil {
+			return fmt.Errorf("error reading 'newTeam': %w", err)
+		}
+		delete(object, "newTeam")
+	}
+
+	if raw, found := object["notes"]; found {
+		err = json.Unmarshal(raw, &a.Notes)
+		if err != nil {
+			return fmt.Errorf("error reading 'notes': %w", err)
+		}
+		delete(object, "notes")
+	}
+
+	if raw, found := object["originalTeam"]; found {
+		err = json.Unmarshal(raw, &a.OriginalTeam)
+		if err != nil {
+			return fmt.Errorf("error reading 'originalTeam': %w", err)
+		}
+		delete(object, "originalTeam")
+	}
+
+	if raw, found := object["player"]; found {
+		err = json.Unmarshal(raw, &a.Player)
+		if err != nil {
+			return fmt.Errorf("error reading 'player': %w", err)
+		}
+		delete(object, "player")
+	}
+
+	if raw, found := object["position"]; found {
+		err = json.Unmarshal(raw, &a.Position)
+		if err != nil {
+			return fmt.Errorf("error reading 'position': %w", err)
+		}
+		delete(object, "position")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for FreeAgent to handle AdditionalProperties
+func (a FreeAgent) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DateDeclared != nil {
+		object["dateDeclared"], err = json.Marshal(a.DateDeclared)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dateDeclared': %w", err)
+		}
+	}
+
+	if a.DateSigned != nil {
+		object["dateSigned"], err = json.Marshal(a.DateSigned)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dateSigned': %w", err)
+		}
+	}
+
+	if a.NewTeam != nil {
+		object["newTeam"], err = json.Marshal(a.NewTeam)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'newTeam': %w", err)
+		}
+	}
+
+	if a.Notes != nil {
+		object["notes"], err = json.Marshal(a.Notes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'notes': %w", err)
+		}
+	}
+
+	if a.OriginalTeam != nil {
+		object["originalTeam"], err = json.Marshal(a.OriginalTeam)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'originalTeam': %w", err)
+		}
+	}
+
+	if a.Player != nil {
+		object["player"], err = json.Marshal(a.Player)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'player': %w", err)
+		}
+	}
+
+	if a.Position != nil {
+		object["position"], err = json.Marshal(a.Position)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'position': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for FreeAgentsResponse. Returns the specified
+// element and whether it was found
+func (a FreeAgentsResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for FreeAgentsResponse
+func (a *FreeAgentsResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for FreeAgentsResponse to handle AdditionalProperties
+func (a *FreeAgentsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["freeAgents"]; found {
+		err = json.Unmarshal(raw, &a.FreeAgents)
+		if err != nil {
+			return fmt.Errorf("error reading 'freeAgents': %w", err)
+		}
+		delete(object, "freeAgents")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for FreeAgentsResponse to handle AdditionalProperties
+func (a FreeAgentsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.FreeAgents != nil {
+		object["freeAgents"], err = json.Marshal(a.FreeAgents)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'freeAgents': %w", err)
 		}
 	}
 
@@ -10378,6 +10641,9 @@ type ClientInterface interface {
 	// GetPeople request
 	GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetFreeAgents request
+	GetFreeAgents(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetPerson request
 	GetPerson(ctx context.Context, personId int, params *GetPersonParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -10513,6 +10779,18 @@ func (c *Client) GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEd
 
 func (c *Client) GetPeople(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPeopleRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetFreeAgents(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFreeAgentsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -11291,6 +11569,96 @@ func NewGetPeopleRequest(server string, params *GetPeopleParams) (*http.Request,
 			for _, qp := range strings.Split(queryFrag, "&") {
 				rawQueryFragments = append(rawQueryFragments, qp)
 			}
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetFreeAgentsRequest generates requests for GetFreeAgents
+func NewGetFreeAgentsRequest(server string, params *GetFreeAgentsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/people/freeAgents")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Order != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "order", *params.Order, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
 		}
 
 		if params.Hydrate != nil {
@@ -12556,6 +12924,9 @@ type ClientWithResponsesInterface interface {
 	// GetPeopleWithResponse request
 	GetPeopleWithResponse(ctx context.Context, params *GetPeopleParams, reqEditors ...RequestEditorFn) (*GetPeopleResponse, error)
 
+	// GetFreeAgentsWithResponse request
+	GetFreeAgentsWithResponse(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*GetFreeAgentsResponse, error)
+
 	// GetPersonWithResponse request
 	GetPersonWithResponse(ctx context.Context, personId int, params *GetPersonParams, reqEditors ...RequestEditorFn) (*GetPersonResponse, error)
 
@@ -12857,6 +13228,36 @@ func (r GetPeopleResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetPeopleResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetFreeAgentsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *FreeAgentsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetFreeAgentsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetFreeAgentsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetFreeAgentsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -13304,6 +13705,15 @@ func (c *ClientWithResponses) GetPeopleWithResponse(ctx context.Context, params 
 	return ParseGetPeopleResponse(rsp)
 }
 
+// GetFreeAgentsWithResponse request returning *GetFreeAgentsResponse
+func (c *ClientWithResponses) GetFreeAgentsWithResponse(ctx context.Context, params *GetFreeAgentsParams, reqEditors ...RequestEditorFn) (*GetFreeAgentsResponse, error) {
+	rsp, err := c.GetFreeAgents(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetFreeAgentsResponse(rsp)
+}
+
 // GetPersonWithResponse request returning *GetPersonResponse
 func (c *ClientWithResponses) GetPersonWithResponse(ctx context.Context, personId int, params *GetPersonParams, reqEditors ...RequestEditorFn) (*GetPersonResponse, error) {
 	rsp, err := c.GetPerson(ctx, personId, params, reqEditors...)
@@ -13636,6 +14046,32 @@ func ParseGetPeopleResponse(rsp *http.Response) (*GetPeopleResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest PeopleResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetFreeAgentsResponse parses an HTTP response from a GetFreeAgentsWithResponse call
+func ParseGetFreeAgentsResponse(rsp *http.Response) (*GetFreeAgentsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetFreeAgentsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest FreeAgentsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

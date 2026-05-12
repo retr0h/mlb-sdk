@@ -47,6 +47,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/sports`                      | [Client.Sports][d-sports]     | [sports.go](examples/sports.go)          |
 | `/api/v1/people/{personId}`            | [Client.Person][d-person]     | [person.go](examples/person.go)          |
 | `/api/v1/people`                      | [Client.People][d-people]     | —                                        |
+| `/api/v1/people/freeAgents`           | [Client.FreeAgents][d-fa]     | [freeagents.go](examples/freeagents.go)  |
 | `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
 | `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
 
@@ -116,5 +117,6 @@ The [MIT][] License.
 [d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports
 [d-person]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Person
 [d-people]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.People
+[d-fa]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.FreeAgents
 [d-team]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
 [d-teams]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Teams

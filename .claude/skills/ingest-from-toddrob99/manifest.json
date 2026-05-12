@@ -135,6 +135,13 @@
       "upstreamSha": "5acf369dcf3fd5c8985d2541e51d6c0a1c7f1447d344733ebfa9a595b29f6909",
       "source": "ingest skill"
     },
+    "people_freeAgents": {
+      "method": "Client.FreeAgents",
+      "operationId": "getFreeAgents",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
+      "source": "ingest skill"
+    },
     "game_linescore": {
       "method": "Client.Linescore",
       "operationId": "getLinescore",

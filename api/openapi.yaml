@@ -218,6 +218,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/PeopleResponse" }
 
+  /api/v1/people/freeAgents:
+    get:
+      operationId: getFreeAgents
+      summary: Free agents
+      description: |
+        Returns free-agent signings, declarations, and status. Optional
+        season filter; toddrob99 lists order, hydrate, fields as query
+        params — season also works in practice.
+      parameters:
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: order, in: query, schema: { type: string }, description: "sort order" }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Free agents
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FreeAgentsResponse" }
+
   /api/v1/transactions:
     get:
       operationId: getTransactions
@@ -1114,6 +1134,26 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    FreeAgent:
+      type: object
+      additionalProperties: true
+      properties:
+        player:       { $ref: "#/components/schemas/Person" }
+        originalTeam: { $ref: "#/components/schemas/Team" }
+        newTeam:      { $ref: "#/components/schemas/Team" }
+        notes:        { type: string }
+        dateSigned:   { type: string, description: "YYYY-MM-DD" }
+        dateDeclared: { type: string, description: "YYYY-MM-DD" }
+        position:     { $ref: "#/components/schemas/PrimaryPosition" }
+
+    FreeAgentsResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        freeAgents:
+          type: array
+          items: { $ref: "#/components/schemas/FreeAgent" }
 
     Transaction:
       type: object
