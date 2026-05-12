@@ -592,6 +592,55 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LeaguesResponse" }
 
+  /api/v1/teams/affiliates:
+    get:
+      operationId: getTeamsAffiliates
+      summary: Affiliate teams for given team ids
+      parameters:
+        - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Affiliates
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamsResponse" }
+
+  /api/v1/teams/history:
+    get:
+      operationId: getTeamsHistory
+      summary: Historical team records
+      parameters:
+        - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
+        - { name: startSeason, in: query, schema: { type: integer } }
+        - { name: endSeason, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: History
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamsResponse" }
+
+  /api/v1/schedule/games/tied:
+    get:
+      operationId: getScheduleTied
+      summary: Tied/suspended games for a season
+      parameters:
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: gameTypes, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Tied games
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
   /api/v1/teams:
     get:
       operationId: getTeams

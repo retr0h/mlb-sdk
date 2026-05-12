@@ -160,7 +160,10 @@ func TestClient_Personnel(t *testing.T) {
 		{name: "happy", teamID: 119, respStatus: 200, respBody: staffHappyBody, wantLen: 1},
 		{
 			name: "with date filter", teamID: 119,
-			query:      PersonnelQuery{On: time.Date(2024, 7, 15, 0, 0, 0, 0, time.UTC), Fields: "roster"},
+			query: PersonnelQuery{
+				On:     time.Date(2024, 7, 15, 0, 0, 0, 0, time.UTC),
+				Fields: "roster",
+			},
 			respStatus: 200, respBody: staffHappyBody, wantLen: 1,
 		},
 		{name: "empty", teamID: 119, respStatus: 200, respBody: `{}`, wantLen: 0},

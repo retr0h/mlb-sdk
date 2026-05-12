@@ -239,6 +239,27 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "c5843a198d88a97b876225ab8a32bc775601de3525bcecd923a7a7762a35df49",
       "source": "ingest skill"
+    },
+    "teams_affiliates": {
+      "method": "Client.TeamsAffiliates",
+      "operationId": "getTeamsAffiliates",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "5d3a95ee06baea05fd9e49da3ea3725d3cd8ea6c18a7c519f198632dac4ef921",
+      "source": "ingest skill"
+    },
+    "teams_history": {
+      "method": "Client.TeamsHistory",
+      "operationId": "getTeamsHistory",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "db4276c883ce931073fd57ac8d56e4f6460fddc4f707333789403b1595d0d694",
+      "source": "ingest skill"
+    },
+    "schedule_tied": {
+      "method": "Client.ScheduleTied",
+      "operationId": "getScheduleTied",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "008bf85afbc6ddf9c9ccdfdead3602a4ebc6a3ad12b2260f71ebca0b955cbde1",
+      "source": "ingest skill"
     }
   }
 }

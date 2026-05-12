@@ -63,6 +63,9 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/people/freeAgents`           | [Client.FreeAgents][d-fa]     | [freeagents.go](examples/freeagents.go)  |
 | `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
 | `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
+| `/api/v1/teams/affiliates`            | [Client.TeamsAffiliates][d-aff] | —                                      |
+| `/api/v1/teams/history`               | [Client.TeamsHistory][d-hist] | —                                        |
+| `/api/v1/schedule/games/tied`         | [Client.ScheduleTied][d-tied] | —                                        |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
 endpoints lives in [docs/roadmap.md][].
@@ -146,3 +149,6 @@ The [MIT][] License.
 [d-fa]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.FreeAgents
 [d-team]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
 [d-teams]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Teams
+[d-aff]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsAffiliates
+[d-hist]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsHistory
+[d-tied]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ScheduleTied
