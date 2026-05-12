@@ -22,7 +22,7 @@ go test ./...
 ## Layout
 
 ```
-api/openapi.yaml      Hand-authored OpenAPI 3.0 spec
+pkg/api/openapi.yaml      Hand-authored OpenAPI 3.0 spec
 internal/gen/         Generated typed HTTP client (oapi-codegen).
                       NOT importable externally.
 pkg/mlb/              Public, idiomatic Go SDK — the only thing you import
@@ -36,7 +36,7 @@ This is a library only — no `main.go`, no `cmd/`, no published binary.
 go test ./...              # run tests
 go vet ./...               # vet
 gofmt -l .                 # find unformatted files
-go generate ./internal/gen # regenerate client.gen.go from api/openapi.yaml
+go generate ./internal/gen # regenerate client.gen.go from pkg/api/openapi.yaml
 ```
 
 Or via just:
@@ -51,7 +51,7 @@ just ready          # fmt + vet + lint
 ## Regenerating the client
 
 The generated client (`internal/gen/client.gen.go`) is checked in. Regenerate
-whenever `api/openapi.yaml` changes:
+whenever `pkg/api/openapi.yaml` changes:
 
 ```bash
 go generate ./internal/gen
@@ -70,7 +70,7 @@ reference, so no separate install step is required.
 When wrapping a new MLB Stats API path, touch every one of these files in this
 order. Skipping any of them leaves the public surface incomplete.
 
-1. **`api/openapi.yaml`** — add the path entry under `paths:` and any new
+1. **`pkg/api/openapi.yaml`** — add the path entry under `paths:` and any new
    component schemas. Set an explicit `operationId`. Every nested object must be
    a named `components/schemas/...` reference (no inline `type: object`); see
    the spec authoring rules below.
@@ -100,7 +100,7 @@ order. Skipping any of them leaves the public surface incomplete.
 
 ## OpenAPI spec authoring
 
-When adding endpoints or types to `api/openapi.yaml`:
+When adding endpoints or types to `pkg/api/openapi.yaml`:
 
 - **Every nested object gets its own named schema** under `components/schemas/`.
   Inline `type: object` with `properties:` is forbidden in path responses and

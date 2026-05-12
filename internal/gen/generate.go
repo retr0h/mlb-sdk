@@ -24,4 +24,4 @@
 // implementation detail and not part of the SDK's public API.
 package gen
 
-//go:generate go tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config cfg.yaml ../../api/openapi.yaml
+//go:generate go tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config cfg.yaml ../../pkg/api/openapi.yaml

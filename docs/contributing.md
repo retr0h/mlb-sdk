@@ -23,8 +23,9 @@ Thanks for your interest in contributing.
 
 - Authoring rules in [development.md](development.md#openapi-spec-authoring) —
   named components only, no inline nested objects.
-- After editing `api/openapi.yaml`, regenerate with `go generate ./internal/gen`
-  and commit the regenerated `internal/gen/client.gen.go`.
+- After editing `pkg/api/openapi.yaml`, regenerate with
+  `go generate ./internal/gen` and commit the regenerated
+  `internal/gen/client.gen.go`.
 
 ### Documentation
 
@@ -43,7 +44,7 @@ Thanks for your interest in contributing.
 
 ## Adding endpoints
 
-1. Add the path + named schemas to `api/openapi.yaml`.
+1. Add the path + named schemas to `pkg/api/openapi.yaml`.
 2. `go generate ./internal/gen` — verify the new operation appears in
    `internal/gen/client.gen.go`.
 3. Add public types in `pkg/mlb/<resource>_types.go`.

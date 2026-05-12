@@ -54,7 +54,7 @@ helper detect this.
    - If the upstream `sha` differs → 🟡 drift. Inspect the diff between
      the upstream entry and what we last ingested, classify:
      - **Additive** (new optional query param, new hydrate option): apply
-       the diff to `api/openapi.yaml`, regenerate, update the wrapper if
+       the diff to `pkg/api/openapi.yaml`, regenerate, update the wrapper if
        needed, run `just ready`, bump the `upstreamSha` in manifest.json.
      - **Breaking** (path changed, required-combo changed, param removed):
        stop, surface to the user with the diff inline, do not auto-apply.
@@ -154,7 +154,7 @@ Before writing the wrapper:
 3. If a gen field has no public peer, add one before committing.
 
 A field is only droppable if the curl sample proves it never appears —
-in that case, remove it from `api/openapi.yaml`, not from the Go side.
+in that case, remove it from `pkg/api/openapi.yaml`, not from the Go side.
 
 ### 5. Update the manifest
 

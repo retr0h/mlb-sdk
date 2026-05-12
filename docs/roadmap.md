@@ -6,8 +6,8 @@ criteria will sharpen as we go.
 
 ## Phase 2 — Remaining v0.1 endpoints
 
-Wrap the four endpoints already in `api/openapi.yaml` that don't yet have public
-surfaces, plus matching CLI subcommands.
+Wrap the four endpoints already in `pkg/api/openapi.yaml` that don't yet have
+public surfaces, plus matching CLI subcommands.
 
 - [ ] `pkg/mlb.PlayByPlay(ctx, gamePk)` — return `[]Play` with typed
       `EventType`, `result.event` constants, and helpers like
@@ -52,7 +52,7 @@ nesting).
 
 - A `tools/spec-author/` directory containing a script that takes
   `(endpoint, sampleJSON)` and emits a candidate YAML fragment for
-  `api/openapi.yaml`.
+  `pkg/api/openapi.yaml`.
 - Output passes `oapi-codegen` without errors.
 - Documented limitation: human review required — LLM hallucinates field types
   and misses optionality.
@@ -97,7 +97,7 @@ response you happened to look at.
 - LLM pass that proposes `oneOf` discriminators and `additionalProperties`
   decisions based on observed variation.
 - Output:
-  - A diff between the corpus-derived spec and `api/openapi.yaml`.
+  - A diff between the corpus-derived spec and `pkg/api/openapi.yaml`.
   - A `mlb spec verify` CLI command that runs the corpus-diff against a fresh
     capture and reports drift.
 - Run quarterly to catch silent MLB schema changes before they break production.

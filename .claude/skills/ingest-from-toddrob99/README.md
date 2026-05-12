@@ -9,7 +9,7 @@ repo's typed Go SDK without us maintaining a parallel endpoint catalog.
 Treats toddrob99's `endpoints.py` dict as upstream truth. Translates one entry
 (or all unported entries) into:
 
-- a `paths:` entry plus named components in `api/openapi.yaml`,
+- a `paths:` entry plus named components in `pkg/api/openapi.yaml`,
 - the regenerated `internal/gen/client.gen.go`,
 - handwritten public types and a `Client` method in `pkg/mlb/`,
 - a table-driven test holding 100.0% statement coverage,
