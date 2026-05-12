@@ -70,6 +70,34 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/gamePace:
+    get:
+      operationId: getGamePace
+      summary: Pace-of-play statistics
+      description: |
+        Returns pace-of-play stats for a sport + season. toddrob99
+        marks season as required. The response wraps data under
+        `{sports: [...]}`.
+      parameters:
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: teamIds, in: query, schema: { type: string } }
+        - { name: leagueIds, in: query, schema: { type: string } }
+        - { name: leagueListId, in: query, schema: { type: string } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: startDate, in: query, schema: { type: string } }
+        - { name: endDate, in: query, schema: { type: string } }
+        - { name: venueIds, in: query, schema: { type: string } }
+        - { name: orgType, in: query, schema: { type: string } }
+        - { name: includeChildren, in: query, schema: { type: boolean } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: GamePace
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GamePaceResponse" }
+
   /api/v1/draft/{year}:
     get:
       operationId: getDraft
@@ -1189,6 +1217,56 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    GamePaceData:
+      type: object
+      additionalProperties: true
+      properties:
+        season:                             { type: string }
+        sport:                              { $ref: "#/components/schemas/Ref" }
+        hitsPer9Inn:                        { type: number, format: double }
+        runsPer9Inn:                        { type: number, format: double }
+        pitchesPer9Inn:                     { type: number, format: double }
+        plateAppearancesPer9Inn:            { type: number, format: double }
+        hitsPerGame:                        { type: number, format: double }
+        runsPerGame:                        { type: number, format: double }
+        inningsPlayedPerGame:               { type: number, format: double }
+        pitchesPerGame:                     { type: number, format: double }
+        pitchersPerGame:                    { type: number, format: double }
+        plateAppearancesPerGame:            { type: number, format: double }
+        hitsPerRun:                         { type: number, format: double }
+        pitchesPerPitcher:                  { type: number, format: double }
+        totalGameTime:                      { type: string }
+        totalInningsPlayed:                 { type: number, format: double }
+        totalHits:                          { type: integer }
+        totalRuns:                          { type: integer }
+        totalPlateAppearances:              { type: integer }
+        totalPitchers:                      { type: integer }
+        totalPitches:                       { type: integer }
+        totalGames:                         { type: integer }
+        total7InnGames:                     { type: integer }
+        total9InnGames:                     { type: integer }
+        total9InnGamesCompletedEarly:       { type: integer }
+        total9InnGamesScheduled:            { type: integer }
+        total9InnGamesWithoutExtraInn:      { type: integer }
+        totalExtraInnGames:                 { type: integer }
+        totalExtraInnTime:                  { type: string }
+        timePerGame:                        { type: string }
+        timePerPitch:                       { type: string }
+        timePerHit:                         { type: string }
+        timePerRun:                         { type: string }
+        timePerPlateAppearance:             { type: string }
+        timePer9Inn:                        { type: string }
+        timePer77PlateAppearances:          { type: string }
+        timePer7InnGameWithoutExtraInn:     { type: string }
+
+    GamePaceResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        sports:
+          type: array
+          items: { $ref: "#/components/schemas/GamePaceData" }
 
     DraftHome:
       type: object

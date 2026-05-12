@@ -142,6 +142,13 @@
       "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
       "source": "ingest skill"
     },
+    "gamePace": {
+      "method": "Client.GamePace",
+      "operationId": "getGamePace",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "75bcbe72cda6e2307b39bf5184ba7e4d2dc9f6f6e16b8a708b28317404a956b2",
+      "source": "ingest skill"
+    },
     "draft": {
       "method": "Client.Draft",
       "operationId": "getDraft",
