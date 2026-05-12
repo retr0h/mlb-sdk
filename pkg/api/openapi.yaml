@@ -19,8 +19,8 @@ paths:
       summary: Game schedule for a sport, team, and/or date range
       parameters:
         - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: gamePk, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: gamePk, in: query, schema: { type: integer }, description: "Unique game identifier" }
         - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
         - { name: startDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
         - { name: endDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
@@ -40,10 +40,10 @@ paths:
         timestamp. toddrob99 marks updatedSince as required.
       parameters:
         - { name: updatedSince, in: query, required: true, schema: { type: string }, description: "ISO-8601 timestamp" }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: GameChanges
@@ -56,7 +56,7 @@ paths:
       operationId: getBoxscore
       summary: Boxscore for a single game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
       responses:
         "200":
           description: Boxscore
@@ -69,7 +69,7 @@ paths:
       operationId: getPlayByPlay
       summary: Play-by-play for a single game (v1)
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
       responses:
         "200":
           description: Play-by-play
@@ -82,7 +82,7 @@ paths:
       operationId: getLiveFeed
       summary: Full live game feed (v1.1)
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
       responses:
         "200":
           description: Live feed
@@ -99,16 +99,16 @@ paths:
         required_params=[["leaderCategories"]]).
       parameters:
         - { name: leaderCategories, in: query, required: true, schema: { type: string }, description: "e.g. homeRuns, battingAverage" }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: leagueId, in: query, schema: { type: integer } }
-        - { name: statGroup, in: query, schema: { type: string } }
-        - { name: playerPool, in: query, schema: { type: string } }
-        - { name: leaderGameTypes, in: query, schema: { type: string } }
-        - { name: statType, in: query, schema: { type: string } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: limit, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: leagueId, in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: statGroup, in: query, schema: { type: string }, description: "Stat group: hitting, pitching, fielding" }
+        - { name: playerPool, in: query, schema: { type: string }, description: "Player pool: All, Qualified, Rookies" }
+        - { name: leaderGameTypes, in: query, schema: { type: string }, description: "Game type filter for leaders" }
+        - { name: statType, in: query, schema: { type: string }, description: "Stat type override, e.g. statsSingleSeason" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: limit, in: query, schema: { type: integer }, description: "Maximum number of results" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: StatsLeaders
@@ -127,14 +127,14 @@ paths:
       parameters:
         - { name: orgType, in: path, required: true, schema: { type: string }, description: "player | team | division | league | sport | types" }
         - { name: sortStat, in: query, schema: { type: string }, description: "e.g. homeRuns, hits, strikeOuts" }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: leagueId, in: query, schema: { type: integer } }
-        - { name: sportIds, in: query, schema: { type: string } }
-        - { name: statGroup, in: query, schema: { type: string } }
-        - { name: limit, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: leagueId, in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: sportIds, in: query, schema: { type: string }, description: "Comma-separated sport IDs" }
+        - { name: statGroup, in: query, schema: { type: string }, description: "Stat group: hitting, pitching, fielding" }
+        - { name: limit, in: query, schema: { type: integer }, description: "Maximum number of results" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: HighLow
@@ -151,18 +151,18 @@ paths:
         marks season as required. The response wraps data under
         `{sports: [...]}`.
       parameters:
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: teamIds, in: query, schema: { type: string } }
-        - { name: leagueIds, in: query, schema: { type: string } }
-        - { name: leagueListId, in: query, schema: { type: string } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: startDate, in: query, schema: { type: string } }
-        - { name: endDate, in: query, schema: { type: string } }
-        - { name: venueIds, in: query, schema: { type: string } }
-        - { name: orgType, in: query, schema: { type: string } }
-        - { name: includeChildren, in: query, schema: { type: boolean } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: teamIds, in: query, schema: { type: string }, description: "Comma-separated team IDs" }
+        - { name: leagueIds, in: query, schema: { type: string }, description: "Comma-separated league IDs" }
+        - { name: leagueListId, in: query, schema: { type: string }, description: "Named league list, e.g. milb_all" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: startDate, in: query, schema: { type: string }, description: "Start date in YYYY-MM-DD format" }
+        - { name: endDate, in: query, schema: { type: string }, description: "End date in YYYY-MM-DD format" }
+        - { name: venueIds, in: query, schema: { type: string }, description: "Comma-separated venue IDs" }
+        - { name: orgType, in: query, schema: { type: string }, description: "Organization type: player, team, division, league, sport, types" }
+        - { name: includeChildren, in: query, schema: { type: boolean }, description: "Include child organizations" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: GamePace
@@ -178,9 +178,9 @@ paths:
         Returns draft data for a given year. The response wraps rounds and
         picks with rich person/team/school sub-objects.
       parameters:
-        - { name: year, in: path, required: true, schema: { type: integer } }
-        - { name: round, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: year, in: path, required: true, schema: { type: integer }, description: "Year, e.g. 2024" }
+        - { name: round, in: query, schema: { type: string }, description: "Draft round number" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Draft
@@ -193,7 +193,7 @@ paths:
       operationId: getGameTimestamps
       summary: Feed timestamps for a live game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
       responses:
         "200":
           description: Timestamps
@@ -206,7 +206,7 @@ paths:
       operationId: getGameColorTimestamps
       summary: Color-feed timestamps for a live game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
       responses:
         "200":
           description: Timestamps
@@ -219,9 +219,9 @@ paths:
       operationId: getContextMetrics
       summary: Context metrics (win probability, sac fly probability) for a game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: timecode, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: timecode, in: query, schema: { type: string }, description: "Point-in-time code YYYYMMDD_HHmmss" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Context metrics
@@ -234,9 +234,9 @@ paths:
       operationId: getLinescore
       summary: Linescore for a single game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
         - { name: timecode, in: query, schema: { type: string }, description: "YYYYMMDD_HHmmss for point-in-time" }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Linescore
@@ -250,7 +250,7 @@ paths:
       summary: League standings (regular season, wild card, etc.) for a league + season
       parameters:
         - { name: leagueId, in: query, required: true, schema: { type: string }, description: "103 = AL, 104 = NL. May be comma-separated for multiple leagues." }
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: standingsTypes, in: query, schema: { type: string }, description: "regularSeason | wildCard | divisionLeaders | …" }
         - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD; standings as of this date" }
         - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags" }
@@ -267,10 +267,10 @@ paths:
       operationId: getTeamCoaches
       summary: Coaching staff for a team
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: date, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: date, in: query, schema: { type: string }, description: "Date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Coaches
@@ -283,9 +283,9 @@ paths:
       operationId: getTeamPersonnel
       summary: Front-office personnel for a team
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: date, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: date, in: query, schema: { type: string }, description: "Date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Personnel
@@ -299,9 +299,9 @@ paths:
       summary: Staff by job type
       parameters:
         - { name: jobType, in: query, required: true, schema: { type: string }, description: "e.g. UMPR, SCOR, DCST" }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: date, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: date, in: query, schema: { type: string }, description: "Date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Jobs
@@ -314,9 +314,9 @@ paths:
       operationId: getJobsDatacasters
       summary: Datacaster roster
       parameters:
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: date, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: date, in: query, schema: { type: string }, description: "Date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Datacasters
@@ -329,8 +329,8 @@ paths:
       operationId: getJobsOfficialScorers
       summary: Official scorer roster
       parameters:
-        - { name: timecode, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: timecode, in: query, schema: { type: string }, description: "Point-in-time code YYYYMMDD_HHmmss" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Official scorers
@@ -343,8 +343,8 @@ paths:
       operationId: getPeopleChanges
       summary: Recently changed person records
       parameters:
-        - { name: updatedSince, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: updatedSince, in: query, schema: { type: string }, description: "ISO-8601 timestamp" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: People changes
@@ -357,9 +357,9 @@ paths:
       operationId: getJobsUmpires
       summary: Umpire roster
       parameters:
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: date, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: date, in: query, schema: { type: string }, description: "Date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Umpires
@@ -372,8 +372,8 @@ paths:
       operationId: getTeamStats
       summary: Aggregated team stats
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: stats, in: query, schema: { type: string }, description: "e.g. season, byDateRange" }
         - { name: group, in: query, schema: { type: string }, description: "hitting | pitching | fielding" }
       responses:
@@ -394,10 +394,10 @@ paths:
         query the full history of seasons, use the `/api/v1/seasons/all`
         path instead (see getAllSeasons).
       parameters:
-        - { name: season,     in: query, schema: { type: integer } }
-        - { name: sportId,    in: query, schema: { type: integer } }
-        - { name: divisionId, in: query, schema: { type: integer } }
-        - { name: leagueId,   in: query, schema: { type: integer } }
+        - { name: season,     in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportId,    in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: divisionId, in: query, schema: { type: integer }, description: "MLB division ID, e.g. 200 = AL West" }
+        - { name: leagueId,   in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
         - { name: fields,     in: query, schema: { type: string }, description: "comma-separated field projection" }
       responses:
         "200":
@@ -435,10 +435,10 @@ paths:
         sportId=1). divisionId / leagueId are supported here when the
         toddrob99 `all` path is used.
       parameters:
-        - { name: sportId,    in: query, schema: { type: integer } }
-        - { name: divisionId, in: query, schema: { type: integer } }
-        - { name: leagueId,   in: query, schema: { type: integer } }
-        - { name: fields,     in: query, schema: { type: string } }
+        - { name: sportId,    in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: divisionId, in: query, schema: { type: integer }, description: "MLB division ID, e.g. 200 = AL West" }
+        - { name: leagueId,   in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: fields,     in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Seasons
@@ -455,9 +455,9 @@ paths:
         entry>]}`; the SDK collapses the wrapper and maps an empty array to
         ErrNotFound. Hydrate sub-objects via the hydrate query parameter.
       parameters:
-        - { name: personId, in: path, required: true, schema: { type: integer } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: personId, in: path, required: true, schema: { type: integer }, description: "MLB person ID, e.g. 660271 for Ohtani" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Person
@@ -473,8 +473,8 @@ paths:
         Returns metadata for one or more people. personIds is required.
       parameters:
         - { name: personIds, in: query, required: true, schema: { type: string }, description: "comma-separated person ids" }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: People
@@ -491,12 +491,12 @@ paths:
         "40Man", "fullSeason", "allTime", "depthChart", etc.), season,
         and date.
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
         - { name: rosterType, in: query, schema: { type: string }, description: "active | 40Man | fullSeason | allTime | depthChart | …" }
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Roster
@@ -513,10 +513,10 @@ paths:
         season filter; toddrob99 lists order, hydrate, fields as query
         params — season also works in practice.
       parameters:
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: order, in: query, schema: { type: string }, description: "sort order" }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Free agents
@@ -535,13 +535,13 @@ paths:
         StartDate+EndDate together. The SDK enforces this via an
         ErrInvalidQuery runtime check.
       parameters:
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: playerId, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: playerId, in: query, schema: { type: integer }, description: "MLB player ID" }
         - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
         - { name: startDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
         - { name: endDate, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Transactions
@@ -560,11 +560,11 @@ paths:
         is exposed separately).
       parameters:
         - { name: awardId, in: path, required: true, schema: { type: string }, description: "e.g. MLBHOF, ALMVP" }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: leagueId, in: query, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: leagueId, in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Award recipients
@@ -582,13 +582,13 @@ paths:
         one of TeamID, LeagueID, or LeagueListID must be set. The SDK
         enforces this with an ErrInvalidQuery runtime check.
       parameters:
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: leagueId, in: query, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: leagueId, in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: date, in: query, schema: { type: string }, description: "YYYY-MM-DD" }
         - { name: leagueListId, in: query, schema: { type: string }, description: "e.g. milb_all" }
         - { name: gameType, in: query, schema: { type: string }, description: "R | S | E | A | D | F | L | W" }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Attendance
@@ -601,9 +601,9 @@ paths:
       operationId: getConferences
       summary: List conferences
       parameters:
-        - { name: conferenceId, in: query, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: conferenceId, in: query, schema: { type: integer }, description: "MLB conference ID" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Conferences
@@ -620,10 +620,10 @@ paths:
         every division the MLB API tracks (MLB, minor leagues, college,
         etc.). Filter via divisionId, leagueId, sportId, or season.
       parameters:
-        - { name: divisionId, in: query, schema: { type: integer } }
-        - { name: leagueId,   in: query, schema: { type: integer } }
+        - { name: divisionId, in: query, schema: { type: integer }, description: "MLB division ID, e.g. 200 = AL West" }
+        - { name: leagueId,   in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
         - { name: sportId,    in: query, schema: { type: integer }, description: "1 = MLB" }
-        - { name: season,     in: query, schema: { type: integer } }
+        - { name: season,     in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
       responses:
         "200":
           description: Divisions
@@ -643,7 +643,7 @@ paths:
         - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
         - { name: leagueIds, in: query, schema: { type: string }, description: "comma-separated league ids" }
         - { name: seasons, in: query, schema: { type: string }, description: "comma-separated seasons" }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Leagues
@@ -657,10 +657,10 @@ paths:
       summary: Affiliate teams for given team ids
       parameters:
         - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Affiliates
@@ -674,9 +674,9 @@ paths:
       summary: Historical team records
       parameters:
         - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
-        - { name: startSeason, in: query, schema: { type: integer } }
-        - { name: endSeason, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: startSeason, in: query, schema: { type: integer }, description: "Start season year" }
+        - { name: endSeason, in: query, schema: { type: integer }, description: "End season year" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: History
@@ -689,10 +689,10 @@ paths:
       operationId: getScheduleTied
       summary: Tied/suspended games for a season
       parameters:
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: gameTypes, in: query, schema: { type: string } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: gameTypes, in: query, schema: { type: string }, description: "Comma-separated game type codes" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Tied games
@@ -705,10 +705,10 @@ paths:
       operationId: getSportsPlayers
       summary: All players for a sport + season
       parameters:
-        - { name: sportId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: sportId, in: path, required: true, schema: { type: integer }, description: "1 = MLB" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Players
@@ -721,11 +721,11 @@ paths:
       operationId: getTeamAlumni
       summary: Team alumni
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: group, in: query, required: true, schema: { type: string }, description: "hitting | pitching | fielding" }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Alumni
@@ -738,13 +738,13 @@ paths:
       operationId: getTeamLeaders
       summary: Team stat leaders
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: leaderCategories, in: query, required: true, schema: { type: string } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: leaderGameTypes, in: query, schema: { type: string } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: limit, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: leaderCategories, in: query, required: true, schema: { type: string }, description: "Stat category, e.g. homeRuns, battingAverage" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: leaderGameTypes, in: query, schema: { type: string }, description: "Game type filter for leaders" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: limit, in: query, schema: { type: integer }, description: "Maximum number of results" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Team leaders
@@ -757,16 +757,16 @@ paths:
       operationId: getTeamsStats
       summary: League-wide team stats
       parameters:
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: sportIds, in: query, schema: { type: string } }
-        - { name: group, in: query, required: true, schema: { type: string } }
-        - { name: stats, in: query, required: true, schema: { type: string } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: order, in: query, schema: { type: string } }
-        - { name: sortStat, in: query, schema: { type: string } }
-        - { name: startDate, in: query, schema: { type: string } }
-        - { name: endDate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportIds, in: query, schema: { type: string }, description: "Comma-separated sport IDs" }
+        - { name: group, in: query, required: true, schema: { type: string }, description: "Stat group: hitting, pitching, fielding" }
+        - { name: stats, in: query, required: true, schema: { type: string }, description: "Stat type: season, career, byDateRange" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: order, in: query, schema: { type: string }, description: "Sort order: asc or desc" }
+        - { name: sortStat, in: query, schema: { type: string }, description: "Stat to sort by, e.g. homeRuns" }
+        - { name: startDate, in: query, schema: { type: string }, description: "Start date in YYYY-MM-DD format" }
+        - { name: endDate, in: query, schema: { type: string }, description: "End date in YYYY-MM-DD format" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Teams stats
@@ -779,9 +779,9 @@ paths:
       operationId: getPersonGameStats
       summary: Player stats for a specific game
       parameters:
-        - { name: personId, in: path, required: true, schema: { type: integer } }
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: personId, in: path, required: true, schema: { type: integer }, description: "MLB person ID, e.g. 660271 for Ohtani" }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Person game stats
@@ -794,13 +794,13 @@ paths:
       operationId: getSchedulePostseason
       summary: Postseason schedule
       parameters:
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: gameTypes, in: query, schema: { type: string } }
-        - { name: seriesNumber, in: query, schema: { type: integer } }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: gameTypes, in: query, schema: { type: string }, description: "Comma-separated game type codes" }
+        - { name: seriesNumber, in: query, schema: { type: integer }, description: "Postseason series number" }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Postseason schedule
@@ -813,12 +813,12 @@ paths:
       operationId: getSchedulePostseasonSeries
       summary: Postseason series
       parameters:
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: gameTypes, in: query, schema: { type: string } }
-        - { name: seriesNumber, in: query, schema: { type: integer } }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: gameTypes, in: query, schema: { type: string }, description: "Comma-separated game type codes" }
+        - { name: seriesNumber, in: query, schema: { type: integer }, description: "Postseason series number" }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Postseason series
@@ -831,25 +831,25 @@ paths:
       operationId: getStats
       summary: League-wide individual stats
       parameters:
-        - { name: stats, in: query, required: true, schema: { type: string } }
-        - { name: group, in: query, required: true, schema: { type: string } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: sportIds, in: query, schema: { type: string } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: playerPool, in: query, schema: { type: string } }
-        - { name: position, in: query, schema: { type: string } }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: leagueId, in: query, schema: { type: integer } }
-        - { name: personId, in: query, schema: { type: integer } }
-        - { name: limit, in: query, schema: { type: integer } }
-        - { name: offset, in: query, schema: { type: integer } }
-        - { name: sortStat, in: query, schema: { type: string } }
-        - { name: order, in: query, schema: { type: string } }
-        - { name: metrics, in: query, schema: { type: string } }
-        - { name: startDate, in: query, schema: { type: string } }
-        - { name: endDate, in: query, schema: { type: string } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: stats, in: query, required: true, schema: { type: string }, description: "Stat type: season, career, byDateRange" }
+        - { name: group, in: query, required: true, schema: { type: string }, description: "Stat group: hitting, pitching, fielding" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportIds, in: query, schema: { type: string }, description: "Comma-separated sport IDs" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: playerPool, in: query, schema: { type: string }, description: "Player pool: All, Qualified, Rookies" }
+        - { name: position, in: query, schema: { type: string }, description: "Position filter, e.g. OF, P, C" }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: leagueId, in: query, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: personId, in: query, schema: { type: integer }, description: "MLB person ID, e.g. 660271 for Ohtani" }
+        - { name: limit, in: query, schema: { type: integer }, description: "Maximum number of results" }
+        - { name: offset, in: query, schema: { type: integer }, description: "Result offset for pagination" }
+        - { name: sortStat, in: query, schema: { type: string }, description: "Stat to sort by, e.g. homeRuns" }
+        - { name: order, in: query, schema: { type: string }, description: "Sort order: asc or desc" }
+        - { name: metrics, in: query, schema: { type: string }, description: "Statcast metrics, e.g. exitVelocity" }
+        - { name: startDate, in: query, schema: { type: string }, description: "Start date in YYYY-MM-DD format" }
+        - { name: endDate, in: query, schema: { type: string }, description: "End date in YYYY-MM-DD format" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Stats
@@ -862,9 +862,9 @@ paths:
       operationId: getAllStarBallot
       summary: All-Star ballot
       parameters:
-        - { name: leagueId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: leagueId, in: path, required: true, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Ballot
@@ -877,9 +877,9 @@ paths:
       operationId: getAllStarFinalVote
       summary: All-Star final vote
       parameters:
-        - { name: leagueId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: leagueId, in: path, required: true, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Final vote
@@ -892,9 +892,9 @@ paths:
       operationId: getAllStarWriteIns
       summary: All-Star write-ins
       parameters:
-        - { name: leagueId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: leagueId, in: path, required: true, schema: { type: integer }, description: "103 = AL, 104 = NL" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Write-ins
@@ -907,11 +907,11 @@ paths:
       operationId: getSchedulePostseasonTuneIn
       summary: Postseason tune-in info
       parameters:
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: teamId, in: query, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: teamId, in: query, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Tune-in
@@ -924,9 +924,9 @@ paths:
       operationId: getUmpireGames
       summary: Games assigned to an umpire
       parameters:
-        - { name: umpireId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: umpireId, in: path, required: true, schema: { type: integer }, description: "MLB umpire person ID" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Umpire games
@@ -943,14 +943,14 @@ paths:
         streakSpan, season, sportId, and limit as all required together.
         Note: this endpoint may return 404 during the offseason.
       parameters:
-        - { name: streakType, in: query, required: true, schema: { type: string } }
-        - { name: streakSpan, in: query, required: true, schema: { type: string } }
-        - { name: season, in: query, required: true, schema: { type: integer } }
-        - { name: sportId, in: query, required: true, schema: { type: integer } }
-        - { name: limit, in: query, required: true, schema: { type: integer } }
-        - { name: gameType, in: query, schema: { type: string } }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: streakType, in: query, required: true, schema: { type: string }, description: "Streak type, e.g. hittingStreak" }
+        - { name: streakSpan, in: query, required: true, schema: { type: string }, description: "Streak span: season, career, currentStreak" }
+        - { name: season, in: query, required: true, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportId, in: query, required: true, schema: { type: integer }, description: "1 = MLB" }
+        - { name: limit, in: query, required: true, schema: { type: integer }, description: "Maximum number of results" }
+        - { name: gameType, in: query, schema: { type: string }, description: "R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason" }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Streaks
@@ -965,8 +965,8 @@ paths:
       operationId: getHomeRunDerby
       summary: Home Run Derby data
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Derby
@@ -982,7 +982,7 @@ paths:
       summary: Uniform data for games
       parameters:
         - { name: gamePks, in: query, required: true, schema: { type: string }, description: "comma-separated game pks" }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Game uniforms
@@ -996,8 +996,8 @@ paths:
       summary: Team uniform catalog
       parameters:
         - { name: teamIds, in: query, required: true, schema: { type: string }, description: "comma-separated team ids" }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Team uniforms
@@ -1027,9 +1027,9 @@ paths:
       operationId: getGameColor
       summary: Color commentary feed for a game
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: timecode, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: timecode, in: query, schema: { type: string }, description: "Point-in-time code YYYYMMDD_HHmmss" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Color feed
@@ -1044,9 +1044,9 @@ paths:
       operationId: getGameColorDiff
       summary: Color feed diff patch
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: startTimecode, in: query, required: true, schema: { type: string } }
-        - { name: endTimecode, in: query, required: true, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: startTimecode, in: query, required: true, schema: { type: string }, description: "Start timecode YYYYMMDD_HHmmss" }
+        - { name: endTimecode, in: query, required: true, schema: { type: string }, description: "End timecode YYYYMMDD_HHmmss" }
       responses:
         "200":
           description: Color diff
@@ -1063,9 +1063,9 @@ paths:
       operationId: getGameDiff
       summary: Live feed diff patch
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: startTimecode, in: query, required: true, schema: { type: string } }
-        - { name: endTimecode, in: query, required: true, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: startTimecode, in: query, required: true, schema: { type: string }, description: "Start timecode YYYYMMDD_HHmmss" }
+        - { name: endTimecode, in: query, required: true, schema: { type: string }, description: "End timecode YYYYMMDD_HHmmss" }
       responses:
         "200":
           description: Live diff
@@ -1082,8 +1082,8 @@ paths:
       operationId: getGameContent
       summary: Game content (highlights, editorial)
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: highlightLimit, in: query, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: highlightLimit, in: query, schema: { type: integer }, description: "Maximum number of highlights to return" }
       responses:
         "200":
           description: Game content
@@ -1098,9 +1098,9 @@ paths:
       operationId: getGameWinProbability
       summary: Win probability per at-bat
       parameters:
-        - { name: gamePk, in: path, required: true, schema: { type: integer } }
-        - { name: timecode, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer }, description: "Unique game identifier" }
+        - { name: timecode, in: query, schema: { type: string }, description: "Point-in-time code YYYYMMDD_HHmmss" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Win probability
@@ -1121,14 +1121,14 @@ paths:
         Filter by sport, league(s), and season. Hydrate sub-objects via
         the hydrate query parameter as documented on /teams/{teamId}.
       parameters:
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: activeStatus, in: query, schema: { type: string }, description: "ACTIVE | INACTIVE | BOTH" }
         - { name: leagueIds, in: query, schema: { type: string }, description: "comma-separated league ids" }
         - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
         - { name: sportIds, in: query, schema: { type: string }, description: "comma-separated sport ids" }
         - { name: gameType, in: query, schema: { type: string }, description: "R | S | E | A | D | F | L | W" }
-        - { name: hydrate, in: query, schema: { type: string } }
-        - { name: fields, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string }, description: "Comma-separated hydrate flags" }
+        - { name: fields, in: query, schema: { type: string }, description: "Comma-separated field projection" }
       responses:
         "200":
           description: Teams
@@ -1146,9 +1146,9 @@ paths:
         param. The response is `{"teams": [<one entry>]}`; the SDK collapses
         the wrapper and maps an empty array to ErrNotFound.
       parameters:
-        - { name: teamId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
-        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: teamId, in: path, required: true, schema: { type: integer }, description: "MLB team ID, e.g. 119 for Dodgers" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
+        - { name: sportId, in: query, schema: { type: integer }, description: "1 = MLB" }
         - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags (e.g. league,division,sport,springLeague,venue)" }
         - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
       responses:
@@ -1184,8 +1184,8 @@ paths:
         comma-separated `venueIds` query parameter at `/api/v1/venues`, but
         this SDK exposes the path-based single-object lookup form.
       parameters:
-        - { name: venueId, in: path, required: true, schema: { type: integer } }
-        - { name: season, in: query, schema: { type: integer } }
+        - { name: venueId, in: path, required: true, schema: { type: integer }, description: "MLB venue ID" }
+        - { name: season, in: query, schema: { type: integer }, description: "Season year, e.g. 2024" }
         - { name: hydrate, in: query, schema: { type: string }, description: "comma-separated hydrate flags (e.g. location,fieldInfo,timezone)" }
         - { name: fields, in: query, schema: { type: string }, description: "comma-separated field projection" }
       responses:

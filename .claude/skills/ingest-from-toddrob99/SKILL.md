@@ -125,8 +125,8 @@ Inspect the dict entry for the endpoint you're porting. Each entry looks roughly
 | toddrob99 field     | OpenAPI equivalent                                                            |
 | ------------------- | ----------------------------------------------------------------------------- |
 | `url`               | Replace `{ver}` with the resolved version (`v1` / `v1.1`); becomes `paths.<route>`. |
-| `path_params`       | `parameters: [{ in: path, name, required: true, schema: { type } }]`.        |
-| `query_params`      | `parameters: [{ in: query, name, schema: { type } }]`.                       |
+| `path_params`       | `parameters: [{ in: path, name, required: true, schema: { type }, description: "..." }]`. |
+| `query_params`      | `parameters: [{ in: query, name, schema: { type }, description: "..." }]`.   |
 | `required_params`   | OpenAPI cannot express *one-of* required combos. Document in the operation `description` and validate in the Go wrapper with a returned `ErrInvalidQuery`. |
 | `hydrate_options`   | A single `hydrate` query param of type string; document allowed values in description, do **not** enum-restrict (the list grows). |
 | Response schema     | toddrob99 doesn't model responses — fetch a sample with `curl <url>` and translate per the named-component rule in `docs/development.md`. |
@@ -170,6 +170,12 @@ manifest is how batch mode knows what's already done.
 
 ## Translation gotchas
 
+- **Every parameter MUST have a non-empty `description:`** — downstream
+  consumers (mlb-mcp's mcpgen) generate MCP tool schemas from parameter
+  descriptions. The MCP Go SDK panics on empty `jsonschema:""` tags. Use
+  short, useful descriptions: `"1 = MLB"` for sportId, `"YYYY-MM-DD"` for
+  dates, `"Comma-separated field projection"` for fields. Common params
+  already have established descriptions in the spec — match them.
 - **Path version variants** — toddrob99 uses `{ver}` for the API version
   segment. Most endpoints are v1; the live game feed is v1.1. The OpenAPI spec
   treats them as separate paths, not a parameterized `{ver}`.

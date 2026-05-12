@@ -1299,9 +1299,14 @@ type VenueTimeZone struct {
 
 // GetAttendanceParams defines parameters for GetAttendance.
 type GetAttendanceParams struct {
-	TeamId   *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
 	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	Season   *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// Date YYYY-MM-DD
 	Date *string `form:"date,omitempty" json:"date,omitempty"`
@@ -1311,160 +1316,272 @@ type GetAttendanceParams struct {
 
 	// GameType R | S | E | A | D | F | L | W
 	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetAwardRecipientsParams defines parameters for GetAwardRecipients.
 type GetAwardRecipientsParams struct {
-	SportId  *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	LeagueId *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	Season   *int    `form:"season,omitempty" json:"season,omitempty"`
-	Hydrate  *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetConferencesParams defines parameters for GetConferences.
 type GetConferencesParams struct {
-	ConferenceId *int    `form:"conferenceId,omitempty" json:"conferenceId,omitempty"`
-	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
-	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// ConferenceId MLB conference ID
+	ConferenceId *int `form:"conferenceId,omitempty" json:"conferenceId,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetDivisionsParams defines parameters for GetDivisions.
 type GetDivisionsParams struct {
+	// DivisionId MLB division ID, e.g. 200 = AL West
 	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
-	LeagueId   *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
 
 	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
 }
 
 // GetDraftParams defines parameters for GetDraft.
 type GetDraftParams struct {
-	Round  *string `form:"round,omitempty" json:"round,omitempty"`
+	// Round Draft round number
+	Round *string `form:"round,omitempty" json:"round,omitempty"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameChangesParams defines parameters for GetGameChanges.
 type GetGameChangesParams struct {
 	// UpdatedSince ISO-8601 timestamp
-	UpdatedSince string  `form:"updatedSince" json:"updatedSince"`
-	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	GameType     *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
-	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+	UpdatedSince string `form:"updatedSince" json:"updatedSince"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameContentParams defines parameters for GetGameContent.
 type GetGameContentParams struct {
+	// HighlightLimit Maximum number of highlights to return
 	HighlightLimit *int `form:"highlightLimit,omitempty" json:"highlightLimit,omitempty"`
 }
 
 // GetContextMetricsParams defines parameters for GetContextMetrics.
 type GetContextMetricsParams struct {
+	// Timecode Point-in-time code YYYYMMDD_HHmmss
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameColorParams defines parameters for GetGameColor.
 type GetGameColorParams struct {
+	// Timecode Point-in-time code YYYYMMDD_HHmmss
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameColorDiffParams defines parameters for GetGameColorDiff.
 type GetGameColorDiffParams struct {
+	// StartTimecode Start timecode YYYYMMDD_HHmmss
 	StartTimecode string `form:"startTimecode" json:"startTimecode"`
-	EndTimecode   string `form:"endTimecode" json:"endTimecode"`
+
+	// EndTimecode End timecode YYYYMMDD_HHmmss
+	EndTimecode string `form:"endTimecode" json:"endTimecode"`
 }
 
 // GetGameDiffParams defines parameters for GetGameDiff.
 type GetGameDiffParams struct {
+	// StartTimecode Start timecode YYYYMMDD_HHmmss
 	StartTimecode string `form:"startTimecode" json:"startTimecode"`
-	EndTimecode   string `form:"endTimecode" json:"endTimecode"`
+
+	// EndTimecode End timecode YYYYMMDD_HHmmss
+	EndTimecode string `form:"endTimecode" json:"endTimecode"`
 }
 
 // GetLinescoreParams defines parameters for GetLinescore.
 type GetLinescoreParams struct {
 	// Timecode YYYYMMDD_HHmmss for point-in-time
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameWinProbabilityParams defines parameters for GetGameWinProbability.
 type GetGameWinProbabilityParams struct {
+	// Timecode Point-in-time code YYYYMMDD_HHmmss
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGamePaceParams defines parameters for GetGamePace.
 type GetGamePaceParams struct {
-	Season          int     `form:"season" json:"season"`
-	SportId         *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	TeamIds         *string `form:"teamIds,omitempty" json:"teamIds,omitempty"`
-	LeagueIds       *string `form:"leagueIds,omitempty" json:"leagueIds,omitempty"`
-	LeagueListId    *string `form:"leagueListId,omitempty" json:"leagueListId,omitempty"`
-	GameType        *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	StartDate       *string `form:"startDate,omitempty" json:"startDate,omitempty"`
-	EndDate         *string `form:"endDate,omitempty" json:"endDate,omitempty"`
-	VenueIds        *string `form:"venueIds,omitempty" json:"venueIds,omitempty"`
-	OrgType         *string `form:"orgType,omitempty" json:"orgType,omitempty"`
-	IncludeChildren *bool   `form:"includeChildren,omitempty" json:"includeChildren,omitempty"`
-	Fields          *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// TeamIds Comma-separated team IDs
+	TeamIds *string `form:"teamIds,omitempty" json:"teamIds,omitempty"`
+
+	// LeagueIds Comma-separated league IDs
+	LeagueIds *string `form:"leagueIds,omitempty" json:"leagueIds,omitempty"`
+
+	// LeagueListId Named league list, e.g. milb_all
+	LeagueListId *string `form:"leagueListId,omitempty" json:"leagueListId,omitempty"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// StartDate Start date in YYYY-MM-DD format
+	StartDate *string `form:"startDate,omitempty" json:"startDate,omitempty"`
+
+	// EndDate End date in YYYY-MM-DD format
+	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+
+	// VenueIds Comma-separated venue IDs
+	VenueIds *string `form:"venueIds,omitempty" json:"venueIds,omitempty"`
+
+	// OrgType Organization type: player, team, division, league, sport, types
+	OrgType *string `form:"orgType,omitempty" json:"orgType,omitempty"`
+
+	// IncludeChildren Include child organizations
+	IncludeChildren *bool `form:"includeChildren,omitempty" json:"includeChildren,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetHighLowParams defines parameters for GetHighLow.
 type GetHighLowParams struct {
 	// SortStat e.g. homeRuns, hits, strikeOuts
-	SortStat  *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
-	Season    *int    `form:"season,omitempty" json:"season,omitempty"`
-	GameType  *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	TeamId    *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
-	LeagueId  *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	SportIds  *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+	SortStat *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// SportIds Comma-separated sport IDs
+	SportIds *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+
+	// StatGroup Stat group: hitting, pitching, fielding
 	StatGroup *string `form:"statGroup,omitempty" json:"statGroup,omitempty"`
-	Limit     *int    `form:"limit,omitempty" json:"limit,omitempty"`
-	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Limit Maximum number of results
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetHomeRunDerbyParams defines parameters for GetHomeRunDerby.
 type GetHomeRunDerbyParams struct {
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetJobsParams defines parameters for GetJobs.
 type GetJobsParams struct {
 	// JobType e.g. UMPR, SCOR, DCST
-	JobType string  `form:"jobType" json:"jobType"`
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Date    *string `form:"date,omitempty" json:"date,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+	JobType string `form:"jobType" json:"jobType"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Date Date in YYYY-MM-DD format
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetJobsDatacastersParams defines parameters for GetJobsDatacasters.
 type GetJobsDatacastersParams struct {
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Date    *string `form:"date,omitempty" json:"date,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Date Date in YYYY-MM-DD format
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetJobsOfficialScorersParams defines parameters for GetJobsOfficialScorers.
 type GetJobsOfficialScorersParams struct {
+	// Timecode Point-in-time code YYYYMMDD_HHmmss
 	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetJobsUmpiresParams defines parameters for GetJobsUmpires.
 type GetJobsUmpiresParams struct {
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Date    *string `form:"date,omitempty" json:"date,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Date Date in YYYY-MM-DD format
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetUmpireGamesParams defines parameters for GetUmpireGames.
 type GetUmpireGamesParams struct {
-	Season int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -1478,59 +1595,86 @@ type GetLeaguesParams struct {
 
 	// Seasons comma-separated seasons
 	Seasons *string `form:"seasons,omitempty" json:"seasons,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetAllStarBallotParams defines parameters for GetAllStarBallot.
 type GetAllStarBallotParams struct {
-	Season int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetAllStarFinalVoteParams defines parameters for GetAllStarFinalVote.
 type GetAllStarFinalVoteParams struct {
-	Season int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetAllStarWriteInsParams defines parameters for GetAllStarWriteIns.
 type GetAllStarWriteInsParams struct {
-	Season int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetPeopleParams defines parameters for GetPeople.
 type GetPeopleParams struct {
 	// PersonIds comma-separated person ids
-	PersonIds string  `form:"personIds" json:"personIds"`
-	Hydrate   *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+	PersonIds string `form:"personIds" json:"personIds"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetPeopleChangesParams defines parameters for GetPeopleChanges.
 type GetPeopleChangesParams struct {
+	// UpdatedSince ISO-8601 timestamp
 	UpdatedSince *string `form:"updatedSince,omitempty" json:"updatedSince,omitempty"`
-	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetFreeAgentsParams defines parameters for GetFreeAgents.
 type GetFreeAgentsParams struct {
+	// Season Season year, e.g. 2024
 	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// Order sort order
-	Order   *string `form:"order,omitempty" json:"order,omitempty"`
+	Order *string `form:"order,omitempty" json:"order,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetPersonParams defines parameters for GetPerson.
 type GetPersonParams struct {
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetPersonGameStatsParams defines parameters for GetPersonGameStats.
 type GetPersonGameStatsParams struct {
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -1538,8 +1682,12 @@ type GetPersonGameStatsParams struct {
 type GetScheduleParams struct {
 	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
-	TeamId  *int `form:"teamId,omitempty" json:"teamId,omitempty"`
-	GamePk  *int `form:"gamePk,omitempty" json:"gamePk,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// GamePk Unique game identifier
+	GamePk *int `form:"gamePk,omitempty" json:"gamePk,omitempty"`
 
 	// Date YYYY-MM-DD
 	Date *string `form:"date,omitempty" json:"date,omitempty"`
@@ -1553,48 +1701,95 @@ type GetScheduleParams struct {
 
 // GetScheduleTiedParams defines parameters for GetScheduleTied.
 type GetScheduleTiedParams struct {
-	Season    int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// GameTypes Comma-separated game type codes
 	GameTypes *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
-	Hydrate   *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetSchedulePostseasonParams defines parameters for GetSchedulePostseason.
 type GetSchedulePostseasonParams struct {
-	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
-	GameTypes    *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
-	SeriesNumber *int    `form:"seriesNumber,omitempty" json:"seriesNumber,omitempty"`
-	TeamId       *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
-	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Hydrate      *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// GameTypes Comma-separated game type codes
+	GameTypes *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
+
+	// SeriesNumber Postseason series number
+	SeriesNumber *int `form:"seriesNumber,omitempty" json:"seriesNumber,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetSchedulePostseasonSeriesParams defines parameters for GetSchedulePostseasonSeries.
 type GetSchedulePostseasonSeriesParams struct {
-	Season       *int    `form:"season,omitempty" json:"season,omitempty"`
-	GameTypes    *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
-	SeriesNumber *int    `form:"seriesNumber,omitempty" json:"seriesNumber,omitempty"`
-	TeamId       *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
-	SportId      *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Fields       *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// GameTypes Comma-separated game type codes
+	GameTypes *string `form:"gameTypes,omitempty" json:"gameTypes,omitempty"`
+
+	// SeriesNumber Postseason series number
+	SeriesNumber *int `form:"seriesNumber,omitempty" json:"seriesNumber,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetSchedulePostseasonTuneInParams defines parameters for GetSchedulePostseasonTuneIn.
 type GetSchedulePostseasonTuneInParams struct {
-	Season  *int    `form:"season,omitempty" json:"season,omitempty"`
-	TeamId  *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetSeasonsParams defines parameters for GetSeasons.
 type GetSeasonsParams struct {
-	Season     *int `form:"season,omitempty" json:"season,omitempty"`
-	SportId    *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// DivisionId MLB division ID, e.g. 200 = AL West
 	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
-	LeagueId   *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
 
 	// Fields comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
@@ -1602,10 +1797,17 @@ type GetSeasonsParams struct {
 
 // GetAllSeasonsParams defines parameters for GetAllSeasons.
 type GetAllSeasonsParams struct {
-	SportId    *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	DivisionId *int    `form:"divisionId,omitempty" json:"divisionId,omitempty"`
-	LeagueId   *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// DivisionId MLB division ID, e.g. 200 = AL West
+	DivisionId *int `form:"divisionId,omitempty" json:"divisionId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetSeasonParams defines parameters for GetSeason.
@@ -1628,16 +1830,23 @@ type GetSportsParams struct {
 
 // GetSportsPlayersParams defines parameters for GetSportsPlayers.
 type GetSportsPlayersParams struct {
-	Season   int     `form:"season" json:"season"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
 	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStandingsParams defines parameters for GetStandings.
 type GetStandingsParams struct {
 	// LeagueId 103 = AL, 104 = NL. May be comma-separated for multiple leagues.
 	LeagueId string `form:"leagueId" json:"leagueId"`
-	Season   *int   `form:"season,omitempty" json:"season,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// StandingsTypes regularSeason | wildCard | divisionLeaders | …
 	StandingsTypes *string `form:"standingsTypes,omitempty" json:"standingsTypes,omitempty"`
@@ -1654,57 +1863,130 @@ type GetStandingsParams struct {
 
 // GetStatsParams defines parameters for GetStats.
 type GetStatsParams struct {
-	Stats      string  `form:"stats" json:"stats"`
-	Group      string  `form:"group" json:"group"`
-	Season     *int    `form:"season,omitempty" json:"season,omitempty"`
-	SportIds   *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
-	GameType   *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	// Stats Stat type: season, career, byDateRange
+	Stats string `form:"stats" json:"stats"`
+
+	// Group Stat group: hitting, pitching, fielding
+	Group string `form:"group" json:"group"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// SportIds Comma-separated sport IDs
+	SportIds *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// PlayerPool Player pool: All, Qualified, Rookies
 	PlayerPool *string `form:"playerPool,omitempty" json:"playerPool,omitempty"`
-	Position   *string `form:"position,omitempty" json:"position,omitempty"`
-	TeamId     *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
-	LeagueId   *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	PersonId   *int    `form:"personId,omitempty" json:"personId,omitempty"`
-	Limit      *int    `form:"limit,omitempty" json:"limit,omitempty"`
-	Offset     *int    `form:"offset,omitempty" json:"offset,omitempty"`
-	SortStat   *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
-	Order      *string `form:"order,omitempty" json:"order,omitempty"`
-	Metrics    *string `form:"metrics,omitempty" json:"metrics,omitempty"`
-	StartDate  *string `form:"startDate,omitempty" json:"startDate,omitempty"`
-	EndDate    *string `form:"endDate,omitempty" json:"endDate,omitempty"`
-	Hydrate    *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Position Position filter, e.g. OF, P, C
+	Position *string `form:"position,omitempty" json:"position,omitempty"`
+
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// PersonId MLB person ID, e.g. 660271 for Ohtani
+	PersonId *int `form:"personId,omitempty" json:"personId,omitempty"`
+
+	// Limit Maximum number of results
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Offset Result offset for pagination
+	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// SortStat Stat to sort by, e.g. homeRuns
+	SortStat *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+
+	// Order Sort order: asc or desc
+	Order *string `form:"order,omitempty" json:"order,omitempty"`
+
+	// Metrics Statcast metrics, e.g. exitVelocity
+	Metrics *string `form:"metrics,omitempty" json:"metrics,omitempty"`
+
+	// StartDate Start date in YYYY-MM-DD format
+	StartDate *string `form:"startDate,omitempty" json:"startDate,omitempty"`
+
+	// EndDate End date in YYYY-MM-DD format
+	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStatsLeadersParams defines parameters for GetStatsLeaders.
 type GetStatsLeadersParams struct {
 	// LeaderCategories e.g. homeRuns, battingAverage
-	LeaderCategories string  `form:"leaderCategories" json:"leaderCategories"`
-	Season           *int    `form:"season,omitempty" json:"season,omitempty"`
-	SportId          *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	LeagueId         *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
-	StatGroup        *string `form:"statGroup,omitempty" json:"statGroup,omitempty"`
-	PlayerPool       *string `form:"playerPool,omitempty" json:"playerPool,omitempty"`
-	LeaderGameTypes  *string `form:"leaderGameTypes,omitempty" json:"leaderGameTypes,omitempty"`
-	StatType         *string `form:"statType,omitempty" json:"statType,omitempty"`
-	Hydrate          *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Limit            *int    `form:"limit,omitempty" json:"limit,omitempty"`
-	Fields           *string `form:"fields,omitempty" json:"fields,omitempty"`
+	LeaderCategories string `form:"leaderCategories" json:"leaderCategories"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// LeagueId 103 = AL, 104 = NL
+	LeagueId *int `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+
+	// StatGroup Stat group: hitting, pitching, fielding
+	StatGroup *string `form:"statGroup,omitempty" json:"statGroup,omitempty"`
+
+	// PlayerPool Player pool: All, Qualified, Rookies
+	PlayerPool *string `form:"playerPool,omitempty" json:"playerPool,omitempty"`
+
+	// LeaderGameTypes Game type filter for leaders
+	LeaderGameTypes *string `form:"leaderGameTypes,omitempty" json:"leaderGameTypes,omitempty"`
+
+	// StatType Stat type override, e.g. statsSingleSeason
+	StatType *string `form:"statType,omitempty" json:"statType,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Limit Maximum number of results
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetStatsStreaksParams defines parameters for GetStatsStreaks.
 type GetStatsStreaksParams struct {
-	StreakType string  `form:"streakType" json:"streakType"`
-	StreakSpan string  `form:"streakSpan" json:"streakSpan"`
-	Season     int     `form:"season" json:"season"`
-	SportId    int     `form:"sportId" json:"sportId"`
-	Limit      int     `form:"limit" json:"limit"`
-	GameType   *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Hydrate    *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// StreakType Streak type, e.g. hittingStreak
+	StreakType string `form:"streakType" json:"streakType"`
+
+	// StreakSpan Streak span: season, career, currentStreak
+	StreakSpan string `form:"streakSpan" json:"streakSpan"`
+
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// SportId 1 = MLB
+	SportId int `form:"sportId" json:"sportId"`
+
+	// Limit Maximum number of results
+	Limit int `form:"limit" json:"limit"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamsParams defines parameters for GetTeams.
 type GetTeamsParams struct {
+	// Season Season year, e.g. 2024
 	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// ActiveStatus ACTIVE | INACTIVE | BOTH
@@ -1721,46 +2003,86 @@ type GetTeamsParams struct {
 
 	// GameType R | S | E | A | D | F | L | W
 	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Hydrate  *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamsAffiliatesParams defines parameters for GetTeamsAffiliates.
 type GetTeamsAffiliatesParams struct {
 	// TeamIds comma-separated team ids
-	TeamIds string  `form:"teamIds" json:"teamIds"`
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Season  *int    `form:"season,omitempty" json:"season,omitempty"`
+	TeamIds string `form:"teamIds" json:"teamIds"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamsHistoryParams defines parameters for GetTeamsHistory.
 type GetTeamsHistoryParams struct {
 	// TeamIds comma-separated team ids
-	TeamIds     string  `form:"teamIds" json:"teamIds"`
-	StartSeason *int    `form:"startSeason,omitempty" json:"startSeason,omitempty"`
-	EndSeason   *int    `form:"endSeason,omitempty" json:"endSeason,omitempty"`
-	Fields      *string `form:"fields,omitempty" json:"fields,omitempty"`
+	TeamIds string `form:"teamIds" json:"teamIds"`
+
+	// StartSeason Start season year
+	StartSeason *int `form:"startSeason,omitempty" json:"startSeason,omitempty"`
+
+	// EndSeason End season year
+	EndSeason *int `form:"endSeason,omitempty" json:"endSeason,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamsStatsParams defines parameters for GetTeamsStats.
 type GetTeamsStatsParams struct {
-	Season    int     `form:"season" json:"season"`
-	SportIds  *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
-	Group     string  `form:"group" json:"group"`
-	Stats     string  `form:"stats" json:"stats"`
-	GameType  *string `form:"gameType,omitempty" json:"gameType,omitempty"`
-	Order     *string `form:"order,omitempty" json:"order,omitempty"`
-	SortStat  *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// SportIds Comma-separated sport IDs
+	SportIds *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+
+	// Group Stat group: hitting, pitching, fielding
+	Group string `form:"group" json:"group"`
+
+	// Stats Stat type: season, career, byDateRange
+	Stats string `form:"stats" json:"stats"`
+
+	// GameType R = regular, S = spring, E = exhibition, A = all-star, D/F/L/W = postseason
+	GameType *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+
+	// Order Sort order: asc or desc
+	Order *string `form:"order,omitempty" json:"order,omitempty"`
+
+	// SortStat Stat to sort by, e.g. homeRuns
+	SortStat *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+
+	// StartDate Start date in YYYY-MM-DD format
 	StartDate *string `form:"startDate,omitempty" json:"startDate,omitempty"`
-	EndDate   *string `form:"endDate,omitempty" json:"endDate,omitempty"`
-	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// EndDate End date in YYYY-MM-DD format
+	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamParams defines parameters for GetTeam.
 type GetTeamParams struct {
-	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
 
 	// Hydrate comma-separated hydrate flags (e.g. league,division,sport,springLeague,venue)
@@ -1772,34 +2094,58 @@ type GetTeamParams struct {
 
 // GetTeamAlumniParams defines parameters for GetTeamAlumni.
 type GetTeamAlumniParams struct {
+	// Season Season year, e.g. 2024
 	Season int `form:"season" json:"season"`
 
 	// Group hitting | pitching | fielding
-	Group   string  `form:"group" json:"group"`
+	Group string `form:"group" json:"group"`
+
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamCoachesParams defines parameters for GetTeamCoaches.
 type GetTeamCoachesParams struct {
-	Season *int    `form:"season,omitempty" json:"season,omitempty"`
-	Date   *string `form:"date,omitempty" json:"date,omitempty"`
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Date Date in YYYY-MM-DD format
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamLeadersParams defines parameters for GetTeamLeaders.
 type GetTeamLeadersParams struct {
-	LeaderCategories string  `form:"leaderCategories" json:"leaderCategories"`
-	Season           int     `form:"season" json:"season"`
-	LeaderGameTypes  *string `form:"leaderGameTypes,omitempty" json:"leaderGameTypes,omitempty"`
-	Hydrate          *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Limit            *int    `form:"limit,omitempty" json:"limit,omitempty"`
-	Fields           *string `form:"fields,omitempty" json:"fields,omitempty"`
+	// LeaderCategories Stat category, e.g. homeRuns, battingAverage
+	LeaderCategories string `form:"leaderCategories" json:"leaderCategories"`
+
+	// Season Season year, e.g. 2024
+	Season int `form:"season" json:"season"`
+
+	// LeaderGameTypes Game type filter for leaders
+	LeaderGameTypes *string `form:"leaderGameTypes,omitempty" json:"leaderGameTypes,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
+	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+
+	// Limit Maximum number of results
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamPersonnelParams defines parameters for GetTeamPersonnel.
 type GetTeamPersonnelParams struct {
-	Date   *string `form:"date,omitempty" json:"date,omitempty"`
+	// Date Date in YYYY-MM-DD format
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Fields Comma-separated field projection
 	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
@@ -1807,16 +2153,23 @@ type GetTeamPersonnelParams struct {
 type GetTeamRosterParams struct {
 	// RosterType active | 40Man | fullSeason | allTime | depthChart | …
 	RosterType *string `form:"rosterType,omitempty" json:"rosterType,omitempty"`
-	Season     *int    `form:"season,omitempty" json:"season,omitempty"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// Date YYYY-MM-DD
-	Date    *string `form:"date,omitempty" json:"date,omitempty"`
+	Date *string `form:"date,omitempty" json:"date,omitempty"`
+
+	// Hydrate Comma-separated hydrate flags
 	Hydrate *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamStatsParams defines parameters for GetTeamStats.
 type GetTeamStatsParams struct {
+	// Season Season year, e.g. 2024
 	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// Stats e.g. season, byDateRange
@@ -1828,7 +2181,10 @@ type GetTeamStatsParams struct {
 
 // GetTransactionsParams defines parameters for GetTransactions.
 type GetTransactionsParams struct {
-	TeamId   *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+	// TeamId MLB team ID, e.g. 119 for Dodgers
+	TeamId *int `form:"teamId,omitempty" json:"teamId,omitempty"`
+
+	// PlayerId MLB player ID
 	PlayerId *int `form:"playerId,omitempty" json:"playerId,omitempty"`
 
 	// Date YYYY-MM-DD
@@ -1839,27 +2195,38 @@ type GetTransactionsParams struct {
 
 	// EndDate YYYY-MM-DD
 	EndDate *string `form:"endDate,omitempty" json:"endDate,omitempty"`
-	SportId *int    `form:"sportId,omitempty" json:"sportId,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+
+	// SportId 1 = MLB
+	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetGameUniformsParams defines parameters for GetGameUniforms.
 type GetGameUniformsParams struct {
 	// GamePks comma-separated game pks
-	GamePks string  `form:"gamePks" json:"gamePks"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+	GamePks string `form:"gamePks" json:"gamePks"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamUniformsParams defines parameters for GetTeamUniforms.
 type GetTeamUniformsParams struct {
 	// TeamIds comma-separated team ids
-	TeamIds string  `form:"teamIds" json:"teamIds"`
-	Season  *int    `form:"season,omitempty" json:"season,omitempty"`
-	Fields  *string `form:"fields,omitempty" json:"fields,omitempty"`
+	TeamIds string `form:"teamIds" json:"teamIds"`
+
+	// Season Season year, e.g. 2024
+	Season *int `form:"season,omitempty" json:"season,omitempty"`
+
+	// Fields Comma-separated field projection
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetVenueParams defines parameters for GetVenue.
 type GetVenueParams struct {
+	// Season Season year, e.g. 2024
 	Season *int `form:"season,omitempty" json:"season,omitempty"`
 
 	// Hydrate comma-separated hydrate flags (e.g. location,fieldInfo,timezone)

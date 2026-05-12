@@ -111,6 +111,13 @@ When adding endpoints or types to `pkg/api/openapi.yaml`:
   fields the MLB API adds don't break unmarshalling.
 - Set explicit `operationId` on every path — it becomes the generated function
   name in `internal/gen`.
+- **Every parameter must have a non-empty `description:`** — downstream
+  consumers (e.g. [mlb-mcp][]) generate tool schemas from these descriptions.
+  Empty descriptions break schema generation. Use short, useful text:
+  `"1 = MLB"` for sportId, `"YYYY-MM-DD"` for dates,
+  `"Comma-separated field projection"` for fields.
+
+[mlb-mcp]: https://github.com/retr0h/mlb-mcp
 
 ## Public surface authoring
 
