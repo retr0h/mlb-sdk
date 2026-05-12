@@ -428,6 +428,31 @@ type HandSide struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// HighLowGroup defines model for HighLowGroup.
+type HighLowGroup struct {
+	Group                *DisplayLabel          `json:"group,omitempty"`
+	Splits               *[]HighLowSplit        `json:"splits,omitempty"`
+	TotalSplits          *int                   `json:"totalSplits,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// HighLowResponse defines model for HighLowResponse.
+type HighLowResponse struct {
+	HighLowResults       *[]HighLowGroup        `json:"highLowResults,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// HighLowSplit defines model for HighLowSplit.
+type HighLowSplit struct {
+	// Player Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Player               *Person                 `json:"player,omitempty"`
+	Season               *string                 `json:"season,omitempty"`
+	Stat                 *map[string]interface{} `json:"stat,omitempty"`
+	Team                 *Team                   `json:"team,omitempty"`
+	AdditionalProperties map[string]interface{}  `json:"-"`
+}
+
 // InfoItem defines model for InfoItem.
 type InfoItem struct {
 	Label                *string                `json:"label,omitempty"`
@@ -1235,6 +1260,20 @@ type GetGamePaceParams struct {
 	OrgType         *string `form:"orgType,omitempty" json:"orgType,omitempty"`
 	IncludeChildren *bool   `form:"includeChildren,omitempty" json:"includeChildren,omitempty"`
 	Fields          *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetHighLowParams defines parameters for GetHighLow.
+type GetHighLowParams struct {
+	// SortStat e.g. homeRuns, hits, strikeOuts
+	SortStat  *string `form:"sortStat,omitempty" json:"sortStat,omitempty"`
+	Season    *int    `form:"season,omitempty" json:"season,omitempty"`
+	GameType  *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	TeamId    *int    `form:"teamId,omitempty" json:"teamId,omitempty"`
+	LeagueId  *int    `form:"leagueId,omitempty" json:"leagueId,omitempty"`
+	SportIds  *string `form:"sportIds,omitempty" json:"sportIds,omitempty"`
+	StatGroup *string `form:"statGroup,omitempty" json:"statGroup,omitempty"`
+	Limit     *int    `form:"limit,omitempty" json:"limit,omitempty"`
+	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetLeaguesParams defines parameters for GetLeagues.
@@ -5635,6 +5674,285 @@ func (a HandSide) MarshalJSON() ([]byte, error) {
 		object["description"], err = json.Marshal(a.Description)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'description': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for HighLowGroup. Returns the specified
+// element and whether it was found
+func (a HighLowGroup) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for HighLowGroup
+func (a *HighLowGroup) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for HighLowGroup to handle AdditionalProperties
+func (a *HighLowGroup) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["group"]; found {
+		err = json.Unmarshal(raw, &a.Group)
+		if err != nil {
+			return fmt.Errorf("error reading 'group': %w", err)
+		}
+		delete(object, "group")
+	}
+
+	if raw, found := object["splits"]; found {
+		err = json.Unmarshal(raw, &a.Splits)
+		if err != nil {
+			return fmt.Errorf("error reading 'splits': %w", err)
+		}
+		delete(object, "splits")
+	}
+
+	if raw, found := object["totalSplits"]; found {
+		err = json.Unmarshal(raw, &a.TotalSplits)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalSplits': %w", err)
+		}
+		delete(object, "totalSplits")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for HighLowGroup to handle AdditionalProperties
+func (a HighLowGroup) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Group != nil {
+		object["group"], err = json.Marshal(a.Group)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'group': %w", err)
+		}
+	}
+
+	if a.Splits != nil {
+		object["splits"], err = json.Marshal(a.Splits)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'splits': %w", err)
+		}
+	}
+
+	if a.TotalSplits != nil {
+		object["totalSplits"], err = json.Marshal(a.TotalSplits)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'totalSplits': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for HighLowResponse. Returns the specified
+// element and whether it was found
+func (a HighLowResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for HighLowResponse
+func (a *HighLowResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for HighLowResponse to handle AdditionalProperties
+func (a *HighLowResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["highLowResults"]; found {
+		err = json.Unmarshal(raw, &a.HighLowResults)
+		if err != nil {
+			return fmt.Errorf("error reading 'highLowResults': %w", err)
+		}
+		delete(object, "highLowResults")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for HighLowResponse to handle AdditionalProperties
+func (a HighLowResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.HighLowResults != nil {
+		object["highLowResults"], err = json.Marshal(a.HighLowResults)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'highLowResults': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for HighLowSplit. Returns the specified
+// element and whether it was found
+func (a HighLowSplit) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for HighLowSplit
+func (a *HighLowSplit) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for HighLowSplit to handle AdditionalProperties
+func (a *HighLowSplit) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["player"]; found {
+		err = json.Unmarshal(raw, &a.Player)
+		if err != nil {
+			return fmt.Errorf("error reading 'player': %w", err)
+		}
+		delete(object, "player")
+	}
+
+	if raw, found := object["season"]; found {
+		err = json.Unmarshal(raw, &a.Season)
+		if err != nil {
+			return fmt.Errorf("error reading 'season': %w", err)
+		}
+		delete(object, "season")
+	}
+
+	if raw, found := object["stat"]; found {
+		err = json.Unmarshal(raw, &a.Stat)
+		if err != nil {
+			return fmt.Errorf("error reading 'stat': %w", err)
+		}
+		delete(object, "stat")
+	}
+
+	if raw, found := object["team"]; found {
+		err = json.Unmarshal(raw, &a.Team)
+		if err != nil {
+			return fmt.Errorf("error reading 'team': %w", err)
+		}
+		delete(object, "team")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for HighLowSplit to handle AdditionalProperties
+func (a HighLowSplit) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Player != nil {
+		object["player"], err = json.Marshal(a.Player)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'player': %w", err)
+		}
+	}
+
+	if a.Season != nil {
+		object["season"], err = json.Marshal(a.Season)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'season': %w", err)
+		}
+	}
+
+	if a.Stat != nil {
+		object["stat"], err = json.Marshal(a.Stat)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'stat': %w", err)
+		}
+	}
+
+	if a.Team != nil {
+		object["team"], err = json.Marshal(a.Team)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'team': %w", err)
 		}
 	}
 
@@ -12932,6 +13250,9 @@ type ClientInterface interface {
 	// GetGamePace request
 	GetGamePace(ctx context.Context, params *GetGamePaceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetHighLow request
+	GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetLeagues request
 	GetLeagues(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -13091,6 +13412,18 @@ func (c *Client) GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...Re
 
 func (c *Client) GetGamePace(ctx context.Context, params *GetGamePaceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetGamePaceRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHighLowRequest(c.Server, orgType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -14091,6 +14424,163 @@ func NewGetGamePaceRequest(server string, params *GetGamePaceParams) (*http.Requ
 		if params.IncludeChildren != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "includeChildren", *params.IncludeChildren, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHighLowRequest generates requests for GetHighLow
+func NewGetHighLowRequest(server string, orgType string, params *GetHighLowParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgType", orgType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/highLow/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.SortStat != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sortStat", *params.SortStat, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Season != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", *params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.TeamId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "teamId", *params.TeamId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LeagueId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "leagueId", *params.LeagueId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.SportIds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportIds", *params.SportIds, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.StatGroup != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "statGroup", *params.StatGroup, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -15717,6 +16207,9 @@ type ClientWithResponsesInterface interface {
 	// GetGamePaceWithResponse request
 	GetGamePaceWithResponse(ctx context.Context, params *GetGamePaceParams, reqEditors ...RequestEditorFn) (*GetGamePaceResponse, error)
 
+	// GetHighLowWithResponse request
+	GetHighLowWithResponse(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*GetHighLowResponse, error)
+
 	// GetLeaguesWithResponse request
 	GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error)
 
@@ -16060,6 +16553,36 @@ func (r GetGamePaceResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetGamePaceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetHighLowResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HighLowResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHighLowResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHighLowResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetHighLowResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -16636,6 +17159,15 @@ func (c *ClientWithResponses) GetGamePaceWithResponse(ctx context.Context, param
 	return ParseGetGamePaceResponse(rsp)
 }
 
+// GetHighLowWithResponse request returning *GetHighLowResponse
+func (c *ClientWithResponses) GetHighLowWithResponse(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*GetHighLowResponse, error) {
+	rsp, err := c.GetHighLow(ctx, orgType, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHighLowResponse(rsp)
+}
+
 // GetLeaguesWithResponse request returning *GetLeaguesResponse
 func (c *ClientWithResponses) GetLeaguesWithResponse(ctx context.Context, params *GetLeaguesParams, reqEditors ...RequestEditorFn) (*GetLeaguesResponse, error) {
 	rsp, err := c.GetLeagues(ctx, params, reqEditors...)
@@ -17030,6 +17562,32 @@ func ParseGetGamePaceResponse(rsp *http.Response) (*GetGamePaceResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest GamePaceResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetHighLowResponse parses an HTTP response from a GetHighLowWithResponse call
+func ParseGetHighLowResponse(rsp *http.Response) (*GetHighLowResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHighLowResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HighLowResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

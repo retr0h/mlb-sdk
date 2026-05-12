@@ -70,6 +70,32 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/highLow/{orgType}:
+    get:
+      operationId: getHighLow
+      summary: Season high/low records
+      description: |
+        Returns high/low stat leaders. orgType is one of player, team,
+        division, league, sport, types. toddrob99 marks sortStat+season
+        as required together.
+      parameters:
+        - { name: orgType, in: path, required: true, schema: { type: string }, description: "player | team | division | league | sport | types" }
+        - { name: sortStat, in: query, schema: { type: string }, description: "e.g. homeRuns, hits, strikeOuts" }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: leagueId, in: query, schema: { type: integer } }
+        - { name: sportIds, in: query, schema: { type: string } }
+        - { name: statGroup, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: HighLow
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HighLowResponse" }
+
   /api/v1/gamePace:
     get:
       operationId: getGamePace
@@ -1217,6 +1243,35 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    HighLowSplit:
+      type: object
+      additionalProperties: true
+      properties:
+        season:  { type: string }
+        stat:
+          type: object
+          additionalProperties: true
+        team:    { $ref: "#/components/schemas/Team" }
+        player:  { $ref: "#/components/schemas/Person" }
+
+    HighLowGroup:
+      type: object
+      additionalProperties: true
+      properties:
+        group: { $ref: "#/components/schemas/DisplayLabel" }
+        totalSplits: { type: integer }
+        splits:
+          type: array
+          items: { $ref: "#/components/schemas/HighLowSplit" }
+
+    HighLowResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        highLowResults:
+          type: array
+          items: { $ref: "#/components/schemas/HighLowGroup" }
 
     GamePaceData:
       type: object

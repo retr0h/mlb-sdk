@@ -34,6 +34,7 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 | `/api/v1/game/{gamePk}/playByPlay`    | [Client.PlayByPlay][d-pbp]    | [playbyplay.go](examples/playbyplay.go)  |
 | `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
 | `/api/v1/gamePace`                    | [Client.GamePace][d-pace]     | [gamepace.go](examples/gamepace.go)      |
+| `/api/v1/highLow/{orgType}`           | [Client.HighLow][d-hl]        | [highlow.go](examples/highlow.go)        |
 | `/api/v1/game/{gamePk}/linescore`     | [Client.Linescore][d-line]    | [linescore.go](examples/linescore.go)    |
 | `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
 | `/api/v1/teams/{teamId}/roster`       | [Client.Roster][d-roster]     | [roster.go](examples/roster.go)          |
@@ -108,6 +109,7 @@ The [MIT][] License.
 [d-pbp]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
 [d-live]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
 [d-pace]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GamePace
+[d-hl]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.HighLow
 [d-line]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Linescore
 [d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
 [d-roster]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Roster
