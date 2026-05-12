@@ -70,6 +70,21 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/game/{gamePk}/linescore:
+    get:
+      operationId: getLinescore
+      summary: Linescore for a single game
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: timecode, in: query, schema: { type: string }, description: "YYYYMMDD_HHmmss for point-in-time" }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Linescore
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LinescoreResponse" }
+
   /api/v1/standings:
     get:
       operationId: getStandings
@@ -1023,6 +1038,86 @@ components:
         typeCode:       { type: string, description: "e.g. ASG, SE, TR" }
         typeDesc:       { type: string }
         description:    { type: string }
+
+    LinescoreInningHalf:
+      type: object
+      additionalProperties: true
+      properties:
+        runs:       { type: integer }
+        hits:       { type: integer }
+        errors:     { type: integer }
+        leftOnBase: { type: integer }
+
+    LinescoreInning:
+      type: object
+      additionalProperties: true
+      properties:
+        num:        { type: integer }
+        ordinalNum: { type: string }
+        home:       { $ref: "#/components/schemas/LinescoreInningHalf" }
+        away:       { $ref: "#/components/schemas/LinescoreInningHalf" }
+
+    LinescoreTeamTotals:
+      type: object
+      additionalProperties: true
+      properties:
+        runs:       { type: integer }
+        hits:       { type: integer }
+        errors:     { type: integer }
+        leftOnBase: { type: integer }
+        isWinner:   { type: boolean }
+
+    LinescoreTeams:
+      type: object
+      additionalProperties: true
+      properties:
+        home: { $ref: "#/components/schemas/LinescoreTeamTotals" }
+        away: { $ref: "#/components/schemas/LinescoreTeamTotals" }
+
+    LinescoreDefense:
+      type: object
+      additionalProperties: true
+      properties:
+        pitcher:   { $ref: "#/components/schemas/Person" }
+        catcher:   { $ref: "#/components/schemas/Person" }
+        first:     { $ref: "#/components/schemas/Person" }
+        second:    { $ref: "#/components/schemas/Person" }
+        third:     { $ref: "#/components/schemas/Person" }
+        shortstop: { $ref: "#/components/schemas/Person" }
+        left:      { $ref: "#/components/schemas/Person" }
+        center:    { $ref: "#/components/schemas/Person" }
+        right:     { $ref: "#/components/schemas/Person" }
+
+    LinescoreOffense:
+      type: object
+      additionalProperties: true
+      properties:
+        batter: { $ref: "#/components/schemas/Person" }
+        onDeck: { $ref: "#/components/schemas/Person" }
+        inHole: { $ref: "#/components/schemas/Person" }
+        first:  { $ref: "#/components/schemas/Person" }
+        second: { $ref: "#/components/schemas/Person" }
+        third:  { $ref: "#/components/schemas/Person" }
+
+    LinescoreResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        currentInning:        { type: integer }
+        currentInningOrdinal: { type: string }
+        inningState:          { type: string }
+        inningHalf:           { type: string }
+        isTopInning:          { type: boolean }
+        scheduledInnings:     { type: integer }
+        innings:
+          type: array
+          items: { $ref: "#/components/schemas/LinescoreInning" }
+        teams:   { $ref: "#/components/schemas/LinescoreTeams" }
+        defense: { $ref: "#/components/schemas/LinescoreDefense" }
+        offense: { $ref: "#/components/schemas/LinescoreOffense" }
+        balls:   { type: integer }
+        strikes: { type: integer }
+        outs:    { type: integer }
 
     TransactionsResponse:
       type: object

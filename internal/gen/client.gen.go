@@ -295,6 +295,127 @@ type LeaguesResponse struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// LinescoreDefense defines model for LinescoreDefense.
+type LinescoreDefense struct {
+	// Catcher Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Catcher *Person `json:"catcher,omitempty"`
+
+	// Center Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Center *Person `json:"center,omitempty"`
+
+	// First Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	First *Person `json:"first,omitempty"`
+
+	// Left Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Left *Person `json:"left,omitempty"`
+
+	// Pitcher Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Pitcher *Person `json:"pitcher,omitempty"`
+
+	// Right Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Right *Person `json:"right,omitempty"`
+
+	// Second Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Second *Person `json:"second,omitempty"`
+
+	// Shortstop Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Shortstop *Person `json:"shortstop,omitempty"`
+
+	// Third Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Third                *Person                `json:"third,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreInning defines model for LinescoreInning.
+type LinescoreInning struct {
+	Away                 *LinescoreInningHalf   `json:"away,omitempty"`
+	Home                 *LinescoreInningHalf   `json:"home,omitempty"`
+	Num                  *int                   `json:"num,omitempty"`
+	OrdinalNum           *string                `json:"ordinalNum,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreInningHalf defines model for LinescoreInningHalf.
+type LinescoreInningHalf struct {
+	Errors               *int                   `json:"errors,omitempty"`
+	Hits                 *int                   `json:"hits,omitempty"`
+	LeftOnBase           *int                   `json:"leftOnBase,omitempty"`
+	Runs                 *int                   `json:"runs,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreOffense defines model for LinescoreOffense.
+type LinescoreOffense struct {
+	// Batter Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Batter *Person `json:"batter,omitempty"`
+
+	// First Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	First *Person `json:"first,omitempty"`
+
+	// InHole Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	InHole *Person `json:"inHole,omitempty"`
+
+	// OnDeck Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	OnDeck *Person `json:"onDeck,omitempty"`
+
+	// Second Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Second *Person `json:"second,omitempty"`
+
+	// Third Lightweight person reference returned by awards / transactions /
+	// roster endpoints. PrimaryPosition is only present when hydrated.
+	Third                *Person                `json:"third,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreResponse defines model for LinescoreResponse.
+type LinescoreResponse struct {
+	Balls                *int                   `json:"balls,omitempty"`
+	CurrentInning        *int                   `json:"currentInning,omitempty"`
+	CurrentInningOrdinal *string                `json:"currentInningOrdinal,omitempty"`
+	Defense              *LinescoreDefense      `json:"defense,omitempty"`
+	InningHalf           *string                `json:"inningHalf,omitempty"`
+	InningState          *string                `json:"inningState,omitempty"`
+	Innings              *[]LinescoreInning     `json:"innings,omitempty"`
+	IsTopInning          *bool                  `json:"isTopInning,omitempty"`
+	Offense              *LinescoreOffense      `json:"offense,omitempty"`
+	Outs                 *int                   `json:"outs,omitempty"`
+	ScheduledInnings     *int                   `json:"scheduledInnings,omitempty"`
+	Strikes              *int                   `json:"strikes,omitempty"`
+	Teams                *LinescoreTeams        `json:"teams,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreTeamTotals defines model for LinescoreTeamTotals.
+type LinescoreTeamTotals struct {
+	Errors               *int                   `json:"errors,omitempty"`
+	Hits                 *int                   `json:"hits,omitempty"`
+	IsWinner             *bool                  `json:"isWinner,omitempty"`
+	LeftOnBase           *int                   `json:"leftOnBase,omitempty"`
+	Runs                 *int                   `json:"runs,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// LinescoreTeams defines model for LinescoreTeams.
+type LinescoreTeams struct {
+	Away                 *LinescoreTeamTotals   `json:"away,omitempty"`
+	Home                 *LinescoreTeamTotals   `json:"home,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // LiveData defines model for LiveData.
 type LiveData struct {
 	Plays                *PlayByPlayResponse    `json:"plays,omitempty"`
@@ -799,6 +920,13 @@ type GetDivisionsParams struct {
 	// SportId 1 = MLB
 	SportId *int `form:"sportId,omitempty" json:"sportId,omitempty"`
 	Season  *int `form:"season,omitempty" json:"season,omitempty"`
+}
+
+// GetLinescoreParams defines parameters for GetLinescore.
+type GetLinescoreParams struct {
+	// Timecode YYYYMMDD_HHmmss for point-in-time
+	Timecode *string `form:"timecode,omitempty" json:"timecode,omitempty"`
+	Fields   *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetLeaguesParams defines parameters for GetLeagues.
@@ -3658,6 +3786,1022 @@ func (a LeaguesResponse) MarshalJSON() ([]byte, error) {
 		object["leagues"], err = json.Marshal(a.Leagues)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'leagues': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreDefense. Returns the specified
+// element and whether it was found
+func (a LinescoreDefense) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreDefense
+func (a *LinescoreDefense) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreDefense to handle AdditionalProperties
+func (a *LinescoreDefense) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["catcher"]; found {
+		err = json.Unmarshal(raw, &a.Catcher)
+		if err != nil {
+			return fmt.Errorf("error reading 'catcher': %w", err)
+		}
+		delete(object, "catcher")
+	}
+
+	if raw, found := object["center"]; found {
+		err = json.Unmarshal(raw, &a.Center)
+		if err != nil {
+			return fmt.Errorf("error reading 'center': %w", err)
+		}
+		delete(object, "center")
+	}
+
+	if raw, found := object["first"]; found {
+		err = json.Unmarshal(raw, &a.First)
+		if err != nil {
+			return fmt.Errorf("error reading 'first': %w", err)
+		}
+		delete(object, "first")
+	}
+
+	if raw, found := object["left"]; found {
+		err = json.Unmarshal(raw, &a.Left)
+		if err != nil {
+			return fmt.Errorf("error reading 'left': %w", err)
+		}
+		delete(object, "left")
+	}
+
+	if raw, found := object["pitcher"]; found {
+		err = json.Unmarshal(raw, &a.Pitcher)
+		if err != nil {
+			return fmt.Errorf("error reading 'pitcher': %w", err)
+		}
+		delete(object, "pitcher")
+	}
+
+	if raw, found := object["right"]; found {
+		err = json.Unmarshal(raw, &a.Right)
+		if err != nil {
+			return fmt.Errorf("error reading 'right': %w", err)
+		}
+		delete(object, "right")
+	}
+
+	if raw, found := object["second"]; found {
+		err = json.Unmarshal(raw, &a.Second)
+		if err != nil {
+			return fmt.Errorf("error reading 'second': %w", err)
+		}
+		delete(object, "second")
+	}
+
+	if raw, found := object["shortstop"]; found {
+		err = json.Unmarshal(raw, &a.Shortstop)
+		if err != nil {
+			return fmt.Errorf("error reading 'shortstop': %w", err)
+		}
+		delete(object, "shortstop")
+	}
+
+	if raw, found := object["third"]; found {
+		err = json.Unmarshal(raw, &a.Third)
+		if err != nil {
+			return fmt.Errorf("error reading 'third': %w", err)
+		}
+		delete(object, "third")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreDefense to handle AdditionalProperties
+func (a LinescoreDefense) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Catcher != nil {
+		object["catcher"], err = json.Marshal(a.Catcher)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'catcher': %w", err)
+		}
+	}
+
+	if a.Center != nil {
+		object["center"], err = json.Marshal(a.Center)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'center': %w", err)
+		}
+	}
+
+	if a.First != nil {
+		object["first"], err = json.Marshal(a.First)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'first': %w", err)
+		}
+	}
+
+	if a.Left != nil {
+		object["left"], err = json.Marshal(a.Left)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'left': %w", err)
+		}
+	}
+
+	if a.Pitcher != nil {
+		object["pitcher"], err = json.Marshal(a.Pitcher)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pitcher': %w", err)
+		}
+	}
+
+	if a.Right != nil {
+		object["right"], err = json.Marshal(a.Right)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'right': %w", err)
+		}
+	}
+
+	if a.Second != nil {
+		object["second"], err = json.Marshal(a.Second)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'second': %w", err)
+		}
+	}
+
+	if a.Shortstop != nil {
+		object["shortstop"], err = json.Marshal(a.Shortstop)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'shortstop': %w", err)
+		}
+	}
+
+	if a.Third != nil {
+		object["third"], err = json.Marshal(a.Third)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'third': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreInning. Returns the specified
+// element and whether it was found
+func (a LinescoreInning) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreInning
+func (a *LinescoreInning) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreInning to handle AdditionalProperties
+func (a *LinescoreInning) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["away"]; found {
+		err = json.Unmarshal(raw, &a.Away)
+		if err != nil {
+			return fmt.Errorf("error reading 'away': %w", err)
+		}
+		delete(object, "away")
+	}
+
+	if raw, found := object["home"]; found {
+		err = json.Unmarshal(raw, &a.Home)
+		if err != nil {
+			return fmt.Errorf("error reading 'home': %w", err)
+		}
+		delete(object, "home")
+	}
+
+	if raw, found := object["num"]; found {
+		err = json.Unmarshal(raw, &a.Num)
+		if err != nil {
+			return fmt.Errorf("error reading 'num': %w", err)
+		}
+		delete(object, "num")
+	}
+
+	if raw, found := object["ordinalNum"]; found {
+		err = json.Unmarshal(raw, &a.OrdinalNum)
+		if err != nil {
+			return fmt.Errorf("error reading 'ordinalNum': %w", err)
+		}
+		delete(object, "ordinalNum")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreInning to handle AdditionalProperties
+func (a LinescoreInning) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Away != nil {
+		object["away"], err = json.Marshal(a.Away)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'away': %w", err)
+		}
+	}
+
+	if a.Home != nil {
+		object["home"], err = json.Marshal(a.Home)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'home': %w", err)
+		}
+	}
+
+	if a.Num != nil {
+		object["num"], err = json.Marshal(a.Num)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'num': %w", err)
+		}
+	}
+
+	if a.OrdinalNum != nil {
+		object["ordinalNum"], err = json.Marshal(a.OrdinalNum)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'ordinalNum': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreInningHalf. Returns the specified
+// element and whether it was found
+func (a LinescoreInningHalf) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreInningHalf
+func (a *LinescoreInningHalf) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreInningHalf to handle AdditionalProperties
+func (a *LinescoreInningHalf) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errors"]; found {
+		err = json.Unmarshal(raw, &a.Errors)
+		if err != nil {
+			return fmt.Errorf("error reading 'errors': %w", err)
+		}
+		delete(object, "errors")
+	}
+
+	if raw, found := object["hits"]; found {
+		err = json.Unmarshal(raw, &a.Hits)
+		if err != nil {
+			return fmt.Errorf("error reading 'hits': %w", err)
+		}
+		delete(object, "hits")
+	}
+
+	if raw, found := object["leftOnBase"]; found {
+		err = json.Unmarshal(raw, &a.LeftOnBase)
+		if err != nil {
+			return fmt.Errorf("error reading 'leftOnBase': %w", err)
+		}
+		delete(object, "leftOnBase")
+	}
+
+	if raw, found := object["runs"]; found {
+		err = json.Unmarshal(raw, &a.Runs)
+		if err != nil {
+			return fmt.Errorf("error reading 'runs': %w", err)
+		}
+		delete(object, "runs")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreInningHalf to handle AdditionalProperties
+func (a LinescoreInningHalf) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Errors != nil {
+		object["errors"], err = json.Marshal(a.Errors)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'errors': %w", err)
+		}
+	}
+
+	if a.Hits != nil {
+		object["hits"], err = json.Marshal(a.Hits)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hits': %w", err)
+		}
+	}
+
+	if a.LeftOnBase != nil {
+		object["leftOnBase"], err = json.Marshal(a.LeftOnBase)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leftOnBase': %w", err)
+		}
+	}
+
+	if a.Runs != nil {
+		object["runs"], err = json.Marshal(a.Runs)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'runs': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreOffense. Returns the specified
+// element and whether it was found
+func (a LinescoreOffense) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreOffense
+func (a *LinescoreOffense) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreOffense to handle AdditionalProperties
+func (a *LinescoreOffense) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["batter"]; found {
+		err = json.Unmarshal(raw, &a.Batter)
+		if err != nil {
+			return fmt.Errorf("error reading 'batter': %w", err)
+		}
+		delete(object, "batter")
+	}
+
+	if raw, found := object["first"]; found {
+		err = json.Unmarshal(raw, &a.First)
+		if err != nil {
+			return fmt.Errorf("error reading 'first': %w", err)
+		}
+		delete(object, "first")
+	}
+
+	if raw, found := object["inHole"]; found {
+		err = json.Unmarshal(raw, &a.InHole)
+		if err != nil {
+			return fmt.Errorf("error reading 'inHole': %w", err)
+		}
+		delete(object, "inHole")
+	}
+
+	if raw, found := object["onDeck"]; found {
+		err = json.Unmarshal(raw, &a.OnDeck)
+		if err != nil {
+			return fmt.Errorf("error reading 'onDeck': %w", err)
+		}
+		delete(object, "onDeck")
+	}
+
+	if raw, found := object["second"]; found {
+		err = json.Unmarshal(raw, &a.Second)
+		if err != nil {
+			return fmt.Errorf("error reading 'second': %w", err)
+		}
+		delete(object, "second")
+	}
+
+	if raw, found := object["third"]; found {
+		err = json.Unmarshal(raw, &a.Third)
+		if err != nil {
+			return fmt.Errorf("error reading 'third': %w", err)
+		}
+		delete(object, "third")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreOffense to handle AdditionalProperties
+func (a LinescoreOffense) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Batter != nil {
+		object["batter"], err = json.Marshal(a.Batter)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'batter': %w", err)
+		}
+	}
+
+	if a.First != nil {
+		object["first"], err = json.Marshal(a.First)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'first': %w", err)
+		}
+	}
+
+	if a.InHole != nil {
+		object["inHole"], err = json.Marshal(a.InHole)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'inHole': %w", err)
+		}
+	}
+
+	if a.OnDeck != nil {
+		object["onDeck"], err = json.Marshal(a.OnDeck)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'onDeck': %w", err)
+		}
+	}
+
+	if a.Second != nil {
+		object["second"], err = json.Marshal(a.Second)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'second': %w", err)
+		}
+	}
+
+	if a.Third != nil {
+		object["third"], err = json.Marshal(a.Third)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'third': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreResponse. Returns the specified
+// element and whether it was found
+func (a LinescoreResponse) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreResponse
+func (a *LinescoreResponse) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreResponse to handle AdditionalProperties
+func (a *LinescoreResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["balls"]; found {
+		err = json.Unmarshal(raw, &a.Balls)
+		if err != nil {
+			return fmt.Errorf("error reading 'balls': %w", err)
+		}
+		delete(object, "balls")
+	}
+
+	if raw, found := object["currentInning"]; found {
+		err = json.Unmarshal(raw, &a.CurrentInning)
+		if err != nil {
+			return fmt.Errorf("error reading 'currentInning': %w", err)
+		}
+		delete(object, "currentInning")
+	}
+
+	if raw, found := object["currentInningOrdinal"]; found {
+		err = json.Unmarshal(raw, &a.CurrentInningOrdinal)
+		if err != nil {
+			return fmt.Errorf("error reading 'currentInningOrdinal': %w", err)
+		}
+		delete(object, "currentInningOrdinal")
+	}
+
+	if raw, found := object["defense"]; found {
+		err = json.Unmarshal(raw, &a.Defense)
+		if err != nil {
+			return fmt.Errorf("error reading 'defense': %w", err)
+		}
+		delete(object, "defense")
+	}
+
+	if raw, found := object["inningHalf"]; found {
+		err = json.Unmarshal(raw, &a.InningHalf)
+		if err != nil {
+			return fmt.Errorf("error reading 'inningHalf': %w", err)
+		}
+		delete(object, "inningHalf")
+	}
+
+	if raw, found := object["inningState"]; found {
+		err = json.Unmarshal(raw, &a.InningState)
+		if err != nil {
+			return fmt.Errorf("error reading 'inningState': %w", err)
+		}
+		delete(object, "inningState")
+	}
+
+	if raw, found := object["innings"]; found {
+		err = json.Unmarshal(raw, &a.Innings)
+		if err != nil {
+			return fmt.Errorf("error reading 'innings': %w", err)
+		}
+		delete(object, "innings")
+	}
+
+	if raw, found := object["isTopInning"]; found {
+		err = json.Unmarshal(raw, &a.IsTopInning)
+		if err != nil {
+			return fmt.Errorf("error reading 'isTopInning': %w", err)
+		}
+		delete(object, "isTopInning")
+	}
+
+	if raw, found := object["offense"]; found {
+		err = json.Unmarshal(raw, &a.Offense)
+		if err != nil {
+			return fmt.Errorf("error reading 'offense': %w", err)
+		}
+		delete(object, "offense")
+	}
+
+	if raw, found := object["outs"]; found {
+		err = json.Unmarshal(raw, &a.Outs)
+		if err != nil {
+			return fmt.Errorf("error reading 'outs': %w", err)
+		}
+		delete(object, "outs")
+	}
+
+	if raw, found := object["scheduledInnings"]; found {
+		err = json.Unmarshal(raw, &a.ScheduledInnings)
+		if err != nil {
+			return fmt.Errorf("error reading 'scheduledInnings': %w", err)
+		}
+		delete(object, "scheduledInnings")
+	}
+
+	if raw, found := object["strikes"]; found {
+		err = json.Unmarshal(raw, &a.Strikes)
+		if err != nil {
+			return fmt.Errorf("error reading 'strikes': %w", err)
+		}
+		delete(object, "strikes")
+	}
+
+	if raw, found := object["teams"]; found {
+		err = json.Unmarshal(raw, &a.Teams)
+		if err != nil {
+			return fmt.Errorf("error reading 'teams': %w", err)
+		}
+		delete(object, "teams")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreResponse to handle AdditionalProperties
+func (a LinescoreResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Balls != nil {
+		object["balls"], err = json.Marshal(a.Balls)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'balls': %w", err)
+		}
+	}
+
+	if a.CurrentInning != nil {
+		object["currentInning"], err = json.Marshal(a.CurrentInning)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'currentInning': %w", err)
+		}
+	}
+
+	if a.CurrentInningOrdinal != nil {
+		object["currentInningOrdinal"], err = json.Marshal(a.CurrentInningOrdinal)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'currentInningOrdinal': %w", err)
+		}
+	}
+
+	if a.Defense != nil {
+		object["defense"], err = json.Marshal(a.Defense)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'defense': %w", err)
+		}
+	}
+
+	if a.InningHalf != nil {
+		object["inningHalf"], err = json.Marshal(a.InningHalf)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'inningHalf': %w", err)
+		}
+	}
+
+	if a.InningState != nil {
+		object["inningState"], err = json.Marshal(a.InningState)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'inningState': %w", err)
+		}
+	}
+
+	if a.Innings != nil {
+		object["innings"], err = json.Marshal(a.Innings)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'innings': %w", err)
+		}
+	}
+
+	if a.IsTopInning != nil {
+		object["isTopInning"], err = json.Marshal(a.IsTopInning)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isTopInning': %w", err)
+		}
+	}
+
+	if a.Offense != nil {
+		object["offense"], err = json.Marshal(a.Offense)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'offense': %w", err)
+		}
+	}
+
+	if a.Outs != nil {
+		object["outs"], err = json.Marshal(a.Outs)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'outs': %w", err)
+		}
+	}
+
+	if a.ScheduledInnings != nil {
+		object["scheduledInnings"], err = json.Marshal(a.ScheduledInnings)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'scheduledInnings': %w", err)
+		}
+	}
+
+	if a.Strikes != nil {
+		object["strikes"], err = json.Marshal(a.Strikes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'strikes': %w", err)
+		}
+	}
+
+	if a.Teams != nil {
+		object["teams"], err = json.Marshal(a.Teams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'teams': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreTeamTotals. Returns the specified
+// element and whether it was found
+func (a LinescoreTeamTotals) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreTeamTotals
+func (a *LinescoreTeamTotals) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreTeamTotals to handle AdditionalProperties
+func (a *LinescoreTeamTotals) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errors"]; found {
+		err = json.Unmarshal(raw, &a.Errors)
+		if err != nil {
+			return fmt.Errorf("error reading 'errors': %w", err)
+		}
+		delete(object, "errors")
+	}
+
+	if raw, found := object["hits"]; found {
+		err = json.Unmarshal(raw, &a.Hits)
+		if err != nil {
+			return fmt.Errorf("error reading 'hits': %w", err)
+		}
+		delete(object, "hits")
+	}
+
+	if raw, found := object["isWinner"]; found {
+		err = json.Unmarshal(raw, &a.IsWinner)
+		if err != nil {
+			return fmt.Errorf("error reading 'isWinner': %w", err)
+		}
+		delete(object, "isWinner")
+	}
+
+	if raw, found := object["leftOnBase"]; found {
+		err = json.Unmarshal(raw, &a.LeftOnBase)
+		if err != nil {
+			return fmt.Errorf("error reading 'leftOnBase': %w", err)
+		}
+		delete(object, "leftOnBase")
+	}
+
+	if raw, found := object["runs"]; found {
+		err = json.Unmarshal(raw, &a.Runs)
+		if err != nil {
+			return fmt.Errorf("error reading 'runs': %w", err)
+		}
+		delete(object, "runs")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreTeamTotals to handle AdditionalProperties
+func (a LinescoreTeamTotals) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Errors != nil {
+		object["errors"], err = json.Marshal(a.Errors)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'errors': %w", err)
+		}
+	}
+
+	if a.Hits != nil {
+		object["hits"], err = json.Marshal(a.Hits)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hits': %w", err)
+		}
+	}
+
+	if a.IsWinner != nil {
+		object["isWinner"], err = json.Marshal(a.IsWinner)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isWinner': %w", err)
+		}
+	}
+
+	if a.LeftOnBase != nil {
+		object["leftOnBase"], err = json.Marshal(a.LeftOnBase)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'leftOnBase': %w", err)
+		}
+	}
+
+	if a.Runs != nil {
+		object["runs"], err = json.Marshal(a.Runs)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'runs': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for LinescoreTeams. Returns the specified
+// element and whether it was found
+func (a LinescoreTeams) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LinescoreTeams
+func (a *LinescoreTeams) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LinescoreTeams to handle AdditionalProperties
+func (a *LinescoreTeams) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["away"]; found {
+		err = json.Unmarshal(raw, &a.Away)
+		if err != nil {
+			return fmt.Errorf("error reading 'away': %w", err)
+		}
+		delete(object, "away")
+	}
+
+	if raw, found := object["home"]; found {
+		err = json.Unmarshal(raw, &a.Home)
+		if err != nil {
+			return fmt.Errorf("error reading 'home': %w", err)
+		}
+		delete(object, "home")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LinescoreTeams to handle AdditionalProperties
+func (a LinescoreTeams) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Away != nil {
+		object["away"], err = json.Marshal(a.Away)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'away': %w", err)
+		}
+	}
+
+	if a.Home != nil {
+		object["home"], err = json.Marshal(a.Home)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'home': %w", err)
 		}
 	}
 
@@ -8412,6 +9556,9 @@ type ClientInterface interface {
 	// GetBoxscore request
 	GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetLinescore request
+	GetLinescore(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetPlayByPlay request
 	GetPlayByPlay(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -8502,6 +9649,18 @@ func (c *Client) GetDivisions(ctx context.Context, params *GetDivisionsParams, r
 
 func (c *Client) GetBoxscore(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetBoxscoreRequest(c.Server, gamePk)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLinescore(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLinescoreRequest(c.Server, gamePk, params)
 	if err != nil {
 		return nil, err
 	}
@@ -9051,6 +10210,79 @@ func NewGetBoxscoreRequest(server string, gamePk int) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLinescoreRequest generates requests for GetLinescore
+func NewGetLinescoreRequest(server string, gamePk int, params *GetLinescoreParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/game/%s/linescore", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Timecode != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "timecode", *params.Timecode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -10325,6 +11557,9 @@ type ClientWithResponsesInterface interface {
 	// GetBoxscoreWithResponse request
 	GetBoxscoreWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetBoxscoreResponse, error)
 
+	// GetLinescoreWithResponse request
+	GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error)
+
 	// GetPlayByPlayWithResponse request
 	GetPlayByPlayWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetPlayByPlayResponse, error)
 
@@ -10509,6 +11744,36 @@ func (r GetBoxscoreResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetBoxscoreResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetLinescoreResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *LinescoreResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLinescoreResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLinescoreResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetLinescoreResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -10950,6 +12215,15 @@ func (c *ClientWithResponses) GetBoxscoreWithResponse(ctx context.Context, gameP
 	return ParseGetBoxscoreResponse(rsp)
 }
 
+// GetLinescoreWithResponse request returning *GetLinescoreResponse
+func (c *ClientWithResponses) GetLinescoreWithResponse(ctx context.Context, gamePk int, params *GetLinescoreParams, reqEditors ...RequestEditorFn) (*GetLinescoreResponse, error) {
+	rsp, err := c.GetLinescore(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLinescoreResponse(rsp)
+}
+
 // GetPlayByPlayWithResponse request returning *GetPlayByPlayResponse
 func (c *ClientWithResponses) GetPlayByPlayWithResponse(ctx context.Context, gamePk int, reqEditors ...RequestEditorFn) (*GetPlayByPlayResponse, error) {
 	rsp, err := c.GetPlayByPlay(ctx, gamePk, reqEditors...)
@@ -11187,6 +12461,32 @@ func ParseGetBoxscoreResponse(rsp *http.Response) (*GetBoxscoreResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest BoxscoreResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLinescoreResponse parses an HTTP response from a GetLinescoreWithResponse call
+func ParseGetLinescoreResponse(rsp *http.Response) (*GetLinescoreResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLinescoreResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest LinescoreResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

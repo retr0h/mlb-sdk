@@ -120,6 +120,13 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "5ec584446918136a2e06db2b961b24765749bdc0b91f7d0125c8cd6a6049ec12",
       "source": "ingest skill"
+    },
+    "game_linescore": {
+      "method": "Client.Linescore",
+      "operationId": "getLinescore",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "6276d721569eda1f7b745b781b2b55ab8925e155b0640d6b0d675663c789a694",
+      "source": "ingest skill"
     }
   }
 }
