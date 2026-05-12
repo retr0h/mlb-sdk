@@ -700,6 +700,146 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ScheduleResponse" }
 
+  /api/v1/sports/{sportId}/players:
+    get:
+      operationId: getSportsPlayers
+      summary: All players for a sport + season
+      parameters:
+        - { name: sportId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Players
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
+  /api/v1/teams/{teamId}/alumni:
+    get:
+      operationId: getTeamAlumni
+      summary: Team alumni
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: group, in: query, required: true, schema: { type: string }, description: "hitting | pitching | fielding" }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Alumni
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeopleResponse" }
+
+  /api/v1/teams/{teamId}/leaders:
+    get:
+      operationId: getTeamLeaders
+      summary: Team stat leaders
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+        - { name: leaderCategories, in: query, required: true, schema: { type: string } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: leaderGameTypes, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Team leaders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamLeadersResponse" }
+
+  /api/v1/teams/stats:
+    get:
+      operationId: getTeamsStats
+      summary: League-wide team stats
+      parameters:
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: sportIds, in: query, schema: { type: string } }
+        - { name: group, in: query, required: true, schema: { type: string } }
+        - { name: stats, in: query, required: true, schema: { type: string } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: order, in: query, schema: { type: string } }
+        - { name: sortStat, in: query, schema: { type: string } }
+        - { name: startDate, in: query, schema: { type: string } }
+        - { name: endDate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Teams stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamStatsResponse" }
+
+  /api/v1/people/{personId}/stats/game/{gamePk}:
+    get:
+      operationId: getPersonGameStats
+      summary: Player stats for a specific game
+      parameters:
+        - { name: personId, in: path, required: true, schema: { type: integer } }
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Person game stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeamStatsResponse" }
+
+  /api/v1/schedule/postseason:
+    get:
+      operationId: getSchedulePostseason
+      summary: Postseason schedule
+      parameters:
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: gameTypes, in: query, schema: { type: string } }
+        - { name: seriesNumber, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Postseason schedule
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
+  /api/v1/schedule/postseason/tuneIn:
+    get:
+      operationId: getSchedulePostseasonTuneIn
+      summary: Postseason tune-in info
+      parameters:
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: teamId, in: query, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Tune-in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
+  /api/v1/jobs/umpires/games/{umpireId}:
+    get:
+      operationId: getUmpireGames
+      summary: Games assigned to an umpire
+      parameters:
+        - { name: umpireId, in: path, required: true, schema: { type: integer } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Umpire games
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScheduleResponse" }
+
   /api/v1/teams:
     get:
       operationId: getTeams
@@ -1484,6 +1624,14 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    TeamLeadersResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        teamLeaders:
+          type: array
+          items: { $ref: "#/components/schemas/LeaderCategory" }
 
     LeaderEntry:
       type: object

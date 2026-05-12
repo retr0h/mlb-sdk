@@ -288,6 +288,62 @@
       "ingestedOn": "2026-05-11",
       "upstreamSha": "8f90e1b052c2b3a13f04bcfe495e9dc3a55f944248dfa4dd468714938f344392",
       "source": "ingest skill"
+    },
+    "person_stats": {
+      "method": "Client.PersonGameStats",
+      "operationId": "getPersonGameStats",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "197cb2f79b0611fde8f871fca86e583425c5757a05b838dcf06bbe80eb8be710",
+      "source": "ingest skill"
+    },
+    "team_leaders": {
+      "method": "Client.TeamLeaders",
+      "operationId": "getTeamLeaders",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "787a1f9c6f153227e9844cecd839c7c4a3cec1c0cef6da50713a4478f9130bce",
+      "source": "ingest skill"
+    },
+    "team_alumni": {
+      "method": "Client.TeamAlumni",
+      "operationId": "getTeamAlumni",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "e833ffa276a5e5bbfb4bb7d77862f52f0d0ef61eca6c6f8ac778ce48601cd4f8",
+      "source": "ingest skill"
+    },
+    "teams_stats": {
+      "method": "Client.TeamsStats",
+      "operationId": "getTeamsStats",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "efe0159784a302b2d439cf02f461d21add487f2eefafd2bee4992375332606d6",
+      "source": "ingest skill"
+    },
+    "sports_players": {
+      "method": "Client.SportsPlayers",
+      "operationId": "getSportsPlayers",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "700cc8195b5019e41c4636a251f35c1a78e3009a7bbdf322508839269cbc68b3",
+      "source": "ingest skill"
+    },
+    "jobs_umpire_games": {
+      "method": "Client.UmpireGames",
+      "operationId": "getUmpireGames",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "2b040b791e7fd65605fb83da237270f816a9ff37fd5b18b15b31c0bece01f9bb",
+      "source": "ingest skill"
+    },
+    "schedule_postseason": {
+      "method": "Client.SchedulePostseason",
+      "operationId": "getSchedulePostseason",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "6e3d3898741153be263e23810e05f3785dc64eeaf8cce3df68130e293214da0d",
+      "source": "ingest skill"
+    },
+    "schedule_postseason_tuneIn": {
+      "method": "Client.SchedulePostseasonTuneIn",
+      "operationId": "getSchedulePostseasonTuneIn",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "b1add159a54c573b983e4debf1a098923f34151e043c0006669208bbb765d337",
+      "source": "ingest skill"
     }
   }
 }
