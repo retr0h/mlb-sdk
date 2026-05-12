@@ -934,6 +934,48 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ScheduleResponse" }
 
+  /api/v1/stats/streaks:
+    get:
+      operationId: getStatsStreaks
+      summary: Stat streaks
+      description: |
+        Returns hitting/pitching streak data. toddrob99 marks streakType,
+        streakSpan, season, sportId, and limit as all required together.
+        Note: this endpoint may return 404 during the offseason.
+      parameters:
+        - { name: streakType, in: query, required: true, schema: { type: string } }
+        - { name: streakSpan, in: query, required: true, schema: { type: string } }
+        - { name: season, in: query, required: true, schema: { type: integer } }
+        - { name: sportId, in: query, required: true, schema: { type: integer } }
+        - { name: limit, in: query, required: true, schema: { type: integer } }
+        - { name: gameType, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Streaks
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /api/v1/homeRunDerby/{gamePk}:
+    get:
+      operationId: getHomeRunDerby
+      summary: Home Run Derby data
+      parameters:
+        - { name: gamePk, in: path, required: true, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Derby
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
   /api/v1/uniforms/game:
     get:
       operationId: getGameUniforms

@@ -1428,6 +1428,11 @@ type GetHighLowParams struct {
 	Fields    *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
+// GetHomeRunDerbyParams defines parameters for GetHomeRunDerby.
+type GetHomeRunDerbyParams struct {
+	Fields *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
 // GetJobsParams defines parameters for GetJobs.
 type GetJobsParams struct {
 	// JobType e.g. UMPR, SCOR, DCST
@@ -1684,6 +1689,18 @@ type GetStatsLeadersParams struct {
 	Hydrate          *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
 	Limit            *int    `form:"limit,omitempty" json:"limit,omitempty"`
 	Fields           *string `form:"fields,omitempty" json:"fields,omitempty"`
+}
+
+// GetStatsStreaksParams defines parameters for GetStatsStreaks.
+type GetStatsStreaksParams struct {
+	StreakType string  `form:"streakType" json:"streakType"`
+	StreakSpan string  `form:"streakSpan" json:"streakSpan"`
+	Season     int     `form:"season" json:"season"`
+	SportId    int     `form:"sportId" json:"sportId"`
+	Limit      int     `form:"limit" json:"limit"`
+	GameType   *string `form:"gameType,omitempty" json:"gameType,omitempty"`
+	Hydrate    *string `form:"hydrate,omitempty" json:"hydrate,omitempty"`
+	Fields     *string `form:"fields,omitempty" json:"fields,omitempty"`
 }
 
 // GetTeamsParams defines parameters for GetTeams.
@@ -14731,6 +14748,9 @@ type ClientInterface interface {
 	// GetHighLow request
 	GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetHomeRunDerby request
+	GetHomeRunDerby(ctx context.Context, gamePk int, params *GetHomeRunDerbyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetJobs request
 	GetJobs(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -14811,6 +14831,9 @@ type ClientInterface interface {
 
 	// GetStatsLeaders request
 	GetStatsLeaders(ctx context.Context, params *GetStatsLeadersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetStatsStreaks request
+	GetStatsStreaks(ctx context.Context, params *GetStatsStreaksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeams request
 	GetTeams(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -15091,6 +15114,18 @@ func (c *Client) GetGamePace(ctx context.Context, params *GetGamePaceParams, req
 
 func (c *Client) GetHighLow(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetHighLowRequest(c.Server, orgType, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetHomeRunDerby(ctx context.Context, gamePk int, params *GetHomeRunDerbyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHomeRunDerbyRequest(c.Server, gamePk, params)
 	if err != nil {
 		return nil, err
 	}
@@ -15415,6 +15450,18 @@ func (c *Client) GetStats(ctx context.Context, params *GetStatsParams, reqEditor
 
 func (c *Client) GetStatsLeaders(ctx context.Context, params *GetStatsLeadersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStatsLeadersRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetStatsStreaks(ctx context.Context, params *GetStatsStreaksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetStatsStreaksRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -17156,6 +17203,67 @@ func NewGetHighLowRequest(server string, orgType string, params *GetHighLowParam
 			}
 
 		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHomeRunDerbyRequest generates requests for GetHomeRunDerby
+func NewGetHomeRunDerbyRequest(server string, gamePk int, params *GetHomeRunDerbyParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "gamePk", gamePk, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/homeRunDerby/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
 
 		if params.Fields != nil {
 
@@ -19720,6 +19828,124 @@ func NewGetStatsLeadersRequest(server string, params *GetStatsLeadersParams) (*h
 	return req, nil
 }
 
+// NewGetStatsStreaksRequest generates requests for GetStatsStreaks
+func NewGetStatsStreaksRequest(server string, params *GetStatsStreaksParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/stats/streaks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "streakType", params.StreakType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "streakSpan", params.StreakSpan, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "season", params.Season, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sportId", params.SportId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.GameType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "gameType", *params.GameType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Hydrate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "hydrate", *params.Hydrate, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Fields != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "fields", *params.Fields, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamsRequest generates requests for GetTeams
 func NewGetTeamsRequest(server string, params *GetTeamsParams) (*http.Request, error) {
 	var err error
@@ -21327,6 +21553,9 @@ type ClientWithResponsesInterface interface {
 	// GetHighLowWithResponse request
 	GetHighLowWithResponse(ctx context.Context, orgType string, params *GetHighLowParams, reqEditors ...RequestEditorFn) (*GetHighLowResponse, error)
 
+	// GetHomeRunDerbyWithResponse request
+	GetHomeRunDerbyWithResponse(ctx context.Context, gamePk int, params *GetHomeRunDerbyParams, reqEditors ...RequestEditorFn) (*GetHomeRunDerbyResponse, error)
+
 	// GetJobsWithResponse request
 	GetJobsWithResponse(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
 
@@ -21407,6 +21636,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetStatsLeadersWithResponse request
 	GetStatsLeadersWithResponse(ctx context.Context, params *GetStatsLeadersParams, reqEditors ...RequestEditorFn) (*GetStatsLeadersResponse, error)
+
+	// GetStatsStreaksWithResponse request
+	GetStatsStreaksWithResponse(ctx context.Context, params *GetStatsStreaksParams, reqEditors ...RequestEditorFn) (*GetStatsStreaksResponse, error)
 
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, params *GetTeamsParams, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
@@ -22051,6 +22283,36 @@ func (r GetHighLowResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetHighLowResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetHomeRunDerbyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHomeRunDerbyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHomeRunDerbyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetHomeRunDerbyResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -22867,6 +23129,36 @@ func (r GetStatsLeadersResponse) ContentType() string {
 	return ""
 }
 
+type GetStatsStreaksResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetStatsStreaksResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetStatsStreaksResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetStatsStreaksResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23527,6 +23819,15 @@ func (c *ClientWithResponses) GetHighLowWithResponse(ctx context.Context, orgTyp
 	return ParseGetHighLowResponse(rsp)
 }
 
+// GetHomeRunDerbyWithResponse request returning *GetHomeRunDerbyResponse
+func (c *ClientWithResponses) GetHomeRunDerbyWithResponse(ctx context.Context, gamePk int, params *GetHomeRunDerbyParams, reqEditors ...RequestEditorFn) (*GetHomeRunDerbyResponse, error) {
+	rsp, err := c.GetHomeRunDerby(ctx, gamePk, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHomeRunDerbyResponse(rsp)
+}
+
 // GetJobsWithResponse request returning *GetJobsResponse
 func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*GetJobsResponse, error) {
 	rsp, err := c.GetJobs(ctx, params, reqEditors...)
@@ -23768,6 +24069,15 @@ func (c *ClientWithResponses) GetStatsLeadersWithResponse(ctx context.Context, p
 		return nil, err
 	}
 	return ParseGetStatsLeadersResponse(rsp)
+}
+
+// GetStatsStreaksWithResponse request returning *GetStatsStreaksResponse
+func (c *ClientWithResponses) GetStatsStreaksWithResponse(ctx context.Context, params *GetStatsStreaksParams, reqEditors ...RequestEditorFn) (*GetStatsStreaksResponse, error) {
+	rsp, err := c.GetStatsStreaks(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetStatsStreaksResponse(rsp)
 }
 
 // GetTeamsWithResponse request returning *GetTeamsResponse
@@ -24424,6 +24734,32 @@ func ParseGetHighLowResponse(rsp *http.Response) (*GetHighLowResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest HighLowResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetHomeRunDerbyResponse parses an HTTP response from a GetHomeRunDerbyWithResponse call
+func ParseGetHomeRunDerbyResponse(rsp *http.Response) (*GetHomeRunDerbyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHomeRunDerbyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -25126,6 +25462,32 @@ func ParseGetStatsLeadersResponse(rsp *http.Response) (*GetStatsLeadersResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest StatsLeadersResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetStatsStreaksResponse parses an HTTP response from a GetStatsStreaksWithResponse call
+func ParseGetStatsStreaksResponse(rsp *http.Response) (*GetStatsStreaksResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetStatsStreaksResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

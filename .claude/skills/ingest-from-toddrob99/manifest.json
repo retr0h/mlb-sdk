@@ -435,6 +435,20 @@
       "ingestedOn": "2026-05-12",
       "upstreamSha": "9550948439ed08db5dfdd20c28bdffba8c489dbaba9f36e1ddaf8b7263a34d5f",
       "source": "ingest skill"
+    },
+    "stats_streaks": {
+      "method": "Client.StatsStreaks",
+      "operationId": "getStatsStreaks",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "55747de9d9e97b3988f3351d439e7a8b65cd8befa3211893f7b78aa1c3976f01",
+      "source": "ingest skill"
+    },
+    "homeRunDerby": {
+      "method": "Client.HomeRunDerby",
+      "operationId": "getHomeRunDerby",
+      "ingestedOn": "2026-05-12",
+      "upstreamSha": "5657bae691e40d061641f57949a07f19023f54ecdaf0312b1f42b72ccaf5e6ca",
+      "source": "ingest skill"
     }
   }
 }
