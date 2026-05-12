@@ -142,6 +142,13 @@
       "upstreamSha": "74cb68506738e0d6a935f0c744c654550f613634a7e98b9f13c62216b4234475",
       "source": "ingest skill"
     },
+    "stats_leaders": {
+      "method": "Client.StatsLeaders",
+      "operationId": "getStatsLeaders",
+      "ingestedOn": "2026-05-11",
+      "upstreamSha": "c7b68a8d26d385e01e0b9051c6c0d348e85aa4d4ef32a4d83ed08a440e0b60bd",
+      "source": "ingest skill"
+    },
     "highLow": {
       "method": "Client.HighLow",
       "operationId": "getHighLow",

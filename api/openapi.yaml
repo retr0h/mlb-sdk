@@ -70,6 +70,32 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/LiveFeedResponse" }
 
+  /api/v1/stats/leaders:
+    get:
+      operationId: getStatsLeaders
+      summary: League stat leaders
+      description: |
+        Returns stat leaders. leaderCategories is required (toddrob99:
+        required_params=[["leaderCategories"]]).
+      parameters:
+        - { name: leaderCategories, in: query, required: true, schema: { type: string }, description: "e.g. homeRuns, battingAverage" }
+        - { name: season, in: query, schema: { type: integer } }
+        - { name: sportId, in: query, schema: { type: integer } }
+        - { name: leagueId, in: query, schema: { type: integer } }
+        - { name: statGroup, in: query, schema: { type: string } }
+        - { name: playerPool, in: query, schema: { type: string } }
+        - { name: leaderGameTypes, in: query, schema: { type: string } }
+        - { name: statType, in: query, schema: { type: string } }
+        - { name: hydrate, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer } }
+        - { name: fields, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: StatsLeaders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StatsLeadersResponse" }
+
   /api/v1/highLow/{orgType}:
     get:
       operationId: getHighLow
@@ -1243,6 +1269,38 @@ components:
         people:
           type: array
           items: { $ref: "#/components/schemas/PersonDetail" }
+
+    LeaderEntry:
+      type: object
+      additionalProperties: true
+      properties:
+        rank:   { type: integer }
+        value:  { type: string }
+        team:   { $ref: "#/components/schemas/Team" }
+        league: { $ref: "#/components/schemas/Ref" }
+        person: { $ref: "#/components/schemas/Person" }
+        sport:  { $ref: "#/components/schemas/Ref" }
+
+    LeaderCategory:
+      type: object
+      additionalProperties: true
+      properties:
+        leaderCategory: { type: string }
+        season:         { type: string }
+        gameType:       { $ref: "#/components/schemas/DisplayLabel" }
+        statGroup:      { type: string }
+        totalSplits:    { type: integer }
+        leaders:
+          type: array
+          items: { $ref: "#/components/schemas/LeaderEntry" }
+
+    StatsLeadersResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        leagueLeaders:
+          type: array
+          items: { $ref: "#/components/schemas/LeaderCategory" }
 
     HighLowSplit:
       type: object
