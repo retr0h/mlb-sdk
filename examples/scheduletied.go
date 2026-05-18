@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // ScheduleTied prints tied/suspended games for a season. Run with:
 //
 //	go run ./examples/scheduletied [SEASON]   # default: 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	year := 2024
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		year = n
 	}
-
+//
 	c := mlb.New()
 	games, err := c.ScheduleTied(context.Background(), mlb.ScheduleTiedQuery{
 		Season: year,

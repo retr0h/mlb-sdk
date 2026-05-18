@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // TeamAlumniQuery filters an alumni lookup. Season and Group are required.
 type TeamAlumniQuery struct {
 	Season  int    // required
@@ -18,7 +18,7 @@ type TeamAlumniQuery struct {
 	Hydrate string
 	Fields  string
 }
-
+//
 // TeamAlumni fetches alumni for a team. Season and Group are required.
 func (c *Client) TeamAlumni(
 	ctx context.Context,
@@ -38,7 +38,7 @@ func (c *Client) TeamAlumni(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamAlumniWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teamAlumni: %w", err)

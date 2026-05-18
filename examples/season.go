@@ -1,28 +1,28 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Season prints the calendar windows for a single MLB season. Run with:
 //
 //	go run ./examples/season [YEAR]   # default: 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 const dateFmt = "2006-01-02"
-
+//
 func main() {
 	year := "2024"
 	if len(os.Args) > 1 {
 		year = os.Args[1]
 	}
-
+//
 	c := mlb.New()
 	s, err := c.Season(context.Background(), year, mlb.SeasonQuery{SportID: 1})
 	if err != nil {

@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Draft fetches draft data for a given year.
 //
 // Example:
@@ -29,7 +29,7 @@ func (c *Client) Draft(ctx context.Context, year int, q DraftQuery) (*DraftData,
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetDraftWithResponse(ctx, year, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: draft: %w", err)
@@ -42,7 +42,7 @@ func (c *Client) Draft(ctx context.Context, year int, q DraftQuery) (*DraftData,
 	}
 	return draftFromGen(resp.JSON200), nil
 }
-
+//
 func draftFromGen(r *gen.DraftResponse) *DraftData {
 	out := &DraftData{}
 	if r == nil || r.Drafts == nil {
@@ -60,7 +60,7 @@ func draftFromGen(r *gen.DraftResponse) *DraftData {
 	}
 	return out
 }
-
+//
 func draftRoundFromGen(r gen.DraftRound) DraftRound {
 	out := DraftRound{}
 	if r.Round != nil {
@@ -74,7 +74,7 @@ func draftRoundFromGen(r gen.DraftRound) DraftRound {
 	}
 	return out
 }
-
+//
 func draftPickFromGen(p gen.DraftPick) DraftPick {
 	out := DraftPick{}
 	if p.BisPlayerId != nil {
@@ -136,7 +136,7 @@ func draftPickFromGen(p gen.DraftPick) DraftPick {
 	}
 	return out
 }
-
+//
 func draftHomeFromGen(h gen.DraftHome) DraftHome {
 	out := DraftHome{}
 	if h.City != nil {
@@ -147,7 +147,7 @@ func draftHomeFromGen(h gen.DraftHome) DraftHome {
 	}
 	return out
 }
-
+//
 func draftSchoolFromGen(s gen.DraftSchool) DraftSchool {
 	out := DraftSchool{}
 	if s.Name != nil {
@@ -167,7 +167,7 @@ func draftSchoolFromGen(s gen.DraftSchool) DraftSchool {
 	}
 	return out
 }
-
+//
 func draftTypeRefFromGen(d gen.DraftTypeRef) DraftTypeRef {
 	out := DraftTypeRef{}
 	if d.Code != nil {

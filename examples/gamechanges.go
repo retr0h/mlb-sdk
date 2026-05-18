@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // GameChanges prints recently updated games. Run with:
 //
 //	go run ./examples/gamechanges
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"time"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	since := time.Now().Add(-24 * time.Hour).Format(time.RFC3339)
 	c := mlb.New()

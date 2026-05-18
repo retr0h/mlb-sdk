@@ -1,18 +1,18 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const rosterDateFmt = "2006-01-02"
-
+//
 // Roster fetches the roster for a team. Filter by rosterType ("active",
 // "40Man", "fullSeason", …), season, and date.
 //
@@ -39,7 +39,7 @@ func (c *Client) Roster(ctx context.Context, teamID int, q RosterQuery) (*Roster
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamRosterWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: roster: %w", err)
@@ -52,7 +52,7 @@ func (c *Client) Roster(ctx context.Context, teamID int, q RosterQuery) (*Roster
 	}
 	return rosterFromGen(resp.JSON200), nil
 }
-
+//
 func rosterFromGen(r *gen.RosterResponse) *Roster {
 	out := &Roster{}
 	if r == nil {
@@ -69,7 +69,7 @@ func rosterFromGen(r *gen.RosterResponse) *Roster {
 	}
 	return out
 }
-
+//
 func rosterEntryFromGen(e gen.RosterEntry) RosterEntry {
 	out := RosterEntry{}
 	if e.Person != nil {
@@ -86,7 +86,7 @@ func rosterEntryFromGen(e gen.RosterEntry) RosterEntry {
 	}
 	return out
 }
-
+//
 func rosterStatusFromGen(s gen.RosterStatus) RosterStatus {
 	out := RosterStatus{}
 	if s.Code != nil {

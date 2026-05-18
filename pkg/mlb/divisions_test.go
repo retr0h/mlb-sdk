@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const divisionsHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "divisions": [
@@ -33,7 +33,7 @@ const divisionsHappyBody = `{
     }
   ]
 }`
-
+//
 func TestDivisions_Division(t *testing.T) {
 	empty := divisionsFromGen(nil) // nil → empty Divisions
 	full := &Divisions{Divisions: []Division{
@@ -65,7 +65,7 @@ func TestDivisions_Division(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Divisions(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -143,7 +143,7 @@ func TestClient_Divisions(t *testing.T) {
 			wantErr:    "divisions",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -163,10 +163,10 @@ func TestClient_Divisions(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			d, err := client.Divisions(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

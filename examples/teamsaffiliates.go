@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // TeamsAffiliates prints affiliate teams. Run with:
 //
 //	go run ./examples/teamsaffiliates
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	ts, err := c.TeamsAffiliates(context.Background(), mlb.TeamsAffiliatesQuery{

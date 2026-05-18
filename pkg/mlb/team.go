@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Team fetches a single team by id. The underlying endpoint responds with
 // `{"teams": [<one entry>]}`; this method collapses the wrapper and
 // returns the single TeamInfo. An empty array maps to ErrNotFound.
@@ -39,7 +39,7 @@ func (c *Client) Team(ctx context.Context, teamID int, q TeamQuery) (*TeamInfo, 
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: team: %w", err)
@@ -56,7 +56,7 @@ func (c *Client) Team(ctx context.Context, teamID int, q TeamQuery) (*TeamInfo, 
 	}
 	return t, nil
 }
-
+//
 // teamFromResponse collapses the teams array to a single TeamInfo. Empty
 // array → nil so the caller maps to ErrNotFound.
 func teamFromResponse(r *gen.TeamsResponse) *TeamInfo {
@@ -66,7 +66,7 @@ func teamFromResponse(r *gen.TeamsResponse) *TeamInfo {
 	t := teamInfoFromGen((*r.Teams)[0])
 	return &t
 }
-
+//
 func teamInfoFromGen(t gen.TeamInfo) TeamInfo {
 	out := TeamInfo{}
 	if t.Id != nil {
@@ -134,7 +134,7 @@ func teamInfoFromGen(t gen.TeamInfo) TeamInfo {
 	}
 	return out
 }
-
+//
 func leagueInfoFromGen(l gen.LeagueInfo) LeagueInfo {
 	out := LeagueInfo{}
 	if l.Id != nil {

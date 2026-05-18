@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Linescore fetches the linescore for a single game. Returns a per-inning
 // breakdown plus game-total runs/hits/errors and the current
 // defense/offense situation.
@@ -34,7 +34,7 @@ func (c *Client) Linescore(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetLinescoreWithResponse(ctx, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: linescore: %w", err)
@@ -47,7 +47,7 @@ func (c *Client) Linescore(
 	}
 	return linescoreFromGen(resp.JSON200), nil
 }
-
+//
 func linescoreFromGen(r *gen.LinescoreResponse) *Linescore {
 	out := &Linescore{}
 	if r == nil {
@@ -97,7 +97,7 @@ func linescoreFromGen(r *gen.LinescoreResponse) *Linescore {
 	}
 	return out
 }
-
+//
 func linescoreInningFromGen(i gen.LinescoreInning) LinescoreInning {
 	out := LinescoreInning{}
 	if i.Num != nil {
@@ -114,7 +114,7 @@ func linescoreInningFromGen(i gen.LinescoreInning) LinescoreInning {
 	}
 	return out
 }
-
+//
 func linescoreInningHalfFromGen(h gen.LinescoreInningHalf) LinescoreInningHalf {
 	out := LinescoreInningHalf{}
 	if h.Runs != nil {
@@ -131,7 +131,7 @@ func linescoreInningHalfFromGen(h gen.LinescoreInningHalf) LinescoreInningHalf {
 	}
 	return out
 }
-
+//
 func linescoreTeamsFromGen(t gen.LinescoreTeams) LinescoreTeams {
 	out := LinescoreTeams{}
 	if t.Home != nil {
@@ -142,7 +142,7 @@ func linescoreTeamsFromGen(t gen.LinescoreTeams) LinescoreTeams {
 	}
 	return out
 }
-
+//
 func linescoreTeamTotalsFromGen(t gen.LinescoreTeamTotals) LinescoreTeamTotals {
 	out := LinescoreTeamTotals{}
 	if t.Runs != nil {
@@ -162,7 +162,7 @@ func linescoreTeamTotalsFromGen(t gen.LinescoreTeamTotals) LinescoreTeamTotals {
 	}
 	return out
 }
-
+//
 func linescoreDefenseFromGen(d gen.LinescoreDefense) LinescoreDefense {
 	out := LinescoreDefense{}
 	if d.Pitcher != nil {
@@ -194,7 +194,7 @@ func linescoreDefenseFromGen(d gen.LinescoreDefense) LinescoreDefense {
 	}
 	return out
 }
-
+//
 func linescoreOffenseFromGen(o gen.LinescoreOffense) LinescoreOffense {
 	out := LinescoreOffense{}
 	if o.Batter != nil {

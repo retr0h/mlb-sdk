@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const statsLeadersHappyBody = `{
   "leagueLeaders": [{
     "leaderCategory": "homeRuns", "season": "2024",
@@ -28,7 +28,7 @@ const statsLeadersHappyBody = `{
     }]
   }]
 }`
-
+//
 func TestClient_StatsLeaders(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -106,7 +106,7 @@ func TestClient_StatsLeaders(t *testing.T) {
 			wantErr:    "statsLeaders",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -126,10 +126,10 @@ func TestClient_StatsLeaders(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			sl, err := client.StatsLeaders(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

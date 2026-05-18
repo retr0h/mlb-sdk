@@ -1,29 +1,29 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 // TeamQuery refines a single-team lookup. The teamId path parameter is
 // taken as a method argument; everything in this struct is optional.
 type TeamQuery struct {
 	// Season constrains the team metadata to a specific season (some fields
 	// — venue, league context — vary year-over-year).
 	Season int
-
+//
 	// SportID restricts to a sport (1 = MLB, 11 = AAA, …). Rarely needed
 	// for /teams/{id} because the id is globally unique, but accepted.
 	SportID int
-
+//
 	// Hydrate is a comma-separated hydrate string. Common values for this
 	// endpoint: "league", "division", "sport", "springLeague", "venue".
 	// Without hydration, sub-objects carry only id/name/link.
 	Hydrate string
-
+//
 	// Fields restricts the response to a comma-separated field projection.
 	Fields string
 }
-
+//
 // TeamInfo is the rich team record returned by /api/v1/teams/{teamId} and
 // /api/v1/teams. Sub-objects (League, Division, Sport, SpringLeague, Venue)
 // only carry id/name/link until the request hydrates the matching key —
@@ -54,7 +54,7 @@ type TeamInfo struct {
 	Active          bool
 	AllStarStatus   string
 }
-
+//
 // LeagueInfo is the rich league record used both by /api/v1/league and as a
 // nested object in /api/v1/teams responses. Most fields are zero until the
 // API hydrates the league sub-object — embedded references typically only

@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 // StatsLeadersQuery filters a stat-leaders lookup. LeaderCategories is
 // required (toddrob99: required_params=[["leaderCategories"]]).
 type StatsLeadersQuery struct {
@@ -19,12 +19,12 @@ type StatsLeadersQuery struct {
 	Limit            int
 	Fields           string
 }
-
+//
 // StatsLeaders is the typed view of /api/v1/stats/leaders.
 type StatsLeaders struct {
 	LeagueLeaders []LeaderCategory
 }
-
+//
 // LeaderCategory is one stat-category block (e.g. homeRuns).
 type LeaderCategory struct {
 	LeaderCategory string
@@ -34,7 +34,7 @@ type LeaderCategory struct {
 	TotalSplits    int
 	Leaders        []LeaderEntry
 }
-
+//
 // LeaderEntry is one leader row.
 type LeaderEntry struct {
 	Rank   int

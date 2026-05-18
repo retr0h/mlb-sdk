@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // JobsQuery filters a jobs lookup. JobType is required.
 type JobsQuery struct {
 	JobType string // required: "UMPR", "SCOR", "DCST", …
@@ -18,7 +18,7 @@ type JobsQuery struct {
 	Date    string
 	Fields  string
 }
-
+//
 // Jobs fetches staff by job type. q.JobType is required.
 func (c *Client) Jobs(ctx context.Context, q JobsQuery) (*Staff, error) {
 	if q.JobType == "" {
@@ -34,7 +34,7 @@ func (c *Client) Jobs(ctx context.Context, q JobsQuery) (*Staff, error) {
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetJobsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: jobs: %w", err)
@@ -47,14 +47,14 @@ func (c *Client) Jobs(ctx context.Context, q JobsQuery) (*Staff, error) {
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 // DatacastersQuery filters a datacasters lookup.
 type DatacastersQuery struct {
 	SportID int
 	Date    string
 	Fields  string
 }
-
+//
 // Datacasters fetches the datacaster roster.
 func (c *Client) Datacasters(ctx context.Context, q DatacastersQuery) (*Staff, error) {
 	params := &gen.GetJobsDatacastersParams{}
@@ -67,7 +67,7 @@ func (c *Client) Datacasters(ctx context.Context, q DatacastersQuery) (*Staff, e
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetJobsDatacastersWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: datacasters: %w", err)
@@ -80,13 +80,13 @@ func (c *Client) Datacasters(ctx context.Context, q DatacastersQuery) (*Staff, e
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 // OfficialScorersQuery filters an official-scorers lookup.
 type OfficialScorersQuery struct {
 	Timecode string
 	Fields   string
 }
-
+//
 // OfficialScorers fetches the official scorer roster.
 func (c *Client) OfficialScorers(ctx context.Context, q OfficialScorersQuery) (*Staff, error) {
 	params := &gen.GetJobsOfficialScorersParams{}
@@ -96,7 +96,7 @@ func (c *Client) OfficialScorers(ctx context.Context, q OfficialScorersQuery) (*
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetJobsOfficialScorersWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: officialScorers: %w", err)
@@ -109,13 +109,13 @@ func (c *Client) OfficialScorers(ctx context.Context, q OfficialScorersQuery) (*
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 // PeopleChangesQuery filters a people-changes lookup.
 type PeopleChangesQuery struct {
 	UpdatedSince string
 	Fields       string
 }
-
+//
 // PeopleChanges fetches recently changed person records.
 func (c *Client) PeopleChanges(ctx context.Context, q PeopleChangesQuery) ([]PersonDetail, error) {
 	params := &gen.GetPeopleChangesParams{}
@@ -125,7 +125,7 @@ func (c *Client) PeopleChanges(ctx context.Context, q PeopleChangesQuery) ([]Per
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetPeopleChangesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: peopleChanges: %w", err)

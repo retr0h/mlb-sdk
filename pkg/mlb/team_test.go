@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const teamHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "teams": [{
@@ -63,7 +63,7 @@ const teamHappyBody = `{
     }
   }]
 }`
-
+//
 func TestClient_Team(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -152,7 +152,7 @@ func TestClient_Team(t *testing.T) {
 			wantErr:    "team",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -172,10 +172,10 @@ func TestClient_Team(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			ti, err := client.Team(context.Background(), c.teamID, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)
@@ -210,7 +210,7 @@ func TestClient_Team(t *testing.T) {
 			if !c.wantHydrated {
 				return
 			}
-
+//
 			// Verify the full field-promotion audit on the hydrated row.
 			if ti.ID != 119 || ti.Link != "/api/v1/teams/119" ||
 				ti.Season != 2026 || ti.AllStarStatus != "N" || !ti.Active {

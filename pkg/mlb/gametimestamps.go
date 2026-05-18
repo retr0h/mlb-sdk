@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // GameTimestamps fetches the live-feed timestamps for a game.
 //
 // Example:
@@ -30,7 +30,7 @@ func (c *Client) GameTimestamps(ctx context.Context, gamePk int) ([]string, erro
 	}
 	return timestampsFromGen(resp.JSON200), nil
 }
-
+//
 // GameColorTimestamps fetches the color-feed timestamps for a game.
 func (c *Client) GameColorTimestamps(ctx context.Context, gamePk int) ([]string, error) {
 	resp, err := c.raw.GetGameColorTimestampsWithResponse(ctx, gamePk)
@@ -48,7 +48,7 @@ func (c *Client) GameColorTimestamps(ctx context.Context, gamePk int) ([]string,
 	}
 	return timestampsFromGen(resp.JSON200), nil
 }
-
+//
 func timestampsFromGen(r *gen.TimestampsResponse) []string {
 	if r == nil || r.Timestamps == nil {
 		return nil

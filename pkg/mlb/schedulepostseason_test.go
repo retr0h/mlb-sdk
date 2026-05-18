@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_SchedulePostseason(t *testing.T) {
 	body := `{"dates":[{"date":"2024-10-01","games":[{"gamePk":1}]}]}`
 	cases := []struct {
@@ -80,7 +80,7 @@ func TestClient_SchedulePostseason(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_SchedulePostseasonTuneIn(t *testing.T) {
 	body := `{"dates":[{"date":"2024-10-01","games":[{"gamePk":2}]}]}`
 	cases := []struct {

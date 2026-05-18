@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Venue fetches a single venue by id. The MLB API's `/api/v1/venues` endpoint
 // also supports a comma-separated `venueIds` query parameter, but this SDK
 // wraps the path-based single-object lookup form. Hydrate "location",
@@ -32,7 +32,7 @@ func (c *Client) Venue(ctx context.Context, venueID int, q VenueQuery) (*Venue, 
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetVenueWithResponse(ctx, venueID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: venue: %w", err)
@@ -49,7 +49,7 @@ func (c *Client) Venue(ctx context.Context, venueID int, q VenueQuery) (*Venue, 
 	}
 	return v, nil
 }
-
+//
 // venueFromResponse picks the first (and typically only) venue from the
 // generated response. Returns nil when the venues slice is empty — the
 // caller maps that to ErrNotFound.
@@ -60,7 +60,7 @@ func venueFromResponse(r *gen.VenueResponse) *Venue {
 	v := venueFromGen((*r.Venues)[0])
 	return &v
 }
-
+//
 func venueFromGen(v gen.Venue) Venue {
 	out := Venue{}
 	if v.Id != nil {
@@ -89,7 +89,7 @@ func venueFromGen(v gen.Venue) Venue {
 	}
 	return out
 }
-
+//
 func venueLocationFromGen(l gen.VenueLocation) VenueLocation {
 	out := VenueLocation{}
 	if l.Address1 != nil {
@@ -127,7 +127,7 @@ func venueLocationFromGen(l gen.VenueLocation) VenueLocation {
 	}
 	return out
 }
-
+//
 func venueCoordinatesFromGen(c gen.VenueCoordinates) VenueCoordinates {
 	out := VenueCoordinates{}
 	if c.Latitude != nil {
@@ -138,7 +138,7 @@ func venueCoordinatesFromGen(c gen.VenueCoordinates) VenueCoordinates {
 	}
 	return out
 }
-
+//
 func venueTimeZoneFromGen(t gen.VenueTimeZone) VenueTimeZone {
 	out := VenueTimeZone{}
 	if t.Tz != nil {
@@ -155,7 +155,7 @@ func venueTimeZoneFromGen(t gen.VenueTimeZone) VenueTimeZone {
 	}
 	return out
 }
-
+//
 func venueFieldInfoFromGen(f gen.VenueFieldInfo) VenueFieldInfo {
 	out := VenueFieldInfo{}
 	if f.Capacity != nil {

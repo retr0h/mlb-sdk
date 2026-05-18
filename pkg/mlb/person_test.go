@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const personHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "people": [{
@@ -46,7 +46,7 @@ const personHappyBody = `{
     "strikeZoneBottom": 1.7
   }]
 }`
-
+//
 func TestClient_Person(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -124,7 +124,7 @@ func TestClient_Person(t *testing.T) {
 			wantErr:    "person",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -144,10 +144,10 @@ func TestClient_Person(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			p, err := client.Person(context.Background(), c.personID, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)
@@ -219,7 +219,7 @@ func TestClient_Person(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_People(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -291,7 +291,7 @@ func TestClient_People(t *testing.T) {
 			wantErr:    "people",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -311,10 +311,10 @@ func TestClient_People(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			pp, err := client.People(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

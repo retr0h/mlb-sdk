@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // HighLow prints season high/low records. Run with:
 //
 //	go run ./examples/highlow   # top HR leaders 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	hl, err := c.HighLow(context.Background(), "player", mlb.HighLowQuery{

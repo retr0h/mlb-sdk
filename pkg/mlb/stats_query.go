@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // StatsQuery filters a league-wide stats lookup. Stats and Group are required.
 type StatsQuery struct {
 	Stats      string // required: "season", "career", …
@@ -33,7 +33,7 @@ type StatsQuery struct {
 	Hydrate    string
 	Fields     string
 }
-
+//
 // Stats fetches league-wide individual player stats. q.Stats and q.Group
 // are required.
 func (c *Client) Stats(ctx context.Context, q StatsQuery) (*TeamStats, error) {
@@ -95,7 +95,7 @@ func (c *Client) Stats(ctx context.Context, q StatsQuery) (*TeamStats, error) {
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetStatsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: stats: %w", err)
@@ -108,7 +108,7 @@ func (c *Client) Stats(ctx context.Context, q StatsQuery) (*TeamStats, error) {
 	}
 	return teamStatsFromGen(resp.JSON200), nil
 }
-
+//
 // SchedulePostseasonSeries fetches postseason series data.
 func (c *Client) SchedulePostseasonSeries(
 	ctx context.Context,
@@ -133,7 +133,7 @@ func (c *Client) SchedulePostseasonSeries(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSchedulePostseasonSeriesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: schedulePostseasonSeries: %w", err)
@@ -159,13 +159,13 @@ func (c *Client) SchedulePostseasonSeries(
 	}
 	return games, nil
 }
-
+//
 // AllStarBallotQuery filters an All-Star ballot lookup. Season is required.
 type AllStarBallotQuery struct {
 	Season int // required
 	Fields string
 }
-
+//
 // AllStarBallot fetches the All-Star ballot for a league.
 func (c *Client) AllStarBallot(
 	ctx context.Context,
@@ -191,7 +191,7 @@ func (c *Client) AllStarBallot(
 	}
 	return peopleFromGen(resp.JSON200), nil
 }
-
+//
 // AllStarFinalVote fetches the All-Star final vote for a league.
 func (c *Client) AllStarFinalVote(
 	ctx context.Context,
@@ -217,7 +217,7 @@ func (c *Client) AllStarFinalVote(
 	}
 	return peopleFromGen(resp.JSON200), nil
 }
-
+//
 // AllStarWriteIns fetches the All-Star write-in votes for a league.
 func (c *Client) AllStarWriteIns(
 	ctx context.Context,

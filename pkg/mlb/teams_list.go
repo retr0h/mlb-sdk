@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Teams lists teams the MLB API tracks. An empty query returns every team
 // across every sport; filter via TeamsQuery.
 //
@@ -46,7 +46,7 @@ func (c *Client) Teams(ctx context.Context, q TeamsQuery) (*Teams, error) {
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teams: %w", err)
@@ -59,7 +59,7 @@ func (c *Client) Teams(ctx context.Context, q TeamsQuery) (*Teams, error) {
 	}
 	return teamsFromGen(resp.JSON200), nil
 }
-
+//
 func teamsFromGen(r *gen.TeamsResponse) *Teams {
 	out := &Teams{}
 	if r == nil || r.Teams == nil {

@@ -1,18 +1,18 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const standingsDateFmt = "2006-01-02"
-
+//
 // Standings fetches league standings. q.League is required; 404 is unlikely
 // for this endpoint (the API responds with an empty `records` slice when
 // nothing matches), but handled below for safety.
@@ -44,7 +44,7 @@ func (c *Client) Standings(ctx context.Context, q StandingsQuery) (*Standings, e
 	if q.Hydrate != "" {
 		params.Hydrate = ptr(q.Hydrate)
 	}
-
+//
 	resp, err := c.raw.GetStandingsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: standings: %w", err)
@@ -57,7 +57,7 @@ func (c *Client) Standings(ctx context.Context, q StandingsQuery) (*Standings, e
 	}
 	return standingsFromGen(resp.JSON200), nil
 }
-
+//
 func standingsFromGen(r *gen.StandingsResponse) *Standings {
 	out := &Standings{}
 	if r == nil || r.Records == nil {
@@ -69,7 +69,7 @@ func standingsFromGen(r *gen.StandingsResponse) *Standings {
 	}
 	return out
 }
-
+//
 func divisionStandingsFromGen(d gen.DivisionStandings) DivisionStandings {
 	out := DivisionStandings{}
 	if d.StandingsType != nil {
@@ -95,7 +95,7 @@ func divisionStandingsFromGen(d gen.DivisionStandings) DivisionStandings {
 	}
 	return out
 }
-
+//
 func teamRecordFromGen(t gen.TeamRecord) TeamRecord {
 	out := TeamRecord{}
 	if t.Team != nil {
@@ -171,7 +171,7 @@ func teamRecordFromGen(t gen.TeamRecord) TeamRecord {
 	}
 	return out
 }
-
+//
 func refFromGen(r *gen.Ref) Ref {
 	out := Ref{}
 	if r.Id != nil {
@@ -182,7 +182,7 @@ func refFromGen(r *gen.Ref) Ref {
 	}
 	return out
 }
-
+//
 func streakFromGen(s gen.Streak) Streak {
 	out := Streak{}
 	if s.StreakCode != nil {

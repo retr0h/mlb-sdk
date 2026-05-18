@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // StatsStreaksQuery filters a stat-streaks lookup. All five fields are
 // required (toddrob99: required_params=[["streakType", "streakSpan",
 // "season", "sportId", "limit"]]).
@@ -24,7 +24,7 @@ type StatsStreaksQuery struct {
 	Hydrate    string
 	Fields     string
 }
-
+//
 // StatsStreaks fetches stat streak data. All five required fields must be
 // set. Note: this endpoint may return 404 during the offseason.
 func (c *Client) StatsStreaks(
@@ -54,7 +54,7 @@ func (c *Client) StatsStreaks(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetStatsStreaksWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: statsStreaks: %w", err)

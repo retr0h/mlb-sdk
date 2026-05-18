@@ -1,23 +1,23 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // SportsPlayersQuery filters a sports-players lookup. Season is required.
 type SportsPlayersQuery struct {
 	Season   int // required
 	GameType string
 	Fields   string
 }
-
+//
 // SportsPlayers fetches all players for a sport + season.
 func (c *Client) SportsPlayers(
 	ctx context.Context,
@@ -34,7 +34,7 @@ func (c *Client) SportsPlayers(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSportsPlayersWithResponse(ctx, sportID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: sportsPlayers: %w", err)

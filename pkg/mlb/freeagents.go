@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // FreeAgents fetches free-agent signings and declarations.
 //
 // Example:
@@ -33,7 +33,7 @@ func (c *Client) FreeAgents(ctx context.Context, q FreeAgentsQuery) (*FreeAgents
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetFreeAgentsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: freeAgents: %w", err)
@@ -46,7 +46,7 @@ func (c *Client) FreeAgents(ctx context.Context, q FreeAgentsQuery) (*FreeAgents
 	}
 	return freeAgentsFromGen(resp.JSON200), nil
 }
-
+//
 func freeAgentsFromGen(r *gen.FreeAgentsResponse) *FreeAgents {
 	out := &FreeAgents{}
 	if r == nil || r.FreeAgents == nil {
@@ -58,7 +58,7 @@ func freeAgentsFromGen(r *gen.FreeAgentsResponse) *FreeAgents {
 	}
 	return out
 }
-
+//
 func freeAgentFromGen(f gen.FreeAgent) FreeAgent {
 	out := FreeAgent{}
 	if f.Player != nil {

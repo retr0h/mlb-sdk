@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 )
-
+//
 const standingsHappyBody = `{
   "records": [{
     "standingsType": "regularSeason",
@@ -50,14 +50,14 @@ const standingsHappyBody = `{
     ]
   }]
 }`
-
+//
 func TestStandings_Division(t *testing.T) {
 	st := standingsFromGen(nil) // nil → empty Standings
 	full := &Standings{Records: []DivisionStandings{
 		{Division: Ref{ID: 200}},
 		{Division: Ref{ID: 204}},
 	}}
-
+//
 	cases := []struct {
 		name       string
 		standings  *Standings
@@ -87,7 +87,7 @@ func TestStandings_Division(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestDivisionStandings_Team(t *testing.T) {
 	d := &DivisionStandings{TeamRecords: []TeamRecord{
 		{Team: TeamRef{ID: LAD, Name: "Los Angeles Dodgers"}},
@@ -117,7 +117,7 @@ func TestDivisionStandings_Team(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Standings(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -197,7 +197,7 @@ func TestClient_Standings(t *testing.T) {
 			wantErr:    "standings",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -217,10 +217,10 @@ func TestClient_Standings(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			st, err := client.Standings(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

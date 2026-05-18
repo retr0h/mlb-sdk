@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // TeamsStatsQuery filters a league-wide teams-stats lookup. Season, Group,
 // and Stats are all required.
 type TeamsStatsQuery struct {
@@ -25,7 +25,7 @@ type TeamsStatsQuery struct {
 	EndDate   string
 	Fields    string
 }
-
+//
 // TeamsStats fetches league-wide aggregated team stats.
 func (c *Client) TeamsStats(ctx context.Context, q TeamsStatsQuery) (*TeamStats, error) {
 	if q.Season == 0 || q.Group == "" || q.Stats == "" {
@@ -60,7 +60,7 @@ func (c *Client) TeamsStats(ctx context.Context, q TeamsStatsQuery) (*TeamStats,
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamsStatsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teamsStats: %w", err)

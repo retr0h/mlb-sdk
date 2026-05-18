@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Leagues fetches league metadata. One of q.SportID or q.LeagueIDs must be
 // set; the MLB API rejects the call otherwise (toddrob99 encodes this as
 // `required_params: [["sportId"], ["leagueIds"]]`). Each LeagueInfo's
@@ -29,7 +29,7 @@ func (c *Client) Leagues(ctx context.Context, q LeaguesQuery) (*Leagues, error) 
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	params := &gen.GetLeaguesParams{}
 	if q.SportID != 0 {
 		params.SportId = ptr(q.SportID)
@@ -43,7 +43,7 @@ func (c *Client) Leagues(ctx context.Context, q LeaguesQuery) (*Leagues, error) 
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetLeaguesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: leagues: %w", err)
@@ -56,7 +56,7 @@ func (c *Client) Leagues(ctx context.Context, q LeaguesQuery) (*Leagues, error) 
 	}
 	return leaguesFromGen(resp.JSON200), nil
 }
-
+//
 func leaguesFromGen(r *gen.LeaguesResponse) *Leagues {
 	out := &Leagues{}
 	if r == nil || r.Leagues == nil {

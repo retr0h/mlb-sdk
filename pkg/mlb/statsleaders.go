@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // StatsLeaders fetches league stat leaders. q.LeaderCategories is required
 // (toddrob99: required_params=[["leaderCategories"]]).
 //
@@ -34,7 +34,7 @@ func (c *Client) StatsLeaders(
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	params := &gen.GetStatsLeadersParams{LeaderCategories: q.LeaderCategories}
 	if q.Season != 0 {
 		params.Season = ptr(q.Season)
@@ -66,7 +66,7 @@ func (c *Client) StatsLeaders(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetStatsLeadersWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: statsLeaders: %w", err)
@@ -79,7 +79,7 @@ func (c *Client) StatsLeaders(
 	}
 	return statsLeadersFromGen(resp.JSON200), nil
 }
-
+//
 func statsLeadersFromGen(r *gen.StatsLeadersResponse) *StatsLeaders {
 	out := &StatsLeaders{}
 	if r == nil || r.LeagueLeaders == nil {
@@ -91,7 +91,7 @@ func statsLeadersFromGen(r *gen.StatsLeadersResponse) *StatsLeaders {
 	}
 	return out
 }
-
+//
 func leaderCategoryFromGen(c gen.LeaderCategory) LeaderCategory {
 	out := LeaderCategory{}
 	if c.LeaderCategory != nil {
@@ -117,7 +117,7 @@ func leaderCategoryFromGen(c gen.LeaderCategory) LeaderCategory {
 	}
 	return out
 }
-
+//
 func leaderEntryFromGen(l gen.LeaderEntry) LeaderEntry {
 	out := LeaderEntry{}
 	if l.Rank != nil {

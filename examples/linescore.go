@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Linescore prints the inning-by-inning linescore for a game. Run with:
 //
 //	go run ./examples/linescore [GAME_PK]   # default: 745455
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	gamePk := 745455
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		gamePk = n
 	}
-
+//
 	c := mlb.New()
 	ls, err := c.Linescore(context.Background(), gamePk, mlb.LinescoreQuery{})
 	if err != nil {

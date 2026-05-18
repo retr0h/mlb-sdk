@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // HighLow fetches season high/low records. orgType is one of: player, team,
 // division, league, sport, types. q.SortStat and q.Season must both be set
 // (toddrob99: required_params=[["sortStat", "season"]]).
@@ -32,7 +32,7 @@ func (c *Client) HighLow(ctx context.Context, orgType string, q HighLowQuery) (*
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	params := &gen.GetHighLowParams{}
 	params.SortStat = ptr(q.SortStat)
 	params.Season = ptr(q.Season)
@@ -57,7 +57,7 @@ func (c *Client) HighLow(ctx context.Context, orgType string, q HighLowQuery) (*
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetHighLowWithResponse(ctx, orgType, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: highLow: %w", err)
@@ -70,7 +70,7 @@ func (c *Client) HighLow(ctx context.Context, orgType string, q HighLowQuery) (*
 	}
 	return highLowFromGen(resp.JSON200), nil
 }
-
+//
 func highLowFromGen(r *gen.HighLowResponse) *HighLow {
 	out := &HighLow{}
 	if r == nil || r.HighLowResults == nil {
@@ -82,7 +82,7 @@ func highLowFromGen(r *gen.HighLowResponse) *HighLow {
 	}
 	return out
 }
-
+//
 func highLowGroupFromGen(g gen.HighLowGroup) HighLowGroup {
 	out := HighLowGroup{}
 	if g.Group != nil && g.Group.DisplayName != nil {
@@ -99,7 +99,7 @@ func highLowGroupFromGen(g gen.HighLowGroup) HighLowGroup {
 	}
 	return out
 }
-
+//
 func highLowSplitFromGen(s gen.HighLowSplit) HighLowSplit {
 	out := HighLowSplit{}
 	if s.Season != nil {

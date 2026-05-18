@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const gamePaceHappyBody = `{
   "sports": [{
     "season": "2024",
@@ -40,7 +40,7 @@ const gamePaceHappyBody = `{
     "timePer7InnGameWithoutExtraInn": "02:05:30"
   }]
 }`
-
+//
 func TestClient_GamePace(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -126,7 +126,7 @@ func TestClient_GamePace(t *testing.T) {
 			wantErr:    "gamePace",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -146,10 +146,10 @@ func TestClient_GamePace(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			gp, err := client.GamePace(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // TeamLeadersQuery filters a team-leaders lookup. LeaderCategories and
 // Season are required.
 type TeamLeadersQuery struct {
@@ -21,7 +21,7 @@ type TeamLeadersQuery struct {
 	Limit            int
 	Fields           string
 }
-
+//
 // TeamLeaders fetches stat leaders for a team.
 func (c *Client) TeamLeaders(
 	ctx context.Context,
@@ -50,7 +50,7 @@ func (c *Client) TeamLeaders(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamLeadersWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teamLeaders: %w", err)
@@ -63,7 +63,7 @@ func (c *Client) TeamLeaders(
 	}
 	return teamLeadersFromGen(resp.JSON200), nil
 }
-
+//
 func teamLeadersFromGen(r *gen.TeamLeadersResponse) *StatsLeaders {
 	out := &StatsLeaders{}
 	if r == nil || r.TeamLeaders == nil {

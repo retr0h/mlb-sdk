@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_GameTimestamps(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -81,7 +81,7 @@ func TestClient_GameTimestamps(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameColorTimestamps(t *testing.T) {
 	cases := []struct {
 		name       string

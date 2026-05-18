@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // PersonGameStatsQuery refines a person-game-stats lookup.
 type PersonGameStatsQuery struct {
 	Fields string
 }
-
+//
 // PersonGameStats fetches a player's stats for a specific game.
 func (c *Client) PersonGameStats(
 	ctx context.Context,
@@ -27,7 +27,7 @@ func (c *Client) PersonGameStats(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetPersonGameStatsWithResponse(ctx, personID, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: personGameStats: %w", err)

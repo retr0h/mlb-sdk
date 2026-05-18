@@ -1,22 +1,22 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // GameColorQuery refines a color-feed lookup.
 type GameColorQuery struct {
 	Timecode string
 	Fields   string
 }
-
+//
 // GameColor fetches the color commentary feed. The response is opaque
 // (map[string]any) because the full response shape is too large to model.
 func (c *Client) GameColor(
@@ -31,7 +31,7 @@ func (c *Client) GameColor(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetGameColorWithResponse(ctx, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: gameColor: %w", err)
@@ -44,13 +44,13 @@ func (c *Client) GameColor(
 	}
 	return map[string]any(*resp.JSON200), nil
 }
-
+//
 // GameColorDiffQuery refines a color-diff lookup. Both timecodes required.
 type GameColorDiffQuery struct {
 	StartTimecode string // required
 	EndTimecode   string // required
 }
-
+//
 // GameColorDiff fetches the color-feed diff patch between two timecodes.
 func (c *Client) GameColorDiff(
 	ctx context.Context,
@@ -81,13 +81,13 @@ func (c *Client) GameColorDiff(
 	copy(out, *resp.JSON200)
 	return out, nil
 }
-
+//
 // GameDiffQuery refines a live-feed diff lookup. Both timecodes required.
 type GameDiffQuery struct {
 	StartTimecode string // required
 	EndTimecode   string // required
 }
-
+//
 // GameDiff fetches the live-feed diff patch between two timecodes.
 func (c *Client) GameDiff(
 	ctx context.Context,
@@ -118,12 +118,12 @@ func (c *Client) GameDiff(
 	copy(out, *resp.JSON200)
 	return out, nil
 }
-
+//
 // GameContentQuery refines a game-content lookup.
 type GameContentQuery struct {
 	HighlightLimit int
 }
-
+//
 // GameContent fetches game content (highlights, editorial). The response
 // is opaque because the full shape is deeply nested.
 func (c *Client) GameContent(
@@ -135,7 +135,7 @@ func (c *Client) GameContent(
 	if q.HighlightLimit != 0 {
 		params.HighlightLimit = ptr(q.HighlightLimit)
 	}
-
+//
 	resp, err := c.raw.GetGameContentWithResponse(ctx, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: gameContent: %w", err)
@@ -148,13 +148,13 @@ func (c *Client) GameContent(
 	}
 	return map[string]any(*resp.JSON200), nil
 }
-
+//
 // GameWinProbabilityQuery refines a win-probability lookup.
 type GameWinProbabilityQuery struct {
 	Timecode string
 	Fields   string
 }
-
+//
 // GameWinProbability fetches win probability per at-bat. Returns opaque
 // maps because each entry is a full play object with probability fields.
 func (c *Client) GameWinProbability(
@@ -169,7 +169,7 @@ func (c *Client) GameWinProbability(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetGameWinProbabilityWithResponse(ctx, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: gameWinProbability: %w", err)
@@ -184,7 +184,7 @@ func (c *Client) GameWinProbability(
 	copy(out, *resp.JSON200)
 	return out, nil
 }
-
+//
 // Meta fetches API metadata (gameTypes, statGroups, etc.). The metaType
 // path parameter determines the resource — e.g. "gameTypes", "statGroups".
 func (c *Client) Meta(ctx context.Context, metaType string) ([]map[string]any, error) {

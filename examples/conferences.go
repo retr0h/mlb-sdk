@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Conferences prints the conferences the MLB API tracks. Run with:
 //
 //	go run ./examples/conferences
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	co, err := c.Conferences(context.Background(), mlb.ConferencesQuery{})

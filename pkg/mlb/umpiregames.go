@@ -1,22 +1,22 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // UmpireGamesQuery filters an umpire-games lookup. Season is required.
 type UmpireGamesQuery struct {
 	Season int // required
 	Fields string
 }
-
+//
 // UmpireGames fetches games assigned to an umpire for a season.
 func (c *Client) UmpireGames(
 	ctx context.Context,
@@ -30,7 +30,7 @@ func (c *Client) UmpireGames(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetUmpireGamesWithResponse(ctx, umpireID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: umpireGames: %w", err)

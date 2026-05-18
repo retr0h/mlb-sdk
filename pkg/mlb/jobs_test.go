@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_Jobs(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -117,7 +117,7 @@ func TestClient_Jobs(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Datacasters(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -176,7 +176,7 @@ func TestClient_Datacasters(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_OfficialScorers(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -235,7 +235,7 @@ func TestClient_OfficialScorers(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_PeopleChanges(t *testing.T) {
 	cases := []struct {
 		name       string

@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 )
-
+//
 const seasonsHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "seasons": [{
@@ -41,14 +41,14 @@ const seasonsHappyBody = `{
     "qualifierOutsPitched": 3.0
   }]
 }`
-
+//
 const seasonsAllHappyBody = `{
   "seasons": [
     {"seasonId": "1876", "hasWildcard": false, "regularSeasonStartDate": "1876-04-22"},
     {"seasonId": "2024", "hasWildcard": true,  "regularSeasonStartDate": "2024-03-20"}
   ]
 }`
-
+//
 func TestSeasons_Season(t *testing.T) {
 	empty := seasonsFromGen(nil)
 	full := &Seasons{Seasons: []Season{
@@ -78,7 +78,7 @@ func TestSeasons_Season(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestParseSeasonDate(t *testing.T) {
 	s := "2024-03-20"
 	empty := ""
@@ -110,7 +110,7 @@ func TestParseSeasonDate(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Seasons(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -273,7 +273,7 @@ func TestClient_Seasons(t *testing.T) {
 			wantErr:    "seasons",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -293,10 +293,10 @@ func TestClient_Seasons(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			s, err := client.Seasons(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)
@@ -423,5 +423,5 @@ func TestClient_Seasons(t *testing.T) {
 		})
 	}
 }
-
+//
 func boolPtr(b bool) *bool { return &b }

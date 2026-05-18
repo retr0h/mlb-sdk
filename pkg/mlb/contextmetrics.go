@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // ContextMetrics fetches win probability and sac-fly probability for a game.
 //
 // Example:
@@ -29,7 +29,7 @@ func (c *Client) ContextMetrics(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetContextMetricsWithResponse(ctx, gamePk, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: contextMetrics: %w", err)
@@ -42,7 +42,7 @@ func (c *Client) ContextMetrics(
 	}
 	return contextMetricsFromGen(resp.JSON200), nil
 }
-
+//
 func contextMetricsFromGen(r *gen.ContextMetricsResponse) *ContextMetrics {
 	out := &ContextMetrics{}
 	if r == nil {

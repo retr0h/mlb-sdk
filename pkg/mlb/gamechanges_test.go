@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,10 +12,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const gameChangesHappyBody = `{
   "totalItems": 1, "totalEvents": 0, "totalGames": 1, "totalGamesInProgress": 0,
   "dates": [{
@@ -24,7 +24,7 @@ const gameChangesHappyBody = `{
                "status": {"abstractGameState": "Final"}}]
   }]
 }`
-
+//
 func TestGameChangesFromGen(t *testing.T) {
 	cases := []struct {
 		name string
@@ -42,7 +42,7 @@ func TestGameChangesFromGen(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameChanges(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -111,7 +111,7 @@ func TestClient_GameChanges(t *testing.T) {
 			wantErr:    "gameChanges",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -131,10 +131,10 @@ func TestClient_GameChanges(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			gc, err := client.GameChanges(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

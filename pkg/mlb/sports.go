@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Sports lists the sports tracked by the MLB Stats API. An empty query
 // returns every sport (MLB plus affiliated minor / college / independent
 // leagues). Filter to a single sport via q.SportID.
@@ -29,7 +29,7 @@ func (c *Client) Sports(ctx context.Context, q SportsQuery) (*Sports, error) {
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSportsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: sports: %w", err)
@@ -42,7 +42,7 @@ func (c *Client) Sports(ctx context.Context, q SportsQuery) (*Sports, error) {
 	}
 	return sportsFromGen(resp.JSON200), nil
 }
-
+//
 func sportsFromGen(r *gen.SportsResponse) *Sports {
 	out := &Sports{}
 	if r == nil || r.Sports == nil {
@@ -54,7 +54,7 @@ func sportsFromGen(r *gen.SportsResponse) *Sports {
 	}
 	return out
 }
-
+//
 func sportFromGen(s gen.Sport) Sport {
 	out := Sport{}
 	if s.Id != nil {

@@ -1,11 +1,11 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import "testing"
-
+//
 func TestLeagueID_Int(t *testing.T) {
 	cases := []struct {
 		name string
@@ -26,7 +26,7 @@ func TestLeagueID_Int(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestLeagueID_String(t *testing.T) {
 	cases := []struct {
 		name string
