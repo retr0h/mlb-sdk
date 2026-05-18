@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Umpires prints the MLB umpire roster. Run with:
 //
 //	go run ./examples/umpires
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	s, err := c.Umpires(context.Background(), mlb.UmpiresQuery{SportID: 1})

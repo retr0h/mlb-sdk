@@ -1,18 +1,18 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const attendanceDateFmt = "2006-01-02"
-
+//
 // Attendance fetches attendance records. One of q.TeamID, q.LeagueID, or
 // q.LeagueListID must be set; the MLB API rejects the call otherwise
 // (toddrob99: required_params=[["teamId"], ["leagueId"], ["leagueListId"]]).
@@ -31,7 +31,7 @@ func (c *Client) Attendance(ctx context.Context, q AttendanceQuery) (*Attendance
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	params := &gen.GetAttendanceParams{}
 	if q.TeamID != 0 {
 		params.TeamId = ptr(q.TeamID)
@@ -54,7 +54,7 @@ func (c *Client) Attendance(ctx context.Context, q AttendanceQuery) (*Attendance
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetAttendanceWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: attendance: %w", err)
@@ -67,7 +67,7 @@ func (c *Client) Attendance(ctx context.Context, q AttendanceQuery) (*Attendance
 	}
 	return attendanceFromGen(resp.JSON200), nil
 }
-
+//
 func attendanceFromGen(r *gen.AttendanceResponse) *Attendance {
 	out := &Attendance{}
 	if r == nil {
@@ -84,7 +84,7 @@ func attendanceFromGen(r *gen.AttendanceResponse) *Attendance {
 	}
 	return out
 }
-
+//
 func attendanceRecordFromGen(r gen.AttendanceRecord) AttendanceRecord {
 	out := AttendanceRecord{}
 	if r.OpeningsTotal != nil {
@@ -163,7 +163,7 @@ func attendanceRecordFromGen(r gen.AttendanceRecord) AttendanceRecord {
 	}
 	return out
 }
-
+//
 func attendanceGameRefFromGen(g gen.AttendanceGameRef) AttendanceGameRef {
 	out := AttendanceGameRef{}
 	if g.GamePk != nil {
@@ -180,7 +180,7 @@ func attendanceGameRefFromGen(g gen.AttendanceGameRef) AttendanceGameRef {
 	}
 	return out
 }
-
+//
 func gameTypeRefFromGen(g gen.GameTypeRef) GameTypeRef {
 	out := GameTypeRef{}
 	if g.Id != nil {
@@ -191,7 +191,7 @@ func gameTypeRefFromGen(g gen.GameTypeRef) GameTypeRef {
 	}
 	return out
 }
-
+//
 func attendanceAggregateTotalsFromGen(a gen.AttendanceAggregateTotals) AttendanceAggregateTotals {
 	out := AttendanceAggregateTotals{}
 	if a.OpeningsTotalAway != nil {

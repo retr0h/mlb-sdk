@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // TeamsAffiliatesQuery filters an affiliates lookup. TeamIDs is required.
 type TeamsAffiliatesQuery struct {
 	TeamIDs string // required, comma-separated
@@ -19,7 +19,7 @@ type TeamsAffiliatesQuery struct {
 	Hydrate string
 	Fields  string
 }
-
+//
 // TeamsHistoryQuery filters a teams-history lookup. TeamIDs is required.
 type TeamsHistoryQuery struct {
 	TeamIDs     string // required, comma-separated
@@ -27,7 +27,7 @@ type TeamsHistoryQuery struct {
 	EndSeason   int
 	Fields      string
 }
-
+//
 // TeamsAffiliates fetches affiliate teams for the given team ids.
 func (c *Client) TeamsAffiliates(
 	ctx context.Context,
@@ -49,7 +49,7 @@ func (c *Client) TeamsAffiliates(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamsAffiliatesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teamsAffiliates: %w", err)
@@ -62,7 +62,7 @@ func (c *Client) TeamsAffiliates(
 	}
 	return teamsFromGen(resp.JSON200), nil
 }
-
+//
 // TeamsHistory fetches historical team records for the given ids.
 func (c *Client) TeamsHistory(
 	ctx context.Context,
@@ -81,7 +81,7 @@ func (c *Client) TeamsHistory(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamsHistoryWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: teamsHistory: %w", err)
@@ -94,7 +94,7 @@ func (c *Client) TeamsHistory(
 	}
 	return teamsFromGen(resp.JSON200), nil
 }
-
+//
 // ScheduleTiedQuery filters a tied-games lookup. Season is required.
 type ScheduleTiedQuery struct {
 	Season    int // required
@@ -102,7 +102,7 @@ type ScheduleTiedQuery struct {
 	Hydrate   string
 	Fields    string
 }
-
+//
 // ScheduleTied fetches tied/suspended games for a season.
 func (c *Client) ScheduleTied(
 	ctx context.Context,
@@ -121,7 +121,7 @@ func (c *Client) ScheduleTied(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetScheduleTiedWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: scheduleTied: %w", err)

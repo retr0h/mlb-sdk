@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 // GamePaceQuery filters a game-pace lookup. Season is required (toddrob99:
 // required_params=[["season"]]).
 type GamePaceQuery struct {
@@ -20,7 +20,7 @@ type GamePaceQuery struct {
 	IncludeChildren bool
 	Fields          string
 }
-
+//
 // GamePace is the typed view of /api/v1/gamePace. Time fields are strings
 // in HH:MM:SS format as the API delivers them.
 type GamePace struct {

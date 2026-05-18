@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 )
-
+//
 const transactionsHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "transactions": [
@@ -39,12 +39,12 @@ const transactionsHappyBody = `{
     }
   ]
 }`
-
+//
 func TestClient_Transactions(t *testing.T) {
 	start := time.Date(2024, 7, 30, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2024, 7, 31, 0, 0, 0, 0, time.UTC)
 	on := time.Date(2024, 7, 30, 0, 0, 0, 0, time.UTC)
-
+//
 	cases := []struct {
 		name         string
 		query        TransactionsQuery
@@ -158,7 +158,7 @@ func TestClient_Transactions(t *testing.T) {
 			wantErr:    "transactions",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -178,10 +178,10 @@ func TestClient_Transactions(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			tx, err := client.Transactions(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Roster prints a team's active roster. Run with:
 //
 //	go run ./examples/roster [TEAM_ID] [SEASON]   # default: 119 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	teamID, year := 119, 2024
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		n, _ := strconv.Atoi(os.Args[2])
 		year = n
 	}
-
+//
 	c := mlb.New()
 	r, err := c.Roster(context.Background(), teamID, mlb.RosterQuery{
 		RosterType: "active",

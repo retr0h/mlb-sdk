@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // GameColorTimestamps prints the color-feed timestamps for a game. Run with:
 //
 //	go run ./examples/gamecolortimestamps [GAME_PK]   # default: 745455
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	gamePk := 745455
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		gamePk = n
 	}
-
+//
 	c := mlb.New()
 	ts, err := c.GameColorTimestamps(context.Background(), gamePk)
 	if err != nil {

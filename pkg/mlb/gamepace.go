@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // GamePace fetches pace-of-play statistics. q.Season is required (toddrob99:
 // required_params=[["season"]]).
 //
@@ -22,7 +22,7 @@ func (c *Client) GamePace(ctx context.Context, q GamePaceQuery) (*GamePace, erro
 	if q.Season == 0 {
 		return nil, fmt.Errorf("mlb: gamePace: %w: Season is required", ErrInvalidQuery)
 	}
-
+//
 	params := &gen.GetGamePaceParams{Season: q.Season}
 	if q.SportID != 0 {
 		params.SportId = ptr(q.SportID)
@@ -57,7 +57,7 @@ func (c *Client) GamePace(ctx context.Context, q GamePaceQuery) (*GamePace, erro
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetGamePaceWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: gamePace: %w", err)
@@ -74,7 +74,7 @@ func (c *Client) GamePace(ctx context.Context, q GamePaceQuery) (*GamePace, erro
 	}
 	return gp, nil
 }
-
+//
 func gamePaceFromResponse(r *gen.GamePaceResponse) *GamePace {
 	if r == nil || r.Sports == nil || len(*r.Sports) == 0 {
 		return nil
@@ -82,7 +82,7 @@ func gamePaceFromResponse(r *gen.GamePaceResponse) *GamePace {
 	gp := gamePaceFromGen((*r.Sports)[0])
 	return &gp
 }
-
+//
 func gamePaceFromGen(g gen.GamePaceData) GamePace {
 	out := GamePace{}
 	if g.Season != nil {

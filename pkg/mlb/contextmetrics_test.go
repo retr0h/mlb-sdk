@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,10 +12,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const contextMetricsHappyBody = `{
   "game": {"id": 745455, "link": "/api/v1.1/game/745455/feed/live"},
   "leftFieldSacFlyProbability": {},
@@ -24,7 +24,7 @@ const contextMetricsHappyBody = `{
   "homeWinProbability": 0.0,
   "awayWinProbability": 100.0
 }`
-
+//
 func TestContextMetricsFromGen(t *testing.T) {
 	cases := []struct {
 		name string
@@ -42,7 +42,7 @@ func TestContextMetricsFromGen(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_ContextMetrics(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -104,7 +104,7 @@ func TestClient_ContextMetrics(t *testing.T) {
 			wantErr:    "contextMetrics",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -124,10 +124,10 @@ func TestClient_ContextMetrics(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			cm, err := client.ContextMetrics(context.Background(), c.gamePk, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

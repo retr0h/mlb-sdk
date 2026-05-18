@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_TeamsStats(t *testing.T) {
 	body := `{"stats":[{"type":{"displayName":"season"},"group":{"displayName":"hitting"},"splits":[]}]}`
 	cases := []struct {

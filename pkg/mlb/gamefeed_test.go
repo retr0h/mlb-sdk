@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_GameColor(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -79,7 +79,7 @@ func TestClient_GameColor(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameColorDiff(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -149,7 +149,7 @@ func TestClient_GameColorDiff(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameDiff(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -219,7 +219,7 @@ func TestClient_GameDiff(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameContent(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -286,7 +286,7 @@ func TestClient_GameContent(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_GameWinProbability(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -352,7 +352,7 @@ func TestClient_GameWinProbability(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Meta(t *testing.T) {
 	cases := []struct {
 		name       string

@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Person prints a single MLB person's bio. Run with:
 //
 //	go run ./examples/person [PERSON_ID]   # default: 660271 (Ohtani)
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	id := 660271
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		id = n
 	}
-
+//
 	c := mlb.New()
 	p, err := c.Person(context.Background(), id, mlb.PersonQuery{})
 	if err != nil {

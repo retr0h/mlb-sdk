@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const conferencesHappyBody = `{
   "conferences": [{
     "id": 301, "name": "PCL American Conference",
@@ -23,7 +23,7 @@ const conferencesHappyBody = `{
     "sport":  {"id": 11,  "link": "/api/v1/sports/11"}
   }]
 }`
-
+//
 func TestConferences_Conference(t *testing.T) {
 	empty := conferencesFromGen(nil)
 	full := &Conferences{Conferences: []Conference{
@@ -49,7 +49,7 @@ func TestConferences_Conference(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Conferences(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -124,7 +124,7 @@ func TestClient_Conferences(t *testing.T) {
 			wantErr:    "conferences",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -144,10 +144,10 @@ func TestClient_Conferences(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			co, err := client.Conferences(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

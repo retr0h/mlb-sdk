@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_UmpireGames(t *testing.T) {
 	body := `{"dates":[{"date":"2024-09-07","games":[{"gamePk":745455}]}]}`
 	cases := []struct {

@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const freeAgentsHappyBody = `{
   "freeAgents": [{
     "player": {"id": 642715, "fullName": "Willy Adames", "link": "/api/v1/people/642715"},
@@ -25,7 +25,7 @@ const freeAgentsHappyBody = `{
     "position": {"code": "6", "name": "Shortstop", "type": "Infielder", "abbreviation": "SS"}
   }]
 }`
-
+//
 func TestClient_FreeAgents(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -96,7 +96,7 @@ func TestClient_FreeAgents(t *testing.T) {
 			wantErr:    "freeAgents",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -116,10 +116,10 @@ func TestClient_FreeAgents(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			fa, err := client.FreeAgents(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

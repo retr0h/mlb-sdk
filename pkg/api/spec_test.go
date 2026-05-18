@@ -1,14 +1,14 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package api
-
+//
 import (
 	"strings"
 	"testing"
 )
-
+//
 func TestOpenAPISpec(t *testing.T) {
 	cases := []struct {
 		name     string

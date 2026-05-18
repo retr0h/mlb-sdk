@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Schedule prints today's MLB games for a given team. Run with:
 //
 //	go run ./examples/schedule [TEAM]   # default: LAD
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"time"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	team := mlb.LAD
 	if len(os.Args) > 1 {
@@ -33,7 +33,7 @@ func main() {
 			os.Exit(2)
 		}
 	}
-
+//
 	c := mlb.New()
 	games, err := c.Schedule(context.Background(), mlb.ScheduleQuery{
 		Team: team,

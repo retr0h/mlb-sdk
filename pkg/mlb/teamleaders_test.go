@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_TeamLeaders(t *testing.T) {
 	body := `{"teamLeaders":[{"leaderCategory":"homeRuns","season":"2024","totalSplits":10,"leaders":[{"rank":1,"value":"54","person":{"id":1,"fullName":"Test"}}]}]}`
 	cases := []struct {

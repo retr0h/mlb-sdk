@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // SchedulePostseasonQuery filters a postseason schedule lookup.
 type SchedulePostseasonQuery struct {
 	Season       int
@@ -21,7 +21,7 @@ type SchedulePostseasonQuery struct {
 	Hydrate      string
 	Fields       string
 }
-
+//
 // SchedulePostseason fetches the postseason schedule.
 func (c *Client) SchedulePostseason(
 	ctx context.Context,
@@ -49,7 +49,7 @@ func (c *Client) SchedulePostseason(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSchedulePostseasonWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: schedulePostseason: %w", err)
@@ -72,7 +72,7 @@ func (c *Client) SchedulePostseason(
 	}
 	return games, nil
 }
-
+//
 // SchedulePostseasonTuneInQuery filters a postseason tune-in lookup.
 type SchedulePostseasonTuneInQuery struct {
 	Season  int
@@ -81,7 +81,7 @@ type SchedulePostseasonTuneInQuery struct {
 	Hydrate string
 	Fields  string
 }
-
+//
 // SchedulePostseasonTuneIn fetches postseason tune-in info.
 func (c *Client) SchedulePostseasonTuneIn(
 	ctx context.Context,
@@ -103,7 +103,7 @@ func (c *Client) SchedulePostseasonTuneIn(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSchedulePostseasonTuneInWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: schedulePostseasonTuneIn: %w", err)

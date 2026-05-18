@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,9 +12,9 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 var statsBody = `{"stats":[{"type":{"displayName":"season"},"group":{"displayName":"hitting"},"splits":[]}]}`
-
+//
 func TestClient_Stats(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -87,7 +87,7 @@ func TestClient_Stats(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_SchedulePostseasonSeries(t *testing.T) {
 	body := `{"dates":[{"date":"2024-10-01","games":[{"gamePk":1}]}]}`
 	cases := []struct {
@@ -151,7 +151,7 @@ func TestClient_SchedulePostseasonSeries(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_AllStarBallot(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -229,7 +229,7 @@ func TestClient_AllStarBallot(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_AllStarFinalVote(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -305,7 +305,7 @@ func TestClient_AllStarFinalVote(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_AllStarWriteIns(t *testing.T) {
 	cases := []struct {
 		name       string

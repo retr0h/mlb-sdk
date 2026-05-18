@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // StatsLeaders prints league stat leaders. Run with:
 //
 //	go run ./examples/statsleaders   # top 10 HR leaders 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	sl, err := c.StatsLeaders(context.Background(), mlb.StatsLeadersQuery{

@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,10 +13,10 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const rosterHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "link": "/api/v1/teams/119/roster",
@@ -27,7 +27,7 @@ const rosterHappyBody = `{
     "status":   {"code": "MIN", "description": "Minor League Contract"}
   }]
 }`
-
+//
 func TestRosterFromGen(t *testing.T) {
 	cases := []struct {
 		name    string
@@ -49,7 +49,7 @@ func TestRosterFromGen(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Roster(t *testing.T) {
 	on := time.Date(2024, 7, 15, 0, 0, 0, 0, time.UTC)
 	cases := []struct {
@@ -131,7 +131,7 @@ func TestClient_Roster(t *testing.T) {
 			wantErr:    "roster",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -151,10 +151,10 @@ func TestClient_Roster(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			ro, err := client.Roster(context.Background(), c.teamID, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

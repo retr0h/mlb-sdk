@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Person fetches a single person by id. The underlying endpoint responds
 // with `{"people": [<one entry>]}`; this method collapses the wrapper and
 // maps an empty array to ErrNotFound.
@@ -31,7 +31,7 @@ func (c *Client) Person(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetPersonWithResponse(ctx, personID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: person: %w", err)
@@ -48,7 +48,7 @@ func (c *Client) Person(
 	}
 	return p, nil
 }
-
+//
 // People fetches multiple people by comma-separated ids. q.PersonIDs is
 // required.
 //
@@ -75,7 +75,7 @@ func (c *Client) People(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetPeopleWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: people: %w", err)
@@ -88,7 +88,7 @@ func (c *Client) People(
 	}
 	return peopleFromGen(resp.JSON200), nil
 }
-
+//
 func personDetailFromResponse(r *gen.PeopleResponse) *PersonDetail {
 	if r == nil || r.People == nil || len(*r.People) == 0 {
 		return nil
@@ -96,7 +96,7 @@ func personDetailFromResponse(r *gen.PeopleResponse) *PersonDetail {
 	p := personDetailFromGen((*r.People)[0])
 	return &p
 }
-
+//
 func peopleFromGen(r *gen.PeopleResponse) []PersonDetail {
 	if r == nil || r.People == nil {
 		return nil
@@ -107,7 +107,7 @@ func peopleFromGen(r *gen.PeopleResponse) []PersonDetail {
 	}
 	return out
 }
-
+//
 func personDetailFromGen(p gen.PersonDetail) PersonDetail {
 	out := PersonDetail{}
 	if p.Id != nil {
@@ -217,7 +217,7 @@ func personDetailFromGen(p gen.PersonDetail) PersonDetail {
 	}
 	return out
 }
-
+//
 func handSideFromGen(h gen.HandSide) HandSide {
 	out := HandSide{}
 	if h.Code != nil {

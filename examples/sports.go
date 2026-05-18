@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Sports prints every sport the MLB API tracks. Run with:
 //
 //	go run ./examples/sports
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	s, err := c.Sports(context.Background(), mlb.SportsQuery{})

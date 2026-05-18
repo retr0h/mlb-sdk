@@ -1,23 +1,23 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Seasons prints the regular-season window for a given MLB year. Run with:
 //
 //	go run ./examples/seasons [YEAR]   # default: 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 const dateFmt = "2006-01-02"
-
+//
 func main() {
 	year := 2024
 	if len(os.Args) > 1 {
@@ -28,7 +28,7 @@ func main() {
 		}
 		year = n
 	}
-
+//
 	c := mlb.New()
 	s, err := c.Seasons(context.Background(), mlb.SeasonsQuery{
 		SportID: 1,

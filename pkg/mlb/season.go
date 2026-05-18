@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Season fetches one season's metadata by id. q.SportID is required; the
 // MLB API rejects the call otherwise (toddrob99 encodes this as
 // `required_params: [["sportId"]]`).
@@ -31,7 +31,7 @@ func (c *Client) Season(ctx context.Context, seasonID string, q SeasonQuery) (*S
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSeasonWithResponse(ctx, seasonID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: season: %w", err)
@@ -48,7 +48,7 @@ func (c *Client) Season(ctx context.Context, seasonID string, q SeasonQuery) (*S
 	}
 	return s, nil
 }
-
+//
 // seasonFromResponse collapses the seasons array to a single Season. Empty
 // array → nil so the caller maps to ErrNotFound.
 func seasonFromResponse(r *gen.SeasonsResponse) *Season {

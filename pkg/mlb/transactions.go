@@ -1,18 +1,18 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const transactionsDateFmt = "2006-01-02"
-
+//
 // Transactions fetches roster / assignment transactions. One of the
 // following filter forms is required (toddrob99: required_params=[
 // ["teamId"], ["playerId"], ["date"], ["startDate", "endDate"]]):
@@ -40,7 +40,7 @@ func (c *Client) Transactions(
 	if err := q.validate(); err != nil {
 		return nil, err
 	}
-
+//
 	params := &gen.GetTransactionsParams{}
 	if q.TeamID != 0 {
 		params.TeamId = ptr(q.TeamID)
@@ -63,7 +63,7 @@ func (c *Client) Transactions(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTransactionsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: transactions: %w", err)
@@ -76,7 +76,7 @@ func (c *Client) Transactions(
 	}
 	return transactionsFromGen(resp.JSON200), nil
 }
-
+//
 // validate checks the one-of-required-combos rule. StartDate+EndDate must
 // be set together; the other three (TeamID, PlayerID, On) are accepted alone.
 func (q TransactionsQuery) validate() error {
@@ -85,7 +85,7 @@ func (q TransactionsQuery) validate() error {
 	hasOn := !q.On.IsZero()
 	hasStart := !q.StartDate.IsZero()
 	hasEnd := !q.EndDate.IsZero()
-
+//
 	if hasStart != hasEnd {
 		return fmt.Errorf(
 			"mlb: transactions: %w: StartDate and EndDate must be set together",
@@ -100,7 +100,7 @@ func (q TransactionsQuery) validate() error {
 	}
 	return nil
 }
-
+//
 func transactionsFromGen(r *gen.TransactionsResponse) *Transactions {
 	out := &Transactions{}
 	if r == nil || r.Transactions == nil {
@@ -112,7 +112,7 @@ func transactionsFromGen(r *gen.TransactionsResponse) *Transactions {
 	}
 	return out
 }
-
+//
 func transactionFromGen(t gen.Transaction) Transaction {
 	out := Transaction{}
 	if t.Id != nil {

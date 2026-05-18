@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Team prints a single MLB team's metadata. Run with:
 //
 //	go run ./examples/team [TEAM_ID]   # default: 119 (Dodgers)
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	id := 119
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		id = n
 	}
-
+//
 	c := mlb.New()
 	t, err := c.Team(context.Background(), id, mlb.TeamQuery{
 		Hydrate: "league,division,sport,springLeague,venue",

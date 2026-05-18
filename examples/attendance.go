@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Attendance prints a team's attendance record for a season. Run with:
 //
 //	go run ./examples/attendance [TEAM_ID] [SEASON]   # default: 119 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	teamID, year := 119, 2024
 	if len(os.Args) > 1 {
@@ -34,7 +34,7 @@ func main() {
 		}
 		year = n
 	}
-
+//
 	c := mlb.New()
 	a, err := c.Attendance(context.Background(), mlb.AttendanceQuery{
 		TeamID: teamID,

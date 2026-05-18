@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Conferences lists the conferences tracked by the MLB Stats API.
 //
 // Example:
@@ -30,7 +30,7 @@ func (c *Client) Conferences(ctx context.Context, q ConferencesQuery) (*Conferen
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetConferencesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: conferences: %w", err)
@@ -43,7 +43,7 @@ func (c *Client) Conferences(ctx context.Context, q ConferencesQuery) (*Conferen
 	}
 	return conferencesFromGen(resp.JSON200), nil
 }
-
+//
 func conferencesFromGen(r *gen.ConferencesResponse) *Conferences {
 	out := &Conferences{}
 	if r == nil || r.Conferences == nil {
@@ -55,7 +55,7 @@ func conferencesFromGen(r *gen.ConferencesResponse) *Conferences {
 	}
 	return out
 }
-
+//
 func conferenceFromGen(c gen.Conference) Conference {
 	out := Conference{}
 	if c.Id != nil {

@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // GameChanges fetches games modified since a timestamp. q.UpdatedSince is
 // required (toddrob99: required_params=[["updatedSince"]]).
 //
@@ -30,7 +30,7 @@ func (c *Client) GameChanges(
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	params := &gen.GetGameChangesParams{UpdatedSince: q.UpdatedSince}
 	if q.SportID != 0 {
 		params.SportId = ptr(q.SportID)
@@ -44,7 +44,7 @@ func (c *Client) GameChanges(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetGameChangesWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: gameChanges: %w", err)
@@ -57,7 +57,7 @@ func (c *Client) GameChanges(
 	}
 	return gameChangesFromGen(resp.JSON200), nil
 }
-
+//
 func gameChangesFromGen(r *gen.GameChangesResponse) *GameChanges {
 	out := &GameChanges{}
 	if r == nil {
@@ -83,7 +83,7 @@ func gameChangesFromGen(r *gen.GameChangesResponse) *GameChanges {
 	}
 	return out
 }
-
+//
 func gameChangesDateFromGen(d gen.ScheduleDate) GameChangesDate {
 	out := GameChangesDate{}
 	if d.Date != nil {

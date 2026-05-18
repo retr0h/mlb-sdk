@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // Divisions lists the divisions tracked by the MLB Stats API. An empty
 // DivisionsQuery returns every division — MLB plus the minor / college /
 // independent leagues it tracks. Filter via DivisionID, LeagueID, SportID
@@ -36,7 +36,7 @@ func (c *Client) Divisions(ctx context.Context, q DivisionsQuery) (*Divisions, e
 	if q.Season != 0 {
 		params.Season = ptr(q.Season)
 	}
-
+//
 	resp, err := c.raw.GetDivisionsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: divisions: %w", err)
@@ -49,7 +49,7 @@ func (c *Client) Divisions(ctx context.Context, q DivisionsQuery) (*Divisions, e
 	}
 	return divisionsFromGen(resp.JSON200), nil
 }
-
+//
 func divisionsFromGen(r *gen.DivisionsResponse) *Divisions {
 	out := &Divisions{}
 	if r == nil || r.Divisions == nil {
@@ -61,7 +61,7 @@ func divisionsFromGen(r *gen.DivisionsResponse) *Divisions {
 	}
 	return out
 }
-
+//
 func divisionFromGen(d gen.Division) Division {
 	out := Division{}
 	if d.Id != nil {

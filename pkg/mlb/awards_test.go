@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const awardsHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "awards": [
@@ -46,7 +46,7 @@ const awardsHappyBody = `{
     }
   ]
 }`
-
+//
 func TestClient_AwardRecipients(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -127,7 +127,7 @@ func TestClient_AwardRecipients(t *testing.T) {
 			wantErr:    "awardRecipients",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -147,10 +147,10 @@ func TestClient_AwardRecipients(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			a, err := client.AwardRecipients(context.Background(), c.awardID, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

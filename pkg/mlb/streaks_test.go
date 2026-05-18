@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 func TestClient_StatsStreaks(t *testing.T) {
 	q := StatsStreaksQuery{
 		StreakType: "hittingStreak", StreakSpan: "season",

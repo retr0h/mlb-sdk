@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const draftHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "drafts": {
@@ -41,7 +41,7 @@ const draftHappyBody = `{
     }]
   }
 }`
-
+//
 func TestClient_Draft(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -106,7 +106,7 @@ func TestClient_Draft(t *testing.T) {
 			wantErr:    "draft",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -126,10 +126,10 @@ func TestClient_Draft(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			d, err := client.Draft(context.Background(), c.year, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

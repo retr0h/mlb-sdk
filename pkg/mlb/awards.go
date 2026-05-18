@@ -1,16 +1,16 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 // AwardRecipients fetches every recipient of a single award (e.g. MLBHOF,
 // ALMVP). awardId is required; the underlying MLB API returns 404 when the
 // id is unknown.
@@ -42,7 +42,7 @@ func (c *Client) AwardRecipients(
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetAwardRecipientsWithResponse(ctx, awardID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: awardRecipients: %w", err)
@@ -55,7 +55,7 @@ func (c *Client) AwardRecipients(
 	}
 	return awardsFromGen(resp.JSON200), nil
 }
-
+//
 func awardsFromGen(r *gen.AwardsResponse) *Awards {
 	out := &Awards{}
 	if r == nil || r.Awards == nil {
@@ -67,7 +67,7 @@ func awardsFromGen(r *gen.AwardsResponse) *Awards {
 	}
 	return out
 }
-
+//
 func awardRecipientFromGen(a gen.AwardRecipient) AwardRecipient {
 	out := AwardRecipient{}
 	if a.Id != nil {
@@ -93,7 +93,7 @@ func awardRecipientFromGen(a gen.AwardRecipient) AwardRecipient {
 	}
 	return out
 }
-
+//
 func personFromGen(p gen.Person) Person {
 	out := Person{}
 	if p.Id != nil {
@@ -113,7 +113,7 @@ func personFromGen(p gen.Person) Person {
 	}
 	return out
 }
-
+//
 func primaryPositionFromGen(p gen.PrimaryPosition) PrimaryPosition {
 	out := PrimaryPosition{}
 	if p.Code != nil {

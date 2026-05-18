@@ -1,19 +1,19 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
 	"time"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const seasonDateFmt = "2006-01-02"
-
+//
 // Seasons fetches season metadata. At least one of q.SportID, q.DivisionID
 // or q.LeagueID must be set (the toddrob99 catalog encodes this as
 // `required_params: [["sportId"], ["divisionId"], ["leagueId"]]`). Set q.All
@@ -32,13 +32,13 @@ func (c *Client) Seasons(ctx context.Context, q SeasonsQuery) (*Seasons, error) 
 			ErrInvalidQuery,
 		)
 	}
-
+//
 	if q.All {
 		return c.seasonsAll(ctx, q)
 	}
 	return c.seasonsFiltered(ctx, q)
 }
-
+//
 func (c *Client) seasonsFiltered(ctx context.Context, q SeasonsQuery) (*Seasons, error) {
 	params := &gen.GetSeasonsParams{}
 	if q.Season != 0 {
@@ -56,7 +56,7 @@ func (c *Client) seasonsFiltered(ctx context.Context, q SeasonsQuery) (*Seasons,
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetSeasonsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: seasons: %w", err)
@@ -69,7 +69,7 @@ func (c *Client) seasonsFiltered(ctx context.Context, q SeasonsQuery) (*Seasons,
 	}
 	return seasonsFromGen(resp.JSON200), nil
 }
-
+//
 func (c *Client) seasonsAll(ctx context.Context, q SeasonsQuery) (*Seasons, error) {
 	params := &gen.GetAllSeasonsParams{}
 	if q.SportID != 0 {
@@ -84,7 +84,7 @@ func (c *Client) seasonsAll(ctx context.Context, q SeasonsQuery) (*Seasons, erro
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetAllSeasonsWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: seasons: %w", err)
@@ -97,7 +97,7 @@ func (c *Client) seasonsAll(ctx context.Context, q SeasonsQuery) (*Seasons, erro
 	}
 	return seasonsFromGen(resp.JSON200), nil
 }
-
+//
 func seasonsFromGen(r *gen.SeasonsResponse) *Seasons {
 	out := &Seasons{}
 	if r == nil || r.Seasons == nil {
@@ -109,7 +109,7 @@ func seasonsFromGen(r *gen.SeasonsResponse) *Seasons {
 	}
 	return out
 }
-
+//
 func seasonFromGen(s gen.Season) Season {
 	out := Season{}
 	if s.SeasonId != nil {
@@ -147,7 +147,7 @@ func seasonFromGen(s gen.Season) Season {
 	}
 	return out
 }
-
+//
 // parseSeasonDate parses a YYYY-MM-DD pointer string into a time.Time. Nil
 // or unparseable input yields the zero time (callers can `.IsZero()`).
 func parseSeasonDate(p *string) time.Time {

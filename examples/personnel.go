@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Personnel prints a team's front-office personnel. Run with:
 //
 //	go run ./examples/personnel [TEAM_ID]   # default: 119
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	teamID := 119
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		teamID = n
 	}
-
+//
 	c := mlb.New()
 	s, err := c.Personnel(context.Background(), teamID, mlb.PersonnelQuery{})
 	if err != nil {

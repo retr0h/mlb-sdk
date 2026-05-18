@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Standings prints the top of the NL East as of today. Run with:
 //
 //	go run ./examples/standings [LEAGUE]   # AL | NL (default NL)
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	league := mlb.NL
 	if len(os.Args) > 1 {
@@ -28,7 +28,7 @@ func main() {
 			os.Exit(2)
 		}
 	}
-
+//
 	c := mlb.New()
 	st, err := c.Standings(context.Background(), mlb.StandingsQuery{
 		League:         league,

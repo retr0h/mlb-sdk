@@ -1,18 +1,18 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"fmt"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const staffDateFmt = "2006-01-02"
-
+//
 // Coaches fetches the coaching staff for a team.
 func (c *Client) Coaches(ctx context.Context, teamID int, q CoachesQuery) (*Staff, error) {
 	params := &gen.GetTeamCoachesParams{}
@@ -25,7 +25,7 @@ func (c *Client) Coaches(ctx context.Context, teamID int, q CoachesQuery) (*Staf
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamCoachesWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: coaches: %w", err)
@@ -38,7 +38,7 @@ func (c *Client) Coaches(ctx context.Context, teamID int, q CoachesQuery) (*Staf
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 // Personnel fetches front-office personnel for a team.
 func (c *Client) Personnel(ctx context.Context, teamID int, q PersonnelQuery) (*Staff, error) {
 	params := &gen.GetTeamPersonnelParams{}
@@ -48,7 +48,7 @@ func (c *Client) Personnel(ctx context.Context, teamID int, q PersonnelQuery) (*
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetTeamPersonnelWithResponse(ctx, teamID, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: personnel: %w", err)
@@ -61,7 +61,7 @@ func (c *Client) Personnel(ctx context.Context, teamID int, q PersonnelQuery) (*
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 // Umpires fetches the umpire roster.
 func (c *Client) Umpires(ctx context.Context, q UmpiresQuery) (*Staff, error) {
 	params := &gen.GetJobsUmpiresParams{}
@@ -74,7 +74,7 @@ func (c *Client) Umpires(ctx context.Context, q UmpiresQuery) (*Staff, error) {
 	if q.Fields != "" {
 		params.Fields = ptr(q.Fields)
 	}
-
+//
 	resp, err := c.raw.GetJobsUmpiresWithResponse(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("mlb: umpires: %w", err)
@@ -87,7 +87,7 @@ func (c *Client) Umpires(ctx context.Context, q UmpiresQuery) (*Staff, error) {
 	}
 	return staffFromGen(resp.JSON200), nil
 }
-
+//
 func staffFromGen(r *gen.StaffResponse) *Staff {
 	out := &Staff{}
 	if r == nil {
@@ -110,7 +110,7 @@ func staffFromGen(r *gen.StaffResponse) *Staff {
 	}
 	return out
 }
-
+//
 func staffEntryFromGen(e gen.StaffEntry) StaffEntry {
 	out := StaffEntry{}
 	if e.Person != nil {

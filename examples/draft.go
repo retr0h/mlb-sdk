@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Draft prints top draft picks for a year. Run with:
 //
 //	go run ./examples/draft [YEAR]   # default: 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	year := 2024
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		year = n
 	}
-
+//
 	c := mlb.New()
 	d, err := c.Draft(context.Background(), year, mlb.DraftQuery{Round: "1"})
 	if err != nil {

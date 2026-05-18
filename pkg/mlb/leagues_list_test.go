@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const leaguesHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "leagues": [
@@ -37,7 +37,7 @@ const leaguesHappyBody = `{
     }
   ]
 }`
-
+//
 func TestLeagues_League(t *testing.T) {
 	empty := leaguesFromGen(nil)
 	full := &Leagues{Leagues: []LeagueInfo{
@@ -69,7 +69,7 @@ func TestLeagues_League(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Leagues(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -164,7 +164,7 @@ func TestClient_Leagues(t *testing.T) {
 			wantErr:    "leagues",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -184,10 +184,10 @@ func TestClient_Leagues(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			ls, err := client.Leagues(context.Background(), c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)
@@ -222,7 +222,7 @@ func TestClient_Leagues(t *testing.T) {
 			if !c.wantHydrated {
 				return
 			}
-
+//
 			first := ls.Leagues[0]
 			if first.ID != 103 || first.Name != "American League" ||
 				first.Abbreviation != "AL" || first.NameShort != "American" ||

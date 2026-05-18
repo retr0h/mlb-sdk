@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Venue prints a hydrated venue lookup. Run with:
 //
 //	go run ./examples/venue [VENUE_ID]   # default: 22 (Dodger Stadium)
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	venueID := 22
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		venueID = n
 	}
-
+//
 	c := mlb.New()
 	v, err := c.Venue(context.Background(), venueID, mlb.VenueQuery{
 		Hydrate: "location,fieldInfo,timezone",

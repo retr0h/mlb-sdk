@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -12,10 +12,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const linescoreHappyBody = `{
   "copyright": "Copyright 2026 MLB Advanced Media, L.P.",
   "currentInning": 9, "currentInningOrdinal": "9th",
@@ -54,7 +54,7 @@ const linescoreHappyBody = `{
   },
   "balls": 0, "strikes": 1, "outs": 3
 }`
-
+//
 func TestLinescoreFromGen(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -81,7 +81,7 @@ func TestLinescoreFromGen(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Linescore(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -146,7 +146,7 @@ func TestClient_Linescore(t *testing.T) {
 			wantErr:    "linescore",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -166,10 +166,10 @@ func TestClient_Linescore(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			ls, err := client.Linescore(context.Background(), c.gamePk, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

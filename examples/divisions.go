@@ -1,20 +1,20 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // Divisions prints MLB-only divisions. Run with:
 //
 //	go run ./examples/divisions
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	c := mlb.New()
 	d, err := c.Divisions(context.Background(), mlb.DivisionsQuery{SportID: 1})

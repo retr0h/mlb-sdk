@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,10 +13,10 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+//
 	"github.com/retr0h/mlb-sdk/internal/gen"
 )
-
+//
 const staffHappyBody = `{
   "roster": [{
     "person": {"id": 150353, "fullName": "Dave Roberts", "link": "/api/v1/people/150353"},
@@ -24,7 +24,7 @@ const staffHappyBody = `{
   }],
   "link": "/api/v1/teams/119/coaches", "teamId": 119, "rosterType": "coach"
 }`
-
+//
 func TestStaffFromGen(t *testing.T) {
 	cases := []struct {
 		name string
@@ -42,7 +42,7 @@ func TestStaffFromGen(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Coaches(t *testing.T) {
 	on := time.Date(2024, 7, 15, 0, 0, 0, 0, time.UTC)
 	cases := []struct {
@@ -145,7 +145,7 @@ func TestClient_Coaches(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Personnel(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -219,7 +219,7 @@ func TestClient_Personnel(t *testing.T) {
 		})
 	}
 }
-
+//
 func TestClient_Umpires(t *testing.T) {
 	cases := []struct {
 		name       string

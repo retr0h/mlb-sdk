@@ -1,9 +1,9 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 package mlb
-
+//
 import (
 	"context"
 	"errors"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 )
-
+//
 const highLowHappyBody = `{
   "highLowResults": [{
     "group": {"displayName": "hitting"},
@@ -26,7 +26,7 @@ const highLowHappyBody = `{
     }]
   }]
 }`
-
+//
 func TestClient_HighLow(t *testing.T) {
 	cases := []struct {
 		name         string
@@ -117,7 +117,7 @@ func TestClient_HighLow(t *testing.T) {
 			wantErr:    "highLow",
 		},
 	}
-
+//
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			var seenPath string
@@ -137,10 +137,10 @@ func TestClient_HighLow(t *testing.T) {
 			} else {
 				defer srv.Close()
 			}
-
+//
 			client := New(WithBaseURL(urlStr))
 			hl, err := client.HighLow(context.Background(), c.orgType, c.query)
-
+//
 			if c.wantErr != "" {
 				if err == nil {
 					t.Fatalf("expected error containing %q, got nil", c.wantErr)

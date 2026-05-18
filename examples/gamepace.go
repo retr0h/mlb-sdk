@@ -1,21 +1,21 @@
 // Copyright (c) 2026 John Dewey
 //
 // SPDX-License-Identifier: MIT
-
+//
 // GamePace prints pace-of-play stats for an MLB season. Run with:
 //
 //	go run ./examples/gamepace [SEASON]   # default: 2024
 package main
-
+//
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
-
+//
 	"github.com/retr0h/mlb-sdk/pkg/mlb"
 )
-
+//
 func main() {
 	year := 2024
 	if len(os.Args) > 1 {
@@ -26,7 +26,7 @@ func main() {
 		}
 		year = n
 	}
-
+//
 	c := mlb.New()
 	gp, err := c.GamePace(context.Background(), mlb.GamePaceQuery{
 		Season:  year,
