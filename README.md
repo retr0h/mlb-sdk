@@ -14,11 +14,10 @@
 ⚾ Idiomatic Go library for the public MLB Stats API.
 
 A typed Go client for `statsapi.mlb.com`. MLB does not publish an OpenAPI
-specification, so this repo authors one and generates the underlying
-client from it. Builds on years of community reverse engineering by
-[toddrob99/MLB-StatsAPI][] (Python) and [BillPetti/baseballr][] (R); the
-public surface in `pkg/mlb` hides the API's quirks behind idiomatic
-helpers.
+specification, so this repo authors one and generates the underlying client from
+it. Builds on years of community reverse engineering by [toddrob99/MLB-StatsAPI]
+(Python) and [BillPetti/baseballr] (R); the public surface in `pkg/mlb` hides
+the API's quirks behind idiomatic helpers.
 
 ## 📦 Install
 
@@ -31,64 +30,64 @@ go get github.com/retr0h/mlb-sdk/pkg/mlb
 <details>
 <summary>40+ endpoints (click to expand)</summary>
 
-| Endpoint                              | Docs                          | Example                                  |
-| ------------------------------------- | ----------------------------- | ---------------------------------------- |
-| `/api/v1/schedule`                    | [Client.Schedule][d-sched]    | [schedule.go](examples/schedule.go)      |
-| `/api/v1/game/changes`                | [Client.GameChanges][d-gc]    | [gamechanges.go](examples/gamechanges.go) |
-| `/api/v1/game/{gamePk}/boxscore`      | [Client.Boxscore][d-box]      | [boxscore.go](examples/boxscore.go)      |
-| `/api/v1/game/{gamePk}/playByPlay`    | [Client.PlayByPlay][d-pbp]    | [playbyplay.go](examples/playbyplay.go)  |
-| `/api/v1.1/game/{gamePk}/feed/live`   | [Client.LiveFeed][d-live]     | [livefeed.go](examples/livefeed.go)      |
-| `/api/v1/gamePace`                    | [Client.GamePace][d-pace]     | [gamepace.go](examples/gamepace.go)      |
-| `/api/v1/highLow/{orgType}`           | [Client.HighLow][d-hl]        | [highlow.go](examples/highlow.go)        |
-| `/api/v1/jobs/umpires`                | [Client.Umpires][d-umps]      | [umpires.go](examples/umpires.go)        |
-| `/api/v1/stats/leaders`               | [Client.StatsLeaders][d-sl]   | [statsleaders.go](examples/statsleaders.go) |
-| `/api/v1/game/{gamePk}/feed/live/timestamps` | [Client.GameTimestamps][d-gts] | [gametimestamps.go](examples/gametimestamps.go) |
+| Endpoint                                      | Docs                                 | Example                                                   |
+| --------------------------------------------- | ------------------------------------ | --------------------------------------------------------- |
+| `/api/v1/schedule`                            | [Client.Schedule][d-sched]           | [schedule.go](examples/schedule.go)                       |
+| `/api/v1/game/changes`                        | [Client.GameChanges][d-gc]           | [gamechanges.go](examples/gamechanges.go)                 |
+| `/api/v1/game/{gamePk}/boxscore`              | [Client.Boxscore][d-box]             | [boxscore.go](examples/boxscore.go)                       |
+| `/api/v1/game/{gamePk}/playByPlay`            | [Client.PlayByPlay][d-pbp]           | [playbyplay.go](examples/playbyplay.go)                   |
+| `/api/v1.1/game/{gamePk}/feed/live`           | [Client.LiveFeed][d-live]            | [livefeed.go](examples/livefeed.go)                       |
+| `/api/v1/gamePace`                            | [Client.GamePace][d-pace]            | [gamepace.go](examples/gamepace.go)                       |
+| `/api/v1/highLow/{orgType}`                   | [Client.HighLow][d-hl]               | [highlow.go](examples/highlow.go)                         |
+| `/api/v1/jobs/umpires`                        | [Client.Umpires][d-umps]             | [umpires.go](examples/umpires.go)                         |
+| `/api/v1/stats/leaders`                       | [Client.StatsLeaders][d-sl]          | [statsleaders.go](examples/statsleaders.go)               |
+| `/api/v1/game/{gamePk}/feed/live/timestamps`  | [Client.GameTimestamps][d-gts]       | [gametimestamps.go](examples/gametimestamps.go)           |
 | `/api/v1/game/{gamePk}/feed/color/timestamps` | [Client.GameColorTimestamps][d-gcts] | [gamecolortimestamps.go](examples/gamecolortimestamps.go) |
-| `/api/v1/game/{gamePk}/contextMetrics` | [Client.ContextMetrics][d-cm] | [contextmetrics.go](examples/contextmetrics.go) |
-| `/api/v1/game/{gamePk}/linescore`     | [Client.Linescore][d-line]    | [linescore.go](examples/linescore.go)    |
-| `/api/v1/standings`                   | [Client.Standings][d-stand]   | [standings.go](examples/standings.go)    |
-| `/api/v1/teams/{teamId}/coaches`      | [Client.Coaches][d-coach]     | [coaches.go](examples/coaches.go)        |
-| `/api/v1/teams/{teamId}/personnel`    | [Client.Personnel][d-pers]    | [personnel.go](examples/personnel.go)    |
-| `/api/v1/teams/{teamId}/roster`       | [Client.Roster][d-roster]     | [roster.go](examples/roster.go)          |
-| `/api/v1/teams/{teamId}/stats`        | [Client.TeamStats][d-stats]   | [teamstats.go](examples/teamstats.go)    |
-| `/api/v1/venues/{venueId}`            | [Client.Venue][d-venue]       | [venue.go](examples/venue.go)            |
-| `/api/v1/conferences`                 | [Client.Conferences][d-conf]  | [conferences.go](examples/conferences.go) |
-| `/api/v1/divisions`                   | [Client.Divisions][d-divs]    | [divisions.go](examples/divisions.go)    |
-| `/api/v1/draft/{year}`                | [Client.Draft][d-draft]       | [draft.go](examples/draft.go)            |
-| `/api/v1/league`                      | [Client.Leagues][d-leagues]   | [leagues.go](examples/leagues.go)        |
-| `/api/v1/attendance`                  | [Client.Attendance][d-att]    | [attendance.go](examples/attendance.go)  |
-| `/api/v1/awards/{awardId}/recipients` | [Client.AwardRecipients][d-aw] | [awards.go](examples/awards.go)        |
-| `/api/v1/transactions`                | [Client.Transactions][d-tx]   | [transactions.go](examples/transactions.go) |
-| `/api/v1/seasons`                     | [Client.Seasons][d-seas]      | [seasons.go](examples/seasons.go)        |
-| `/api/v1/seasons/{seasonId}`          | [Client.Season][d-season]     | [season.go](examples/season.go)          |
-| `/api/v1/sports`                      | [Client.Sports][d-sports]     | [sports.go](examples/sports.go)          |
-| `/api/v1/people/{personId}`            | [Client.Person][d-person]     | [person.go](examples/person.go)          |
-| `/api/v1/people`                      | [Client.People][d-people]     | [people.go](examples/people.go)          |
-| `/api/v1/people/freeAgents`           | [Client.FreeAgents][d-fa]     | [freeagents.go](examples/freeagents.go)  |
-| `/api/v1/teams`                       | [Client.Teams][d-teams]       | [teams.go](examples/teams.go)            |
-| `/api/v1/teams/{teamId}`              | [Client.Team][d-team]         | [team.go](examples/team.go)              |
-| `/api/v1/teams/affiliates`            | [Client.TeamsAffiliates][d-aff] | [teamsaffiliates.go](examples/teamsaffiliates.go) |
-| `/api/v1/teams/history`               | [Client.TeamsHistory][d-hist] | [teamshistory.go](examples/teamshistory.go) |
-| `/api/v1/schedule/games/tied`         | [Client.ScheduleTied][d-tied] | [scheduletied.go](examples/scheduletied.go) |
+| `/api/v1/game/{gamePk}/contextMetrics`        | [Client.ContextMetrics][d-cm]        | [contextmetrics.go](examples/contextmetrics.go)           |
+| `/api/v1/game/{gamePk}/linescore`             | [Client.Linescore][d-line]           | [linescore.go](examples/linescore.go)                     |
+| `/api/v1/standings`                           | [Client.Standings][d-stand]          | [standings.go](examples/standings.go)                     |
+| `/api/v1/teams/{teamId}/coaches`              | [Client.Coaches][d-coach]            | [coaches.go](examples/coaches.go)                         |
+| `/api/v1/teams/{teamId}/personnel`            | [Client.Personnel][d-pers]           | [personnel.go](examples/personnel.go)                     |
+| `/api/v1/teams/{teamId}/roster`               | [Client.Roster][d-roster]            | [roster.go](examples/roster.go)                           |
+| `/api/v1/teams/{teamId}/stats`                | [Client.TeamStats][d-stats]          | [teamstats.go](examples/teamstats.go)                     |
+| `/api/v1/venues/{venueId}`                    | [Client.Venue][d-venue]              | [venue.go](examples/venue.go)                             |
+| `/api/v1/conferences`                         | [Client.Conferences][d-conf]         | [conferences.go](examples/conferences.go)                 |
+| `/api/v1/divisions`                           | [Client.Divisions][d-divs]           | [divisions.go](examples/divisions.go)                     |
+| `/api/v1/draft/{year}`                        | [Client.Draft][d-draft]              | [draft.go](examples/draft.go)                             |
+| `/api/v1/league`                              | [Client.Leagues][d-leagues]          | [leagues.go](examples/leagues.go)                         |
+| `/api/v1/attendance`                          | [Client.Attendance][d-att]           | [attendance.go](examples/attendance.go)                   |
+| `/api/v1/awards/{awardId}/recipients`         | [Client.AwardRecipients][d-aw]       | [awards.go](examples/awards.go)                           |
+| `/api/v1/transactions`                        | [Client.Transactions][d-tx]          | [transactions.go](examples/transactions.go)               |
+| `/api/v1/seasons`                             | [Client.Seasons][d-seas]             | [seasons.go](examples/seasons.go)                         |
+| `/api/v1/seasons/{seasonId}`                  | [Client.Season][d-season]            | [season.go](examples/season.go)                           |
+| `/api/v1/sports`                              | [Client.Sports][d-sports]            | [sports.go](examples/sports.go)                           |
+| `/api/v1/people/{personId}`                   | [Client.Person][d-person]            | [person.go](examples/person.go)                           |
+| `/api/v1/people`                              | [Client.People][d-people]            | [people.go](examples/people.go)                           |
+| `/api/v1/people/freeAgents`                   | [Client.FreeAgents][d-fa]            | [freeagents.go](examples/freeagents.go)                   |
+| `/api/v1/teams`                               | [Client.Teams][d-teams]              | [teams.go](examples/teams.go)                             |
+| `/api/v1/teams/{teamId}`                      | [Client.Team][d-team]                | [team.go](examples/team.go)                               |
+| `/api/v1/teams/affiliates`                    | [Client.TeamsAffiliates][d-aff]      | [teamsaffiliates.go](examples/teamsaffiliates.go)         |
+| `/api/v1/teams/history`                       | [Client.TeamsHistory][d-hist]        | [teamshistory.go](examples/teamshistory.go)               |
+| `/api/v1/schedule/games/tied`                 | [Client.ScheduleTied][d-tied]        | [scheduletied.go](examples/scheduletied.go)               |
 
 Run any example with `go run examples/<name>.go`. Roadmap for additional
-endpoints lives in [docs/roadmap.md][].
+endpoints lives in [docs/roadmap.md].
 
 </details>
 
 ## ✨ Features
 
-| Feature             | Description                                                |
-| ------------------- | ---------------------------------------------------------- |
-| OpenAPI-first       | Hand-authored spec + generated client (oapi-codegen)       |
-| Idiomatic surface   | `time.Time`, typed `mlb.TeamID`, helper methods            |
-| Hides API quirks    | e.g. `box.Team(mlb.LAD).DoublePlaysTurned()`               |
-| Test-friendly       | `WithBaseURL` injects an `httptest.Server` for fixtures    |
+| Feature           | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| OpenAPI-first     | Hand-authored spec + generated client (oapi-codegen)    |
+| Idiomatic surface | `time.Time`, typed `mlb.TeamID`, helper methods         |
+| Hides API quirks  | e.g. `box.Team(mlb.LAD).DoublePlaysTurned()`            |
+| Test-friendly     | `WithBaseURL` injects an `httptest.Server` for fixtures |
 
 ## 💡 Inspiration
 
-This module exists because the MLB Stats API is undocumented and the most
-useful prior art is in Python and R:
+This module exists because the MLB Stats API is undocumented and the most useful
+prior art is in Python and R:
 
 - [toddrob99/MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI)
 - [appac/mlb-data-api-docs](https://appac.github.io/mlb-data-api-docs/)
@@ -96,72 +95,71 @@ useful prior art is in Python and R:
 
 ## 📖 Documentation
 
-See the [package documentation][] on pkg.go.dev for API details.
+See the [package documentation] on pkg.go.dev for API details.
 
 ## 🤝 Contributing
 
-See the [Development][] guide for prerequisites, setup, and conventions.
-See the [Contributing][] guide before submitting a PR.
+See the [Development] guide for prerequisites, setup, and conventions. See the
+[Contributing] guide before submitting a PR.
 
 ## 🔗 Related projects
 
-| Project | Description |
-| ------- | ----------- |
-| [mlb-mcp][] | MCP server that exposes this SDK as tools for LLMs |
+| Project   | Description                                        |
+| --------- | -------------------------------------------------- |
+| [mlb-mcp] | MCP server that exposes this SDK as tools for LLMs |
 
 ## ⚖️ Copyright notice
 
 This package and its author are not affiliated with MLB or any MLB team. This
 module is a typed Go client for MLB's public Stats API. Use of MLB data is
-subject to the notice posted at
-<http://gdx.mlb.com/components/copyright.txt>.
+subject to the notice posted at <http://gdx.mlb.com/components/copyright.txt>.
 
 ## 📄 License
 
-The [MIT][] License.
+The [MIT] License.
 
-[toddrob99/MLB-StatsAPI]: https://github.com/toddrob99/MLB-StatsAPI
-[BillPetti/baseballr]: https://github.com/BillPetti/baseballr
-[docs/roadmap.md]: docs/roadmap.md
-[package documentation]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb
-[Development]: docs/development.md
-[Contributing]: docs/contributing.md
-[MIT]: LICENSE
-[mlb-mcp]: https://github.com/retr0h/mlb-mcp
-[d-sched]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Schedule
-[d-gc]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameChanges
-[d-box]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
-[d-pbp]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
-[d-live]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
-[d-pace]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GamePace
-[d-hl]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.HighLow
-[d-sl]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.StatsLeaders
-[d-gts]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameTimestamps
-[d-gcts]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameColorTimestamps
-[d-cm]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ContextMetrics
-[d-line]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Linescore
-[d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
-[d-coach]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Coaches
-[d-pers]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Personnel
-[d-roster]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Roster
-[d-umps]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Umpires
-[d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats
-[d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
-[d-conf]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Conferences
-[d-divs]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Divisions
+[billpetti/baseballr]: https://github.com/BillPetti/baseballr
+[contributing]: docs/contributing.md
+[d-aff]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsAffiliates
+[d-att]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Attendance
+[d-aw]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.AwardRecipients
+[d-box]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Boxscore
+[d-cm]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ContextMetrics
+[d-coach]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Coaches
+[d-conf]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Conferences
+[d-divs]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Divisions
 [d-draft]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Draft
+[d-fa]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.FreeAgents
+[d-gc]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameChanges
+[d-gcts]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameColorTimestamps
+[d-gts]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GameTimestamps
+[d-hist]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsHistory
+[d-hl]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.HighLow
 [d-leagues]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Leagues
-[d-att]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Attendance
-[d-aw]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.AwardRecipients
-[d-tx]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Transactions
-[d-seas]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Seasons
-[d-season]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Season
-[d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports
-[d-person]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Person
+[d-line]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Linescore
+[d-live]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.LiveFeed
+[d-pace]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.GamePace
+[d-pbp]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.PlayByPlay
 [d-people]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.People
-[d-fa]:    https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.FreeAgents
-[d-team]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
+[d-pers]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Personnel
+[d-person]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Person
+[d-roster]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Roster
+[d-sched]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Schedule
+[d-seas]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Seasons
+[d-season]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Season
+[d-sl]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.StatsLeaders
+[d-sports]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Sports
+[d-stand]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Standings
+[d-stats]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamStats
+[d-team]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Team
 [d-teams]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Teams
-[d-aff]:   https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsAffiliates
-[d-hist]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.TeamsHistory
-[d-tied]:  https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ScheduleTied
+[d-tied]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.ScheduleTied
+[d-tx]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Transactions
+[d-umps]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Umpires
+[d-venue]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb#Client.Venue
+[development]: docs/development.md
+[docs/roadmap.md]: docs/roadmap.md
+[mit]: LICENSE
+[mlb-mcp]: https://github.com/retr0h/mlb-mcp
+[package documentation]: https://pkg.go.dev/github.com/retr0h/mlb-sdk/pkg/mlb
+[toddrob99/mlb-statsapi]: https://github.com/toddrob99/MLB-StatsAPI
