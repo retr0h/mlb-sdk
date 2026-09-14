@@ -87,7 +87,7 @@ order. Skipping any of them leaves the public surface incomplete.
 5. **`pkg/mlb/<name>_test.go`** — one table-driven test per public function,
    with rows covering: happy path, 200 with empty/missing fields, 404, 5xx,
    malformed JSON, network failure (closed server). Coverage must stay at 100.0%
-   — run `just go::test` to confirm.
+   — run `just go-test` to confirm.
 6. **`examples/<name>.go`** — a runnable example program (one file per endpoint,
    all under `examples/` which is its own Go submodule with a `replace`
    directive pointing at the parent). Run with `go run examples/<name>.go`.
@@ -112,12 +112,10 @@ When adding endpoints or types to `pkg/api/openapi.yaml`:
 - Set explicit `operationId` on every path — it becomes the generated function
   name in `internal/gen`.
 - **Every parameter must have a non-empty `description:`** — downstream
-  consumers (e.g. [mlb-mcp][]) generate tool schemas from these descriptions.
+  consumers (e.g. [mlb-mcp]) generate tool schemas from these descriptions.
   Empty descriptions break schema generation. Use short, useful text:
   `"1 = MLB"` for sportId, `"YYYY-MM-DD"` for dates,
   `"Comma-separated field projection"` for fields.
-
-[mlb-mcp]: https://github.com/retr0h/mlb-mcp
 
 ## Public surface authoring
 
@@ -371,4 +369,5 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - **Scopes**: `api` (OpenAPI spec), `gen` (generated client), `mlb` (public
   SDK), `cli`, `docs`
 
+[mlb-mcp]: https://github.com/retr0h/mlb-mcp
 [toddrob99]: https://github.com/toddrob99/MLB-StatsAPI

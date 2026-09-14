@@ -1,6 +1,6 @@
 module github.com/retr0h/mlb-sdk/examples
 
-go 1.25.7
+go 1.26.0
 
 require github.com/retr0h/mlb-sdk v0.0.0
 

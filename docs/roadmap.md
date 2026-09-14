@@ -10,13 +10,12 @@ Wrap the four endpoints already in `pkg/api/openapi.yaml` that don't yet have
 public surfaces, plus matching CLI subcommands.
 
 - [ ] `pkg/mlb.PlayByPlay(ctx, gamePk)` — return `[]Play` with typed
-      `EventType`, `result.event` constants, and helpers like
-      `Play.IsDoublePlay()`.
+  `EventType`, `result.event` constants, and helpers like `Play.IsDoublePlay()`.
 - [ ] `pkg/mlb.LiveFeed(ctx, gamePk)` — same shape as PlayByPlay, sourced from
-      the v1.1 `feed/live` endpoint. Decide whether to dedupe with PlayByPlay or
-      expose distinctly.
+  the v1.1 `feed/live` endpoint. Decide whether to dedupe with PlayByPlay or
+  expose distinctly.
 - [ ] `pkg/mlb.TeamStats(ctx, q)` — query season / by-date-range stats with
-      typed `StatGroup` constants (Hitting, Pitching, Fielding).
+  typed `StatGroup` constants (Hitting, Pitching, Fielding).
 - [ ] Migrate `freebies` to consume `pkg/mlb` once v0.1 is tagged.
 
 ## Phase 3 — Polish layer from kvlt
@@ -24,7 +23,7 @@ public surfaces, plus matching CLI subcommands.
 Mechanical port of files we already know we want. Mostly copy-and-adapt.
 
 - [ ] `.github/workflows/` — go.yml, release.yml, dep-review, commit-lint,
-      labeler, stale, greetings, report-card.
+  labeler, stale, greetings, report-card.
 - [ ] `install.sh` adapted from kvlt's installer.
 - [ ] `AI_POLICY.md`, `CODE_OF_CONDUCT.md`.
 - [ ] `docs/development.md`, `docs/contributing.md`, `docs/recipes.md`.
@@ -121,8 +120,7 @@ server would ship as a separate companion module (`mlb-sdk-mcp`) that imports
 `pkg/mlb` rather than as a subcommand.
 
 - [ ] `mlb-sdk-mcp` — separate module exposing `pkg/mlb` as an MCP server over
-      stdio so Claude Desktop / Cursor / agentic clients can call methods
-      directly.
+  stdio so Claude Desktop / Cursor / agentic clients can call methods directly.
 - [ ] `tools.json` schema bundle for tool-use APIs that don't speak MCP.
 - [ ] LLM-friendly docstrings on every public method (concrete examples,
-      embedded team-ID table, common-mistake warnings).
+  embedded team-ID table, common-mistake warnings).
