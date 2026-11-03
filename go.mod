@@ -2,7 +2,7 @@ module github.com/retr0h/mlb-sdk
 
 go 1.27.1
 
-require github.com/oapi-codegen/runtime v1.7.0
+require github.com/oapi-codegen/runtime v1.8.0
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.4.0 // indirect
