@@ -1,6 +1,6 @@
 module github.com/retr0h/mlb-sdk
 
-go 1.27.1
+go 1.27.3
 
 require github.com/oapi-codegen/runtime v1.8.0
 
